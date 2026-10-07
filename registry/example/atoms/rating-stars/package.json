@@ -1,0 +1,61 @@
+{
+  "name": "@example/atoms.rating-stars",
+  "version": "0.0.0",
+  "description": "A read-only star rating with fractional fill and an optional review count.",
+  "type": "module",
+  "private": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./styles.css": "./dist/index.css"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "index.ts",
+    "rating-stars.tsx",
+    "rating-stars.module.scss",
+    "*.composition.tsx",
+    "docs.json"
+  ],
+  "scripts": {
+    "build": "tsup && bht-registry-docgen",
+    "dev": "tsup --watch",
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "devDependencies": {
+    "@bht-component-registry/class-names": "workspace:*",
+    "@bht-component-registry/env": "workspace:*",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "eslint": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/behivetech/bht-component-registry.git",
+    "directory": "registry/example/atoms/rating-stars"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "registry": {
+    "status": "beta",
+    "tags": [
+      "feedback",
+      "commerce"
+    ]
+  }
+}

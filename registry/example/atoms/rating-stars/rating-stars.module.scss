@@ -1,0 +1,45 @@
+.ACME__RatingStars {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-family: var(--md-sys-typescale-body-font);
+  color: var(--md-sys-color-on-surface-variant);
+
+  &--sm {
+    font-size: 0.875rem;
+  }
+
+  &--md {
+    font-size: 1.125rem;
+  }
+
+  &--lg {
+    font-size: 1.5rem;
+  }
+
+  &__stars {
+    display: inline-flex;
+    gap: 0.1em;
+    line-height: 1;
+  }
+
+  &__star {
+    // The outline star, with the filled star painted over the left
+    // `--acme-star-fill` percent of it. One glyph, two colors, no images.
+    position: relative;
+    color: var(--md-sys-color-outline-variant);
+
+    &::before {
+      content: "★";
+      position: absolute;
+      inset: 0;
+      width: var(--acme-star-fill, 0%);
+      overflow: hidden;
+      color: var(--md-sys-color-tertiary);
+    }
+  }
+
+  &__count {
+    font-size: 0.8em;
+  }
+}
