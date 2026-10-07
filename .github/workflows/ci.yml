@@ -33,7 +33,7 @@ jobs:
             echo "pnpm-lock.yaml references GitHub Packages; a public template must install with no token." >&2
             exit 1
           fi
-      - run: pnpm verify --ui=stream
+      - run: pnpm verify
 
   e2e:
     name: Playwright against the static build

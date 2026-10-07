@@ -4,9 +4,10 @@ import { basename, dirname, extname, isAbsolute, join, relative, sep } from "nod
 
 /**
  * Paths that are never part of a template, whichever way it arrives: installs,
- * build output, VCS, turbo/next caches and data the build regenerates. The
- * same rule filters a `--from` checkout and the owner's repo during `update`,
- * so build output can never be mistaken for a template-owned file.
+ * build output, VCS, tool caches (Next; `.turbo` from older templates) and
+ * data the build regenerates. The same rule filters a `--from` checkout and
+ * the owner's repo during `update`, so build output can never be mistaken
+ * for a template-owned file.
  */
 const SKIP_SEGMENTS = new Set([
   "node_modules",

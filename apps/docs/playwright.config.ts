@@ -5,7 +5,7 @@ import { defineConfig, devices } from "@playwright/test";
  * would serve it. There is no auth, no database and no env to set up, so the
  * suite runs the same on a laptop and in CI.
  *
- * The root `pnpm build` (turbo) builds every registry package, regenerates the
+ * The root `pnpm build` runs every package's build in dependency order, regenerates the
  * catalog and writes apps/docs/out — building only this app would fail on a
  * fresh checkout, where the packages have no dist yet. `serve` hosts the
  * folder on :3000 and answers unknown paths with the exported 404.html and a
@@ -26,7 +26,7 @@ export default defineConfig({
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    command: "pnpm --dir ../.. build --ui=stream && pnpm serve",
+    command: "pnpm --dir ../.. build && pnpm serve",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 300_000,

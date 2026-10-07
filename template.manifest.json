@@ -3,6 +3,7 @@
   "owned": [
     "apps/docs/**",
     "packages/**",
+    "scripts/**",
     "turbo/generators/**",
     ".github/workflows/**",
     ".changeset/config.json",

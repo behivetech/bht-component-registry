@@ -14,8 +14,6 @@ next-env.d.ts
 # per-package docs data, written by `bht-registry-docgen` during each package's build
 registry/**/docs.json
 
-# turbo
-.turbo
 
 # registry catalog, regenerated before every dev/build (apps/docs/scripts/generate-catalog.ts)
 apps/docs/src/generated/

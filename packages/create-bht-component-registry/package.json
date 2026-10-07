@@ -8,7 +8,7 @@
     "create",
     "scaffold",
     "nextjs",
-    "turborepo",
+    "pnpm-workspace",
     "changesets"
   ],
   "homepage": "https://platform.behivetech.com",

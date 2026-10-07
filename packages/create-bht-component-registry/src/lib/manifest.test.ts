@@ -38,8 +38,14 @@ describe("isTemplateOwned", () => {
   it("owns the docs app and the shared packages", () => {
     expect(isTemplateOwned("apps/docs/src/app/page.tsx", DEFAULT_MANIFEST)).toBe(true);
     expect(isTemplateOwned("packages/scope/src/index.ts", DEFAULT_MANIFEST)).toBe(true);
-    expect(isTemplateOwned("turbo.json", DEFAULT_MANIFEST)).toBe(true);
+    expect(isTemplateOwned("scripts/gen.mts", DEFAULT_MANIFEST)).toBe(true);
+    expect(isTemplateOwned("scripts/templates/component/package.json.hbs", DEFAULT_MANIFEST)).toBe(true);
     expect(isTemplateOwned(".changeset/config.json", DEFAULT_MANIFEST)).toBe(true);
+  });
+
+  it("still owns the files pre-release (Turborepo) templates shipped, so update can remove them", () => {
+    expect(isTemplateOwned("turbo.json", DEFAULT_MANIFEST)).toBe(true);
+    expect(isTemplateOwned("turbo/generators/config.ts", DEFAULT_MANIFEST)).toBe(true);
   });
 
   it("never owns the owner's components, config, changesets or README", () => {

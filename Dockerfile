@@ -17,7 +17,7 @@ COPY . .
 RUN pnpm install --frozen-lockfile
 ARG REGISTRY_READ_TOKEN=""
 ENV REGISTRY_READ_TOKEN=$REGISTRY_READ_TOKEN
-RUN pnpm build --ui=stream
+RUN pnpm build
 
 FROM nginx:alpine AS runtime
 COPY nginx.conf /etc/nginx/conf.d/default.conf

@@ -35,6 +35,9 @@ export const DEFAULT_MANIFEST: TemplateManifest = {
   owned: [
     "apps/docs/**",
     "packages/**",
+    "scripts/**",
+    // Shipped by pre-release (Turborepo) templates. Still owned so `update`
+    // removes them from repos created from those.
     "turbo/generators/**",
     ".github/workflows/**",
     ".changeset/config.json",
