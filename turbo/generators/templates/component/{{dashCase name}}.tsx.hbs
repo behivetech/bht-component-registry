@@ -1,0 +1,31 @@
+import { type HTMLAttributes } from 'react';
+import { getClassName } from '@bht-component-registry/class-names';
+import styles from './{{ dashCase name }}.module.scss';
+
+export interface {{ pascalCase name }}Props extends HTMLAttributes<HTMLDivElement> {
+  /** Additional class names to merge with the component root element */
+  className?: string;
+  /** Content to render inside the component */
+  children?: React.ReactNode;
+}
+
+/**
+ * TODO: Describe the component. This JSDoc is shown with the props table.
+ */
+export const {{ pascalCase name }} = ({
+  className,
+  children,
+  ...rest
+}: {{ pascalCase name }}Props) => {
+  const [rootClass] = getClassName({
+    className,
+    rootClass: '{{ constantCase scope }}__{{ pascalCase name }}',
+    styles,
+  });
+
+  return (
+    <div {...rest} className={rootClass}>
+      {children}
+    </div>
+  );
+};

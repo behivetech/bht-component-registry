@@ -1,0 +1,33 @@
+{
+  "name": "@bht-component-registry/env",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "Shared build config for every component package, plus the docgen used by both the docs site and the bht-registry-docgen bin.",
+  "exports": {
+    ".": {
+      "types": "./index.d.mts",
+      "default": "./index.mjs"
+    },
+    "./docgen": {
+      "types": "./docgen.d.mts",
+      "default": "./docgen.mjs"
+    },
+    "./tsconfig.json": "./tsconfig.json",
+    "./eslint.config.mjs": "./eslint.config.mjs"
+  },
+  "bin": {
+    "bht-registry-docgen": "./bin/bht-registry-docgen.mjs"
+  },
+  "dependencies": {
+    "@bht-component-registry/eslint-config": "workspace:*",
+    "@bht-component-registry/typescript-config": "workspace:*",
+    "esbuild-sass-plugin": "catalog:",
+    "postcss-modules": "catalog:",
+    "react-docgen-typescript": "^2.4.0",
+    "typescript": "catalog:"
+  },
+  "devDependencies": {
+    "tsup": "catalog:"
+  }
+}

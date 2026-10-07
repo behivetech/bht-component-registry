@@ -1,0 +1,14 @@
+import { render, screen } from '@testing-library/react';
+import { {{ pascalCase name }} } from './{{ dashCase name }}.js';
+
+describe('{{ pascalCase name }}', () => {
+  it('renders children', () => {
+    render(<{{ pascalCase name }}>Hello</{{ pascalCase name }}>);
+    expect(screen.getByText('Hello')).toBeTruthy();
+  });
+
+  it('applies additional className', () => {
+    render(<{{ pascalCase name }} className="custom">Content</{{ pascalCase name }}>);
+    expect(screen.getByText('Content').className).toContain('custom');
+  });
+});

@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/behivetech/bht-component-registry/registry.config.schema.json",
+  "title": "registry.config.json",
+  "description": "Repo-level settings for a bht-component-registry site. Everything here is non-secret and committed; secrets (publish and read tokens) live only in CI secrets or your shell.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["scope", "npmRegistry", "templateVersion", "site"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "scope": {
+      "type": "string",
+      "description": "Your primary npm scope without the @, e.g. \"acme\" for @acme/*. Every component this registry generates is published under it. Must be lowercase, DNS-label safe, and not a reserved word. Create the matching org on npmjs before your first publish.",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])?$"
+    },
+    "npmRegistry": {
+      "type": "string",
+      "format": "uri",
+      "description": "Where `pnpm release` publishes and where the Changelog tab looks up published versions. Default is npmjs; GitHub Packages is https://npm.pkg.github.com; a private registry is whatever URL it gives you.",
+      "default": "https://registry.npmjs.org"
+    },
+    "templateVersion": {
+      "type": "string",
+      "description": "The bht-component-registry template version this repo was created from or last updated to. Maintained by `npx create-bht-component-registry update`; do not edit by hand.",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "site": {
+      "type": "object",
+      "description": "Branding for the docs site. Code never needs to change for these.",
+      "additionalProperties": false,
+      "required": ["title"],
+      "properties": {
+        "title": { "type": "string", "description": "Site name, shown in the header and the <title>." },
+        "description": { "type": "string", "description": "One sentence for the home page hero and <meta name=\"description\">." },
+        "logo": { "type": "string", "description": "Path under apps/docs/public, e.g. \"/logo.svg\". Omit to show the title as text." },
+        "primaryColor": {
+          "type": "string",
+          "description": "Hex color used as the Material Design 3 primary role; the rest of the palette derives from the token sheet.",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "links": {
+          "type": "array",
+          "description": "Footer links.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["label", "href"],
+            "properties": { "label": { "type": "string" }, "href": { "type": "string" } }
+          }
+        }
+      }
+    }
+  }
+}

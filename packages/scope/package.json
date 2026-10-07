@@ -1,0 +1,19 @@
+{
+  "name": "@bht-component-registry/scope",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Scope (npm scope / registry folder) naming rules shared by the generator, the create CLI and the docs site.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@bht-component-registry/typescript-config": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "extends": "@bht-component-registry/typescript-config/library.json",
+  "compilerOptions": {
+    "outDir": "dist"
+  },
+  "include": [
+    "."
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.*",
+    "**/*.test.*",
+    "**/*.composition.*"
+  ]
+}

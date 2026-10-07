@@ -1,0 +1,13 @@
+node_modules
+**/node_modules
+.git
+.turbo
+**/.turbo
+**/.next
+**/out
+**/dist
+apps/docs/src/generated
+apps/docs/playwright-report
+apps/docs/test-results
+.env
+.env*.local

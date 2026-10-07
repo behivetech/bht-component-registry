@@ -1,0 +1,8 @@
+{
+  "extends": "@bht-component-registry/typescript-config/library.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "types": ["vitest/globals"]
+  },
+  "include": ["src"]
+}

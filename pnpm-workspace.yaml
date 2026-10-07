@@ -1,0 +1,32 @@
+packages:
+  # The docs site and the shared tooling it is built with.
+  - "apps/*"
+  - "packages/*"
+  # The registry: one package per component, owned by a scope.
+  #   registry/<scope>/<category>/<name>  →  @<scope>/<category>.<name>
+  - "registry/*/*/*"
+
+# Single source of truth for versions shared across the registry. Every
+# package references these as `catalog:`, so bumping one is a one-line change
+# here and the ranges cannot drift apart between package.json files.
+#
+# peerDependencies are deliberately NOT catalogued: a component peers react at
+# a wide ^19.0.0 while building against a specific version.
+catalog:
+  "@types/node": ^22.20.4
+  "@types/react": 19.2.17
+  "@types/react-dom": 19.2.3
+  esbuild-sass-plugin: ^3.7.0
+  eslint: ^9.39.5
+  postcss-modules: ^9.0.1
+  react: ^19.2.8
+  react-dom: ^19.2.8
+  tsup: ^8.5.1
+  tsx: ^4.23.11
+  typescript: ^5.9.3
+  vitest: ^4.1.10
+
+allowBuilds:
+  esbuild: true
+  unrs-resolver: true
+  "@parcel/watcher": true

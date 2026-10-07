@@ -1,0 +1,37 @@
+# dependencies
+node_modules
+.pnp
+.pnp.*
+
+# build output
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+next-env.d.ts
+
+# per-package docs data, written by `bht-registry-docgen` during each package's build
+registry/**/docs.json
+
+# turbo
+.turbo
+
+# registry catalog, regenerated before every dev/build (apps/docs/scripts/generate-catalog.ts)
+apps/docs/src/generated/
+
+# env files — there are none required; see docs/publishing.md for the optional tokens
+.env
+.env*.local
+
+# tests
+coverage/
+playwright-report/
+test-results/
+
+# misc
+.DS_Store
+*.pem
+.vercel
+npm-debug.log*
+.pnpm-debug.log*

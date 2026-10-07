@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/behivetech/bht-component-registry/template.manifest.schema.json",
+  "title": "template.manifest.json",
+  "description": "Which paths the bht-component-registry template owns. `npx create-bht-component-registry update` reads this file from the TARGET template release and replaces exactly these paths, so the rule is data a new release can change, not a list baked into the CLI.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["owned", "never", "readmeMarker"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "owned": {
+      "type": "array",
+      "description": "Globs (`**` crosses directories, `*` and `?` stay within one segment) that update may add, replace or remove. Because the root package.json is owned, add dependencies to the workspace package that needs them, not to the root.",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1
+    },
+    "never": {
+      "type": "array",
+      "description": "Globs update never touches, even when an `owned` glob also matches them. Your components, your config and your pending changesets live here.",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "templateOnly": {
+      "type": "array",
+      "description": "Globs that exist in the template repo but must never land in a registry made from it (the create CLI's own source, the template repo's issue and PR templates). `create` skips them; `update` never copies them and removes any left behind by an older template. Checked before `owned`.",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "readmeMarker": {
+      "type": "string",
+      "description": "The exact line in README.md above which the template's text is replaced on update. Everything from this line down is yours and is kept. A README without the line is left untouched.",
+      "minLength": 1
+    },
+    "rewriteScope": {
+      "type": "array",
+      "description": "Owned files that mention the template's `example` scope. After update copies them, the owner's scope from registry.config.json is re-applied with the same word replace `create` uses.",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

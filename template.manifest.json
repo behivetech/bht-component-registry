@@ -1,0 +1,38 @@
+{
+  "$schema": "./template.manifest.schema.json",
+  "owned": [
+    "apps/docs/**",
+    "packages/**",
+    "turbo/generators/**",
+    ".github/workflows/**",
+    ".changeset/config.json",
+    "turbo.json",
+    "pnpm-workspace.yaml",
+    "package.json",
+    "registry.config.schema.json",
+    "template.manifest.json",
+    "template.manifest.schema.json",
+    ".gitignore",
+    "Dockerfile",
+    "nginx.conf",
+    "CLAUDE.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "LICENSE",
+    "docs/**"
+  ],
+  "never": [
+    "registry/**",
+    "registry.config.json",
+    ".changeset/*.md",
+    "apps/docs/src/generated/**"
+  ],
+  "templateOnly": [
+    "packages/create-bht-component-registry/**"
+  ],
+  "readmeMarker": "<!-- your notes below this line are kept by update -->",
+  "rewriteScope": [
+    "apps/docs/e2e/public.spec.ts",
+    "apps/docs/package.json"
+  ]
+}
