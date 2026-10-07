@@ -5,7 +5,7 @@
   "templateVersion": "0.2.0",
   "site": {
     "title": "Example Component Registry",
-    "description": "A bit.dev-style component registry that stays in git: docs from source, live examples, versions via Changesets.",
+    "description": "A component registry that stays in git: docs from source, live examples, versions via Changesets.",
     "primaryColor": "#6750a4",
     "links": [
       { "label": "GitHub", "href": "https://github.com/behivetech/bht-component-registry" },

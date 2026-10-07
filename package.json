@@ -1,7 +1,7 @@
 {
   "name": "bht-component-registry",
   "private": true,
-  "description": "A bit.dev-style component registry that stays in git: docs generated from source, live examples, versions via Changesets. Static site, deploy anywhere.",
+  "description": "A component registry that stays in git: docs generated from source, live examples, versions via Changesets. Static site, deploy anywhere.",
   "homepage": "https://platform.behivetech.com",
   "repository": {
     "type": "git",

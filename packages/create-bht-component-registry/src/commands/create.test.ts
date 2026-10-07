@@ -44,7 +44,7 @@ async function makeTemplate(dir: string): Promise<void> {
         templateVersion: "0.1.0",
         site: {
           title: "Example Component Registry",
-          description: "A bit.dev-style component registry that stays in git.",
+          description: "A component registry that stays in git.",
           primaryColor: "#6750a4",
           links: [
             { label: "GitHub", href: "https://github.com/behivetech/bht-component-registry" },
@@ -213,7 +213,7 @@ describe("create", () => {
       templateVersion: readOwnVersion(),
       site: {
         title: "Bobsburgers Component Registry",
-        description: "A bit.dev-style component registry that stays in git.",
+        description: "A component registry that stays in git.",
         primaryColor: "#6750a4",
         links: [{ label: "Hosted & expanded version", href: "https://platform.behivetech.com/expanded" }],
       },

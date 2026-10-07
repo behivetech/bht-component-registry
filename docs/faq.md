@@ -1,6 +1,6 @@
 # FAQ
 
-Short answers to the questions that come up when teams evaluate this registry: why there is no database, why the site is a static export, how it relates to bit.dev, and what the hosted version adds. Where a question has a longer answer, it links to the guide.
+Short answers to the questions that come up when teams evaluate this registry: why there is no database, why the site is a static export, why git and npm rather than a hosted component platform, and what the hosted version adds. Where a question has a longer answer, it links to the guide.
 
 ## Why no database?
 
@@ -16,21 +16,21 @@ The trade-offs: no per-request logic (sign-in, forms, writes), and a change need
 
 No. Developing, building, testing and deploying need none. Two optional tokens exist for publishing and for listing published versions from a private registry; both live in CI secrets or your shell. See [Publishing](publishing.md).
 
-## How does this relate to bit.dev?
+## Why git and npm rather than a hosted component platform?
 
-Same ideas, none of bit's separate store.
+Because you already have both, and they are enough:
 
-| Idea | bit.dev | This registry |
-|---|---|---|
-| Scopes | a bit scope on bit.cloud | an npm scope and a folder under `registry/` |
-| One package per component | bit components | `registry/<scope>/<category>/<name>` is `@<scope>/<category>.<name>` |
-| Compositions | `*.composition.tsx` | the same file, the same pattern |
-| Generated docs | bit's docs from source | README, compositions, react-docgen props, CHANGELOG |
-| Versions | bit's version store | Changesets and the npm registry you already use |
-| Deleting a component | removing from the scope | deleting a folder |
-| Source of truth | the bit workspace and bit.cloud | git |
+| Idea | This registry |
+|---|---|
+| Scopes | an npm scope and a folder under `registry/` |
+| One package per component | `registry/<scope>/<category>/<name>` is `@<scope>/<category>.<name>` |
+| Examples | the named exports of `<name>.composition.tsx` |
+| Generated docs | README, compositions, react-docgen props, CHANGELOG |
+| Versions | Changesets and the npm registry you already use |
+| Deleting a component | deleting a folder |
+| Source of truth | git |
 
-You keep git as the source, npm as the publish target and Changesets for versions. There is no daemon, no second CLI to learn beyond `pnpm gen`, and nothing to export if you stop using it.
+There is no daemon, no second CLI to learn beyond `pnpm gen`, no separate store, and nothing to export if you stop using it.
 
 ## Can I have more than one scope?
 
@@ -86,7 +86,7 @@ Delete `.github/workflows/ci.yml`. It is the only file involved. See [Testing an
 
 The same registry with a dashboard around it:
 
-- sign-in with SSO (Clerk) and organisations as scopes;
+- sign-in with SSO and organisations as scopes;
 - role-based curation of each component's status and tags, with an audit log;
 - hosted docs that read the packages you have already published, so every published version has docs without you running a site.
 

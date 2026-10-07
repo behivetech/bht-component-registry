@@ -6,7 +6,7 @@ import { snippetToLiveCode } from "./snippet";
 import styles from "./markdown.module.scss";
 
 /**
- * README rendering, bit.dev style: every ```jsx / ```tsx block becomes a
+ * README rendering: every ```jsx / ```tsx block becomes a
  * live, editable example; other code blocks are highlighted.
  */
 export function Markdown({ children }: { children: string }) {

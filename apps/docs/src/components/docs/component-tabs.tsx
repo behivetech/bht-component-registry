@@ -12,7 +12,7 @@ const TABS = [
   { path: "/changelog", label: "Changelog" },
 ];
 
-/** Tabs are routes, like bit.dev — each one is linkable and prerendered. */
+/** Tabs are routes, so each one is linkable and prerendered. */
 export function ComponentTabs({ base }: { base: string }) {
   const pathname = usePathname();
   return (

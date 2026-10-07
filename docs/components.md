@@ -31,7 +31,7 @@ Why each file is there:
 
 - `<name>.tsx` holds exactly one exported component whose props interface is `<Name>Props`. The docs engine documents every exported, capitalised component it finds in the package's `.tsx` files (specs and compositions excluded), so keep helpers un-exported or in `index.ts`.
 - `<name>.module.scss` is compiled by the shared tsup config into `dist/index.css`, which the package exposes as `./styles.css`. The docs site imports it for every package so examples are styled.
-- `<name>.composition.tsx` is the bit.dev pattern: each named export is one example. See below.
+- `<name>.composition.tsx`: each named export is one example. See below.
 - `index.ts` is what consumers and the docs sandbox import. Only export from here what you want in the Playground scope.
 - `README.md` and `CHANGELOG.md` are shown as-is. The generator writes a CHANGELOG containing only the package-name heading; Changesets adds releases under it.
 

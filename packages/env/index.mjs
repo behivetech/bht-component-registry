@@ -59,7 +59,7 @@ export function createComponentConfig(overrides = {}) {
   // actually points at — while the cjs pass would emit `index.d.cts`, which no
   // package references. Generating declarations in both passes meant paying for
   // the slowest part of the build twice per package, sequentially, across ~30
-  // component packages. That is what pushed the cms-admin Vercel deploy past its
+  // component packages. That is what once pushed another app's deploy past its
   // 45 minute build limit once the passes were serialized.
   if (chainedFormat) {
     return { ...base, format: [chainedFormat], dts: true, clean: false, ...rest };

@@ -27,8 +27,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 /**
- * The frame around every tab of a component page — bit.dev's component
- * header: name, package, version, status, tags, install snippet, and the
+ * The frame around every tab of a component page: the component header
+ * (name, package, version, status, tags, install snippet) and the
  * tab bar. Status and tags come from the component's package.json
  * (`registry.status`, `registry.tags`) by way of the catalog.
  */

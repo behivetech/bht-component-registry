@@ -1,6 +1,6 @@
 # bht-component-registry
 
-A bit.dev-style component registry that stays in git. One npm package per component, docs generated from the source, live editable examples, versions with Changesets, and a static site you can deploy anywhere.
+A component registry that stays in git. One npm package per component, docs generated from the source, live editable examples, versions with Changesets, and a static site you can deploy anywhere.
 
 [![CI](https://github.com/behivetech/bht-component-registry/actions/workflows/ci.yml/badge.svg)](https://github.com/behivetech/bht-component-registry/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -62,7 +62,7 @@ Then set `scope` in `registry.config.json`, rename `registry/example` to your sc
 - [Adopting](docs/adopting.md): add the registry to a monorepo you already have: what to copy, the build order, what `create` and `update` do not cover.
 - [Testing and CI](docs/testing-and-ci.md): unit tests, Playwright against the static build, the one CI file.
 - [Design tokens](docs/design-tokens.md): the optional tokens page.
-- [FAQ](docs/faq.md): why no database, why a static export, how this relates to bit.dev, what the expanded version adds.
+- [FAQ](docs/faq.md): why no database, why a static export, why git and npm rather than a hosted component platform, what the expanded version adds.
 
 ## Hosted and expanded version
 

@@ -1,7 +1,7 @@
 {
   "name": "create-bht-component-registry",
   "version": "0.2.0",
-  "description": "Scaffold a bht-component-registry — a bit.dev-style component registry that stays in git — and keep it up to date with `update`.",
+  "description": "Scaffold a bht-component-registry — a component registry that stays in git — and keep it up to date with `update`.",
   "keywords": [
     "component-registry",
     "design-system",

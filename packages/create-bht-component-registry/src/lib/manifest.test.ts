@@ -43,7 +43,7 @@ describe("isTemplateOwned", () => {
     expect(isTemplateOwned(".changeset/config.json", DEFAULT_MANIFEST)).toBe(true);
   });
 
-  it("still owns the files pre-release (Turborepo) templates shipped, so update can remove them", () => {
+  it("still owns the task-runner files pre-release templates shipped, so update can remove them", () => {
     expect(isTemplateOwned("turbo.json", DEFAULT_MANIFEST)).toBe(true);
     expect(isTemplateOwned("turbo/generators/config.ts", DEFAULT_MANIFEST)).toBe(true);
   });

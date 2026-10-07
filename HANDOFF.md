@@ -6,8 +6,8 @@ before relying on it. The sibling private repo `../bht-platform` has its own HAN
 
 ## What this is, in one paragraph
 
-The public, docs-only version of Behive Tech's component registry. A bit.dev-style registry
-that stays in git: one npm package per component at `registry/<scope>/<category>/<name>`
+The public, docs-only version of Behive Tech's component registry. A registry that stays
+in git: one npm package per component at `registry/<scope>/<category>/<name>`
 (`@<scope>/<category>.<name>`), docs generated from source (README snippets run live,
 `*.composition.tsx` exports are live editable examples, react-docgen builds the props table,
 CHANGELOG.md from Changesets is the Changelog tab, an optional tokens.scss is a Design tokens
@@ -23,10 +23,10 @@ Made with Bruce over a long planning session; the full plan is in
 `~/.claude/plans/please-review-handoff-md-claude-md-melodic-fog.md`.
 
 - **Two products, two repos.** `bht-platform` (private) is the "expanded" version: dashboard,
-  Clerk sign-in/SSO, Prisma, roles, audit log, tenant boundary; it is the consulting demo and
+  sign-in/SSO, a database, roles, audit log, tenant boundary; it is the consulting demo and
   will host the guide for this repo plus services and "expanded version" pages. This repo is
   the free, simple one anyone can clone. The platform site is this repo's documentation site.
-- **Git is the source of truth. No artifact store. No bit CLI.** Versions are Changesets +
+- **Git is the source of truth. No artifact store. No vendor CLI.** Versions are Changesets +
   git tags (the CLI's `create-bht-component-registry@<version>` tag is also the template
   release; `version-packages` keeps `registry.config.json#templateVersion` equal to it); publishing is `changeset publish` to the registry in `registry.config.json`;
   deleting a component is deleting a folder. The hosted expanded version, when it comes, is a
@@ -49,11 +49,14 @@ Made with Bruce over a long planning session; the full plan is in
   primaryColor, links). Status and tags live in each package's `registry` field.
 - **CI is one deletable file** (`.github/workflows/ci.yml`); testing in CI is the client's
   choice. The template repo itself keeps it green.
-- **No task runner** (Turborepo removed 2026-10-07). The graph is three levels (class-names →
+- **No task runner** (removed 2026-10-07). The graph is three levels (class-names →
   registry packages → docs) and `pnpm -r run` orders it by `workspace:*` deps. Root scripts are
   plain `pnpm -r` / `pnpm --filter`; `pnpm gen` is `scripts/gen.mts` (tsx + prompts +
   handlebars over the same `.hbs` templates). Guides treat plain pnpm as the baseline and
-  mention Turborepo only as an optional section of `docs/adopting.md`; never bring up Nx.
+  name a task runner only in the optional section of `docs/adopting.md`.
+- **No comparable product or company is named anywhere** (Bruce, 2026-10-07): no "X-style",
+  no "like X", no competitor comparisons. Say "similar tools that do packaging and docs"
+  if a comparison is unavoidable. Tools the repo runs on and deploy targets are fine.
 
 ## Layout
 
@@ -146,7 +149,7 @@ Verified locally on 2026-10-07:
    ESM and pin React with an import map. Then extract the docs engine into
    `@behivetech/bht-registry-docs` so both repos consume it (today it is a copy; see drift).
 6. **Later**: `pnpm component:remove <pkg>`; the hosted reader (per-scope read token,
-   release-workflow notify to `/api/published`, Clerk waitlist + billing) lives in the
+   release-workflow notify to `/api/published`, waitlist + billing) lives in the
    platform repo.
 
 ## Gotchas
@@ -186,5 +189,5 @@ Verified locally on 2026-10-07:
 - **Component unit tests need the root `vitest.config.ts`/`vitest.setup.ts`** (globals,
   jsdom, Radix stubs); they are template-owned.
 - `apps/docs/AGENTS.md` and `apps/docs/CLAUDE.md` are Next's managed agent-rules block;
-  `next dev` re-adds them, so leave them be. There is no root `AGENTS.md` any more (it was
-  Turborepo's).
+  `next dev` re-adds them, so leave them be. There is no root `AGENTS.md` any more (it
+  belonged to the removed task runner).
