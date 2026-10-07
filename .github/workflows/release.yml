@@ -1,0 +1,69 @@
+# Versioning and publishing with Changesets.
+#
+# On every push to main, changesets/action either opens (or updates) a
+# "Version Packages" pull request from the pending .changeset/*.md files, or,
+# when that PR has just been merged, publishes the bumped packages to the
+# registry in registry.config.json.
+#
+# Default: npmjs. Create an automation token at https://www.npmjs.com/settings
+# and store it as the repository secret NPM_TOKEN. Create the org for your
+# scope first (https://www.npmjs.com/org/create) or the first publish fails.
+#
+# GitHub Packages instead: set "npmRegistry" to https://npm.pkg.github.com in
+# registry.config.json, give this job `packages: write`, and use
+# `NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}` below.
+#
+# See docs/publishing.md.
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+concurrency: release-${{ github.ref }}
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+      - run: pnpm install --frozen-lockfile
+
+      - name: Version or publish
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          version: pnpm version-packages
+          publish: pnpm release
+          commit: "chore: release packages"
+          title: "chore: release packages"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # Optional, for the hosted/expanded version at platform.behivetech.com:
+      # tell it which packages were just published so their docs appear
+      # immediately rather than on its next look at the registry. Uncomment
+      # once you have a scope there and store its secret as REGISTRY_NOTIFY_TOKEN.
+      #
+      # - name: Notify the hosted registry
+      #   if: steps.changesets.outputs.published == 'true'
+      #   run: |
+      #     curl -fsS -X POST https://platform.behivetech.com/api/published \
+      #       -H "Authorization: Bearer ${{ secrets.REGISTRY_NOTIFY_TOKEN }}" \
+      #       -H "Content-Type: application/json" \
+      #       -d '${{ steps.changesets.outputs.publishedPackages }}'

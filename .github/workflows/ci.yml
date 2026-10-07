@@ -1,0 +1,60 @@
+# Continuous integration for the registry and its docs site.
+#
+# Nothing here needs a secret: the site is a static export and the tests run
+# against that export. If you don't want CI, delete this file — nothing else
+# references it. See docs/testing-and-ci.md.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Build, lint, types, unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Nothing may come from a private registry
+        run: |
+          if grep -q "npm.pkg.github.com" pnpm-lock.yaml; then
+            echo "pnpm-lock.yaml references GitHub Packages; a public template must install with no token." >&2
+            exit 1
+          fi
+      - run: pnpm verify --ui=stream
+
+  e2e:
+    name: Playwright against the static build
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: verify
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter docs exec playwright install --with-deps chromium
+      - run: pnpm test:e2e
+        env:
+          CI: "1"
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: apps/docs/playwright-report
+          retention-days: 7
