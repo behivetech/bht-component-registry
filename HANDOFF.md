@@ -163,7 +163,9 @@ Verified locally on 2026-10-07:
   failure), so a fresh repo's first push to main is green: the repository variable
   `NPM_TRUSTED_PUBLISHING=true` (OIDC, preferred) or the secret `NPM_TOKEN`. The repo must
   also allow Actions to create pull requests (Settings → Actions → General → Workflow
-  permissions; set on 2026-10-07 via the API) or the Version Packages PR step fails.
+  permissions → "Allow GitHub Actions to create and approve pull requests") or the Version
+  Packages PR step fails with "GitHub Actions is not permitted to create or approve pull
+  requests". Not yet enabled as of 2026-10-07; the first run with the variable set failed on it.
 - **`check-types` regenerates the catalog first** (`precheck-types`); on a fresh machine the
   generated files do not exist and `tsc` fails without it. This is what broke the first CI run.
 
