@@ -117,7 +117,7 @@ tar -tzf acme-atoms.button-*.tgz
 
 `.github/workflows/release.yml` runs on pushes to `main` and uses `changesets/action`:
 
-- With pending changesets, it opens (or updates) a "Version Packages" pull request that runs `pnpm version-packages` for you. Merge it to release.
+- With pending changesets, it opens (or updates) a "Version Packages" pull request that runs `pnpm version-packages` for you. Merge it to release. For that the repository must allow it: Settings, Actions, General, Workflow permissions, tick "Allow GitHub Actions to create and approve pull requests" (an organization can also restrict this at its level). Without it the run fails with "GitHub Actions is not permitted to create or approve pull requests".
 - With no pending changesets and unpublished versions, it runs `pnpm release`.
 
 How it authenticates, in order of preference:

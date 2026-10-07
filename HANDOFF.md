@@ -161,7 +161,9 @@ Verified locally on 2026-10-07:
   picker is skipped (bump → summary → confirm). An empty summary opens `$EDITOR`.
 - **release.yml skips version/publish until a publish method exists** (a notice, not a
   failure), so a fresh repo's first push to main is green: the repository variable
-  `NPM_TRUSTED_PUBLISHING=true` (OIDC, preferred) or the secret `NPM_TOKEN`.
+  `NPM_TRUSTED_PUBLISHING=true` (OIDC, preferred) or the secret `NPM_TOKEN`. The repo must
+  also allow Actions to create pull requests (Settings → Actions → General → Workflow
+  permissions; set on 2026-10-07 via the API) or the Version Packages PR step fails.
 - **`check-types` regenerates the catalog first** (`precheck-types`); on a fresh machine the
   generated files do not exist and `tsc` fails without it. This is what broke the first CI run.
 
