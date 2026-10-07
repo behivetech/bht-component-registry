@@ -74,6 +74,10 @@ npx create-bht-component-registry update
 
 It replaces only template-owned paths and never touches `registry/`, `registry.config.json`, pending changesets or your README notes. See [Updating](updating.md).
 
+## Can I put the registry inside a monorepo I already have?
+
+Yes, by hand. Copy `registry/`, the docs app, the support packages and the generator into your workspace and express the build order with whatever runs your builds today; [Adopting](adopting.md) lists each step. `create` and `update` assume they own the repo root, so they are not used in that setup.
+
 ## Can I turn CI off?
 
 Delete `.github/workflows/ci.yml`. It is the only file involved. See [Testing and CI](testing-and-ci.md).
@@ -100,5 +104,6 @@ Behive Tech offers consulting on component libraries, design systems and this re
 - [Publishing](publishing.md)
 - [Deploy](deploy.md)
 - [Updating](updating.md)
+- [Adopting](adopting.md)
 - [Testing and CI](testing-and-ci.md)
 - [Design tokens](design-tokens.md)

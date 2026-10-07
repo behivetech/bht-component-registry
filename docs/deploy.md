@@ -8,7 +8,7 @@
 pnpm build
 ```
 
-Turborepo builds every registry package first (`dist/` and `docs.json`), then the docs app regenerates the catalog and runs `next build` with `output: "export"`. The result is `apps/docs/out`. Check it locally the way a static host serves it:
+`pnpm -r run build` builds the workspace in dependency order: every registry package first (`dist/` and `docs.json`), then the docs app regenerates the catalog and runs `next build` with `output: "export"`. The result is `apps/docs/out`. Check it locally the way a static host serves it:
 
 ```bash
 pnpm serve
@@ -20,7 +20,7 @@ Optional: set `REGISTRY_READ_TOKEN` in the build environment if your packages ar
 
 ## Vercel
 
-Import the repository; Vercel detects pnpm and Turborepo. Settings:
+Import the repository; Vercel detects pnpm. Settings:
 
 - Framework preset: Next.js
 - Root directory: leave as the repo root

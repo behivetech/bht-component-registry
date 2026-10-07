@@ -59,6 +59,7 @@ Then set `scope` in `registry.config.json`, rename `registry/example` to your sc
 - [Publishing](docs/publishing.md): the Changesets flow, npmjs, GitHub Packages and private registries, what a tarball contains, the release workflow.
 - [Deploy](docs/deploy.md): Vercel, Netlify, Cloudflare Pages, any static host, Docker and nginx.
 - [Updating](docs/updating.md): `npx create-bht-component-registry update`, what it touches and never touches.
+- [Adopting](docs/adopting.md): add the registry to a monorepo you already have: what to copy, the build order, what `create` and `update` do not cover.
 - [Testing and CI](docs/testing-and-ci.md): unit tests, Playwright against the static build, the one CI file.
 - [Design tokens](docs/design-tokens.md): the optional tokens page.
 - [FAQ](docs/faq.md): why no database, why a static export, how this relates to bit.dev, what the expanded version adds.

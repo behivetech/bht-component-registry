@@ -27,7 +27,7 @@ Every component is its own npm package with its own semver. Changesets records w
    pnpm release
    ```
 
-   This runs `turbo run build --filter='./registry/*/*/*'` (so every package's `dist/` and `docs.json` are fresh) and then `changeset publish`, which publishes every package whose version is not yet on the registry.
+   This builds the registry packages and what they depend on (`pnpm --filter "{./registry/**}..." run build`, so every package's `dist/` and `docs.json` are fresh) and then `changeset publish`, which publishes every package whose version is not yet on the registry.
 
 The Changelog tab on the docs site is the package's `CHANGELOG.md`, so releases show up in the docs as soon as the site is rebuilt.
 

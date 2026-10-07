@@ -1,6 +1,6 @@
 # Getting started
 
-This guide takes you from nothing to a running docs site with your own scope. You can let `npx create-bht-component-registry` set the repo up, or clone this repo and do the three renames by hand. Either way you end with a Turborepo whose `registry/` folder is the registry, a docs site at `apps/docs`, and a `registry.config.json` naming your scope.
+This guide takes you from nothing to a running docs site with your own scope. You can let `npx create-bht-component-registry` set the repo up, or clone this repo and do the three renames by hand. Either way you end with a pnpm workspace whose `registry/` folder is the registry, a docs site at `apps/docs`, and a `registry.config.json` naming your scope.
 
 ## Prerequisites
 
@@ -80,13 +80,13 @@ my-registry/
 ├─ registry/<scope>/
 │  ├─ scope.json              name, tagline, visibility, optional tokens path
 │  └─ <category>/<name>/      one npm package per component
-├─ turbo/generators/          pnpm gen and its templates
+├─ scripts/                  pnpm gen (gen.mts) and its templates
 ├─ .changeset/                Changesets config and pending changesets
 ├─ .github/workflows/         ci.yml (verify + e2e), release.yml (changesets publish)
 ├─ registry.config.json       scope, npmRegistry, templateVersion, site branding
 ├─ template.manifest.json     the paths `update` is allowed to replace
 ├─ Dockerfile, nginx.conf     serve apps/docs/out from a container
-└─ turbo.json, pnpm-workspace.yaml, package.json
+└─ pnpm-workspace.yaml, package.json, vitest.config.ts
 ```
 
 Workspace-only packages use the `@bht-component-registry/*` scope and are never published. Anything public is `bht`-prefixed so it collides with nothing of yours.
@@ -100,7 +100,7 @@ All run from the repo root.
 | `pnpm dev` | Regenerates the catalog, then Next dev on :3000 |
 | `pnpm build` | Builds every package, then the static export to `apps/docs/out` |
 | `pnpm serve` | Serves `apps/docs/out` on :3000 the way a static host would |
-| `pnpm verify` | build + lint + types + unit tests for every package |
+| `pnpm verify` | build, then lint + types + unit tests for every package |
 | `pnpm test:e2e` | Playwright against the static build (builds first) |
 | `pnpm gen` | Scaffold a component; `pnpm gen --args <scope> <category> <name>` skips the prompts |
 | `pnpm changeset` | Record a change for the next release |
@@ -114,6 +114,7 @@ All run from the repo root.
 - [Publishing](publishing.md)
 - [Deploy](deploy.md)
 - [Updating](updating.md)
+- [Adopting into an existing monorepo](adopting.md)
 - [Testing and CI](testing-and-ci.md)
 - [Design tokens](design-tokens.md)
 - [FAQ](faq.md)

@@ -48,6 +48,11 @@ Made with Bruce over a long planning session; the full plan is in
   primaryColor, links). Status and tags live in each package's `registry` field.
 - **CI is one deletable file** (`.github/workflows/ci.yml`); testing in CI is the client's
   choice. The template repo itself keeps it green.
+- **No task runner** (Turborepo removed 2026-10-07). The graph is three levels (class-names →
+  registry packages → docs) and `pnpm -r run` orders it by `workspace:*` deps. Root scripts are
+  plain `pnpm -r` / `pnpm --filter`; `pnpm gen` is `scripts/gen.mts` (tsx + prompts +
+  handlebars over the same `.hbs` templates). Guides treat plain pnpm as the baseline and
+  mention Turborepo only as an optional section of `docs/adopting.md`; never bring up Nx.
 
 ## Layout
 
@@ -66,8 +71,8 @@ packages/class-names/      getClassName helper (workspace-only; bundled into com
 packages/eslint-config/, typescript-config/
 packages/create-bht-component-registry/   npx create + update (53 tests; see its README)
 registry/example/          two example components (price-tag: stable; rating-stars: beta) + scope.json
-turbo/generators/          pnpm gen (templates read registry.config.json for scope/registry)
-docs/                      the guides (getting-started, components, scopes, publishing, deploy, updating, testing-and-ci, design-tokens, faq)
+scripts/                   gen.mts = pnpm gen (tsx + prompts + handlebars) and templates/component/*.hbs
+docs/                      the guides (getting-started, components, scopes, publishing, deploy, updating, adopting, testing-and-ci, design-tokens, faq)
 registry.config.json       scope, npmRegistry, templateVersion, site; schema alongside
 template.manifest.json     owned / never / templateOnly paths for `update`; schema alongside
 Dockerfile, nginx.conf     static export behind nginx with a real 404
@@ -80,7 +85,7 @@ Dockerfile, nginx.conf     static export behind nginx with a real 404
 pnpm dev            # regenerate catalog, Next dev on :3000
 pnpm build          # static export → apps/docs/out (regenerates catalog first)
 pnpm serve          # serve the export on :3000
-pnpm verify         # build + lint + types + unit tests (22 turbo tasks; use --ui=stream when piping)
+pnpm verify         # build, then lint + types + unit tests (pnpm -r in dependency order; no cache)
 pnpm test:e2e       # Playwright against the static build (builds first); CI=1 for CI reporter
 pnpm gen            # scaffold a component (also: pnpm gen --args <scope> <category> <name>)
 pnpm changeset && pnpm version-packages && pnpm release
@@ -92,18 +97,23 @@ pnpm --filter create-bht-component-registry build   # dist/cli.js; test it with 
 Verified locally on 2026-10-07:
 
 - `pnpm install` with no `.npmrc` and no token → OK (9 workspace projects).
-- `pnpm verify` → 22/22 tasks green (unit tests: scope 7, class-names 4, docs 17, two
-  example packages 9, CLI 53).
+- `pnpm verify` → green (unit tests: scope 7, class-names 4, docs 17, two example
+  packages 9, CLI 62).
 - `pnpm build` → 16 static pages; served with `serve`: known routes 200, unknown scope and
   unknown component 404 with the site's own not-found page (the not-found page had to move
   out of a `(site)` route group to the app root for the export to pick it up).
 - `pnpm test:e2e` → 9 passed.
-- Generator: refuses `"Bad Scope"` and reserved `docs`; `pnpm gen --args testco atoms thing`
-  → package builds, `docs.json` written, catalog shows the scope (DRAFT, 1 doc, 1 example),
-  `pnpm pack` tarball contains exactly dist + source + composition + README + docs.json
-  (+ LICENSE, which pnpm adds). Test scope removed afterwards.
-- CLI smoke test by its author: `create demo --scope bobsburgers --from . --no-install`,
-  `update` no-op / `--dry-run` / dirty-tree refusal / apply.
+- Generator (`scripts/gen.mts`): refuses `"Bad Scope"`, reserved `docs`, an unknown category,
+  a non-kebab name and an existing destination, each with one sentence and exit 1;
+  `pnpm gen --args testco atoms thing` → 12 files, package builds (`dist/` + `docs.json`),
+  tests and lints, and the export contains `testco.html` and `testco/atoms/thing.html`. Test
+  scope removed afterwards. Earlier `pnpm pack` check (tarball = dist + source + composition +
+  README + docs.json + LICENSE) still holds; the template is unchanged.
+- `pnpm dev` on a fresh tree: builds the three upstream packages, then Next dev answers :3000.
+- CLI: 62 unit tests; `create demo --scope bobsburgers --from . --no-install -y` ships
+  `scripts/**` and no `turbo.json`; `update --dry-run` on a repo created from the pre-change
+  tree lists `turbo.json` + `turbo/generators/**` under Removed and `scripts/**` under Added
+  (`update` short-circuits when `templateVersion` already matches, so bump it down to test).
 - Docker: `docker build` + `docker run -p 8089:80` → `/`, `/example`, a component page and its
   changelog 200; `/no-such-scope` 404 with the site's "Not found" page through nginx.
 
@@ -148,11 +158,13 @@ Verified locally on 2026-10-07:
 - **`generate-catalog` auto-adds new registry packages to `apps/docs/package.json`** and tells
   you to run `pnpm install`; the first build after `pnpm gen` fails on "Cannot find module"
   until you do.
-- **turbo's TUI hangs when piped.** Use `--ui=stream` whenever output goes to a file.
-  `pnpm test:e2e` is plain Playwright (not turbo), so turbo flags are rejected there.
+- **`check-types` and `test` need upstream `dist/`.** `pnpm verify` builds first; on a fresh
+  clone run `pnpm build` before running either alone. No cache: every `pnpm build` rebuilds
+  everything (about 30 s).
 - **BSD tools on macOS**: `grep -Z` means decompress, use `--null`; zsh does not word-split
   unquoted variables.
 - **Component unit tests need the root `vitest.config.ts`/`vitest.setup.ts`** (globals,
   jsdom, Radix stubs); they are template-owned.
 - `apps/docs/AGENTS.md` and `apps/docs/CLAUDE.md` are Next's managed agent-rules block;
-  `next dev` re-adds them, so leave them be.
+  `next dev` re-adds them, so leave them be. There is no root `AGENTS.md` any more (it was
+  Turborepo's).

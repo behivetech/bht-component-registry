@@ -53,6 +53,8 @@ Without prompts:
 pnpm gen --args acme atoms date-picker
 ```
 
+The files come from `scripts/templates/component/*.hbs` (Handlebars: `{{ pascalCase name }}`, `{{ constantCase scope }}` and friends). Edit them to change what a new component starts with; they are template-owned, so keep such edits in a commit you can re-apply after an update.
+
 After either form:
 
 ```bash

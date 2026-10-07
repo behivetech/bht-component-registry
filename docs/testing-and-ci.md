@@ -12,7 +12,7 @@ pnpm --filter @acme/atoms.button test       # one package
 pnpm --filter docs test:watch               # the docs app, watching
 ```
 
-Turborepo builds upstream packages first, because a component's test imports the workspace `class-names` package from its `dist/`.
+`pnpm verify` builds before it tests, because a component's test imports the workspace `class-names` package from its `dist/`. On a fresh checkout, run `pnpm build` once before running `pnpm test` on its own.
 
 ## `pnpm verify`
 
@@ -20,10 +20,10 @@ Turborepo builds upstream packages first, because a component's test imports the
 pnpm verify
 ```
 
-Runs `build`, `lint`, `check-types` and `test` across the workspace. Turborepo caches by inputs, so a second run with no changes is instant. Turbo's default TUI swallows output when a task fails; stream it when debugging:
+Runs `build`, then `lint`, `check-types` and `test`, each as `pnpm -r run <script>` across the workspace in dependency order; packages without that script are skipped. There is no cache, so every run rebuilds. Output is prefixed per package; for one phase with less interleaving:
 
 ```bash
-pnpm verify --ui=stream
+pnpm -r --aggregate-output run build
 ```
 
 ## End-to-end tests

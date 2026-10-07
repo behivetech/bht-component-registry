@@ -33,9 +33,9 @@ Only paths listed in `template.manifest.json` at the repo root. The rule is data
 
 - `apps/docs/**`
 - `packages/**`
-- `turbo/generators/**`
+- `scripts/**` (the `pnpm gen` generator and its templates)
 - `.github/workflows/**`
-- root config files (`turbo.json`, `pnpm-workspace.yaml`, `package.json`, `.changeset/config.json`, `registry.config.schema.json`, `.gitignore`, `template.manifest.json`)
+- root config files (`pnpm-workspace.yaml`, `package.json`, `.changeset/config.json`, `registry.config.schema.json`, `.gitignore`, `template.manifest.json`)
 - `Dockerfile`, `nginx.conf`
 - `CLAUDE.md`, `CONTRIBUTING.md`
 
@@ -45,6 +45,8 @@ Only paths listed in `template.manifest.json` at the repo root. The rule is data
 - `registry.config.json`: your scope, registry URL and branding. Only `templateVersion` is bumped.
 - `.changeset/*.md`: pending changesets.
 - `README.md` below the line `<!-- your notes below this line are kept by update -->`. Everything above it is template text and is replaced; everything below it is yours. If your README has no marker line, `update` leaves the whole file alone and warns.
+
+Repos created from a pre-release template, which used Turborepo, also lose `turbo.json` and `turbo/generators/**`. After that update, run `pnpm install` so the lockfile drops `turbo`, delete any `.turbo/` cache folders and the root `AGENTS.md` if it only holds Turborepo's managed block, and drop `--ui=stream` from scripts of your own.
 
 ## What never reaches your repo at all
 
