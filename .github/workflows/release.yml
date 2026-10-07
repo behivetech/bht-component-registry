@@ -43,7 +43,24 @@ jobs:
           registry-url: https://registry.npmjs.org
       - run: pnpm install --frozen-lockfile
 
+      # changesets/action publishes whenever there are no pending changesets,
+      # which on a fresh repo would try to push every package on the first
+      # merge to main. Without a token that only fails noisily, so skip
+      # publishing until NPM_TOKEN exists and say so.
+      - name: Check for a publish token
+        id: token
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NPM_TOKEN" ]; then
+            echo "has=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::NPM_TOKEN is not set; skipping version/publish. Add the secret to enable releases (docs/publishing.md)."
+          else
+            echo "has=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Version or publish
+        if: steps.token.outputs.has == 'true'
         id: changesets
         uses: changesets/action@v1
         with:
@@ -61,7 +78,7 @@ jobs:
       # once you have a scope there and store its secret as REGISTRY_NOTIFY_TOKEN.
       #
       # - name: Notify the hosted registry
-      #   if: steps.changesets.outputs.published == 'true'
+      #   if: steps.token.outputs.has == 'true' && steps.changesets.outputs.published == 'true'
       #   run: |
       #     curl -fsS -X POST https://platform.behivetech.com/api/published \
       #       -H "Authorization: Bearer ${{ secrets.REGISTRY_NOTIFY_TOKEN }}" \

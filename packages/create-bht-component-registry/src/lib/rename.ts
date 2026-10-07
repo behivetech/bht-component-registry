@@ -53,9 +53,47 @@ export function rewriteScopeMentions(text: string, r: ScopeRename): string {
 }
 
 /**
+ * Flips `"private": true` to `false` in a component's package.json, keeping
+ * the key where it already sits (or adding it after `version` when absent).
+ *
+ * The template's example packages are private so the template repo's own
+ * release workflow cannot publish `@example/*` (changesets/action runs
+ * `changeset publish`, which publishes anything not yet on the registry).
+ * The owner's renamed copies must be publishable, or their first
+ * `pnpm release` would silently skip every component.
+ */
+export function markPublishable(text: string): string {
+  const pkg = JSON.parse(text) as Record<string, unknown>;
+  if (pkg.private === false) return text;
+  if ("private" in pkg) {
+    pkg.private = false;
+    return `${JSON.stringify(pkg, null, 2)}\n`;
+  }
+  const ordered: Record<string, unknown> = {};
+  const anchor = "version" in pkg ? "version" : "name";
+  let inserted = false;
+  for (const [key, value] of Object.entries(pkg)) {
+    ordered[key] = value;
+    if (key === anchor) {
+      ordered.private = false;
+      inserted = true;
+    }
+  }
+  if (!inserted) ordered.private = false;
+  return `${JSON.stringify(ordered, null, 2)}\n`;
+}
+
+/** The package.json of each component: exactly `registry/<scope>/<category>/<name>/package.json`. */
+function isComponentPackageJson(relToScope: string): boolean {
+  const parts = relToScope.split("/");
+  return parts.length === 3 && parts[2] === "package.json";
+}
+
+/**
  * Moves `registry/<from>` to `registry/<to>`, rewrites package references in
- * every text file inside it and sets scope.json's display name. Returns the
- * files whose content changed (root-relative), for the summary.
+ * every text file inside it, makes every component package publishable and
+ * sets scope.json's display name. Returns the files whose content changed
+ * (root-relative), for the summary.
  */
 export async function renameScopeTree(root: string, r: ScopeRename): Promise<string[]> {
   const from = join(root, "registry", r.fromScope);
@@ -71,7 +109,8 @@ export async function renameScopeTree(root: string, r: ScopeRename): Promise<str
     if (!isTextFile(rel)) continue;
     const path = join(to, rel);
     const before = await readText(path);
-    const after = rewritePackageRefs(before, r);
+    let after = rewritePackageRefs(before, r);
+    if (isComponentPackageJson(rel)) after = markPublishable(after);
     if (after !== before) {
       await writeText(path, after);
       changed.push(`registry/${r.toScope}/${rel}`);

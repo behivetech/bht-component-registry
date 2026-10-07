@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "A formatted price with an optional compare-at price and the saving.",
   "type": "module",
-  "private": false,
+  "private": true,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

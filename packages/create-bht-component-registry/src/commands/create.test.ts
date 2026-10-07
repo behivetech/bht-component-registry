@@ -67,12 +67,20 @@ async function makeTemplate(dir: string): Promise<void> {
       {
         name: "@example/atoms.thing",
         version: "0.0.0",
+        private: true,
         repository: { type: "git", url: "https://github.com/x/y.git", directory: "registry/example/atoms/thing" },
       },
       null,
       2,
     ),
   );
+  // A second component without a `private` key at all, and a nested package.json that is not a component.
+  await write(
+    dir,
+    "registry/example/molecules/other/package.json",
+    JSON.stringify({ name: "@example/molecules.other", version: "0.0.0", files: ["dist"] }, null, 2),
+  );
+  await write(dir, "registry/example/atoms/thing/fixtures/package.json", JSON.stringify({ name: "fixture", private: true }));
   await write(
     dir,
     "registry/example/atoms/thing/README.md",
@@ -178,6 +186,7 @@ describe("create", () => {
 
     const docsPkg = await readJson(join(target, "apps/docs/package.json"));
     expect(Object.keys(docsPkg.dependencies as object)).toEqual(["@bobsburgers/atoms.thing", "next"]);
+    expect((await readJson(join(target, "registry/bobsburgers/molecules/other/package.json"))).name).toBe("@bobsburgers/molecules.other");
 
     const spec = await readFile(join(target, "apps/docs/e2e/public.spec.ts"), "utf8");
     expect(spec).toContain('page.goto("/bobsburgers")');
@@ -227,6 +236,24 @@ describe("create", () => {
     expect(existsSync(join(target, "template.manifest.json"))).toBe(true);
   });
 
+  it("makes the renamed component packages publishable, keeping key order", async () => {
+    const { target } = await run({});
+    const thing = await readFile(join(target, "registry/bobsburgers/atoms/thing/package.json"), "utf8");
+    const thingPkg = JSON.parse(thing) as Record<string, unknown>;
+    expect(thingPkg.private).toBe(false);
+    expect(Object.keys(thingPkg)).toEqual(["name", "version", "private", "repository"]);
+    expect(thing.endsWith("}\n")).toBe(true);
+
+    // No `private` key in the template → added right after `version`.
+    const other = JSON.parse(await readFile(join(target, "registry/bobsburgers/molecules/other/package.json"), "utf8")) as Record<string, unknown>;
+    expect(Object.keys(other)).toEqual(["name", "version", "private", "files"]);
+    expect(other.private).toBe(false);
+
+    // Only a component's own package.json is a component; nested ones are left alone.
+    const fixture = JSON.parse(await readFile(join(target, "registry/bobsburgers/atoms/thing/fixtures/package.json"), "utf8")) as Record<string, unknown>;
+    expect(fixture.private).toBe(true);
+  });
+
   it("never materialises template-only paths, not even as empty folders", async () => {
     const { target } = await run({});
     expect(existsSync(join(target, "packages/create-bht-component-registry"))).toBe(false);
@@ -238,9 +265,9 @@ describe("create", () => {
   });
 
   it("creates the chosen categories, marking empty ones with .gitkeep", async () => {
-    const { target } = await run({ categories: ["atoms", "molecules"] });
+    const { target } = await run({ categories: ["atoms", "forms"] });
     expect(existsSync(join(target, "registry/bobsburgers/atoms/.gitkeep"))).toBe(false);
-    expect(existsSync(join(target, "registry/bobsburgers/molecules/.gitkeep"))).toBe(true);
+    expect(existsSync(join(target, "registry/bobsburgers/forms/.gitkeep"))).toBe(true);
     expect(existsSync(join(target, "registry/bobsburgers/organisms"))).toBe(false);
   });
 

@@ -19,6 +19,10 @@ starter categories; pass them as flags to skip the questions. The command downlo
 release matching its own version, renames the shipped `example` scope to yours, writes
 `registry.config.json`, runs `pnpm install` and a first `pnpm build`, and prints what to do next.
 
+The example packages are unpublishable in the template (`"private": true`, so the template repo's
+own release workflow can never publish `@example/*`); yours are publishable — the rename sets
+`"private": false` in every `registry/<scope>/<category>/<name>/package.json`.
+
 ```bash
 npx create-bht-component-registry my-registry --scope acme --yes
 ```

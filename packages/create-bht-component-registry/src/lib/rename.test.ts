@@ -1,5 +1,22 @@
 import { describe, expect, it } from "vitest";
-import { rewritePackageRefs, rewriteScopeMentions, scopeRename } from "./rename.js";
+import { markPublishable, rewritePackageRefs, rewriteScopeMentions, scopeRename } from "./rename.js";
+
+describe("markPublishable", () => {
+  it("flips private:true in place", () => {
+    const out = markPublishable('{\n  "name": "@a/b",\n  "private": true,\n  "version": "1.0.0"\n}\n');
+    expect(out).toBe('{\n  "name": "@a/b",\n  "private": false,\n  "version": "1.0.0"\n}\n');
+  });
+
+  it("adds private:false after version when the key is missing", () => {
+    const out = JSON.parse(markPublishable('{"name":"@a/b","version":"1.0.0","files":[]}')) as Record<string, unknown>;
+    expect(Object.keys(out)).toEqual(["name", "version", "private", "files"]);
+  });
+
+  it("returns the text untouched when already publishable", () => {
+    const text = '{\n  "name": "@a/b",\n  "private": false\n}\n';
+    expect(markPublishable(text)).toBe(text);
+  });
+});
 
 describe("rewritePackageRefs", () => {
   const r = scopeRename("bobsburgers");

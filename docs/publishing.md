@@ -106,7 +106,12 @@ tar -tzf acme-atoms.button-*.tgz
 - With pending changesets, it opens (or updates) a "Version Packages" pull request that runs `pnpm version-packages` for you. Merge it to release.
 - With no pending changesets and unpublished versions, it runs `pnpm release` with `NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}`.
 
-Add `NPM_TOKEN` under Settings, Secrets and variables, Actions. For GitHub Packages, swap in the commented `GITHUB_TOKEN` lines and give the workflow `packages: write`.
+Add `NPM_TOKEN` under Settings, Secrets and variables, Actions. Until it exists the workflow skips versioning and publishing with a notice rather than failing, so your first pushes to `main` stay green. For GitHub Packages, swap in the commented `GITHUB_TOKEN` lines and give the workflow `packages: write`.
+
+Two things to know about what gets published:
+
+- `changeset publish` publishes every package that is not `"private": true` and whose version is not already on the registry. That is why the template's own example packages are marked private: `create` makes the packages in your renamed scope publishable, and if you cloned instead, you will be deleting the example scope anyway.
+- Scoped packages on a free npmjs org must publish with `access: public`; `.changeset/config.json` and every generated `publishConfig` already say so. Set `restricted` only for a private registry that supports it.
 
 The workflow also has a commented-out "notify the hosted platform" step: one `curl` that tells the hosted version a release happened, for private registries it cannot discover on its own. Leave it commented unless you use the hosted version.
 

@@ -129,6 +129,16 @@ Verified locally on 2026-10-07:
 
 ## Gotchas
 
+- **The example packages are `"private": true` on purpose.** changesets/action runs
+  `changeset publish` whenever there are no pending changesets, and publish pushes every
+  public package not yet on the registry; the first CI run tried to publish `@example/*` to
+  npmjs. `create` flips `private` to false for the renamed scope, so clients' packages publish.
+  Anyone who clones instead of using `create` deletes the example scope anyway.
+- **release.yml skips version/publish when `NPM_TOKEN` is unset** (a notice, not a failure),
+  so a fresh repo's first push to main is green. Add the secret to enable releases.
+- **`check-types` regenerates the catalog first** (`precheck-types`); on a fresh machine the
+  generated files do not exist and `tsc` fails without it. This is what broke the first CI run.
+
 - **Static export rules**: no proxy/middleware, no route handlers, no cookies/auth; every
   param route has `generateStaticParams` and `export const dynamicParams = false`; the
   not-found page must be at `src/app/not-found.tsx` (not inside a route group).

@@ -12,6 +12,7 @@
     "build": "next build",
     "serve": "serve out --listen 3000 --no-clipboard",
     "lint": "eslint",
+    "precheck-types": "pnpm generate",
     "check-types": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
