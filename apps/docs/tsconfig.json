@@ -1,0 +1,22 @@
+{
+  "extends": "@bht-component-registry/typescript-config/bundler.json",
+  "compilerOptions": {
+    "target": "ES2017",
+    "allowJs": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "allowImportingTsExtensions": false,
+    "plugins": [{ "name": "next" }],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
+}

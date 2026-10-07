@@ -1,0 +1,170 @@
+// Internal copy for the docs site's own chrome; not a registry component, not published. Edit freely.
+//
+// Material Design 3 outlined card. `--card-background` / `--card-border` /
+// `--card-radius` are the public styling hooks; each color falls back to the
+// pre-MD3 `--color-*` name, which tokens.scss aliases to the matching MD3 role.
+
+.BHT__Card {
+  background: var(--card-background, var(--md-sys-color-surface, var(--color-surface)));
+  color: var(--md-sys-color-on-surface, var(--color-on-surface));
+  border: var(--card-border, 1px solid var(--md-sys-color-outline-variant, var(--color-border)));
+  border-radius: var(--card-radius, var(--md-sys-shape-corner-medium, 12px));
+  // Grid/flex items default to their content's min-content width, not their
+  // track/basis minimum — without this, a Card holding wide content forces
+  // its container wider instead of shrinking.
+  min-width: 0;
+  // Long unbroken strings (paths, package names, URLs) would otherwise run past
+  // the border once min-width: 0 lets the card shrink below them.
+  overflow-wrap: anywhere;
+
+  &__header {
+    padding: var(--spacing-4) var(--spacing-6);
+    border-bottom: 1px solid var(--md-sys-color-outline-variant, var(--color-border));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-4);
+  }
+
+  &__heading {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    min-width: 0;
+  }
+
+  &__icon {
+    display: inline-flex;
+    line-height: 1;
+  }
+
+  &__title {
+    margin: 0;
+    font-family: var(--md-sys-typescale-title-medium-font, var(--font-heading));
+    font-size: var(--md-sys-typescale-title-medium-size, 1rem);
+    font-weight: var(--md-sys-typescale-title-medium-weight, 500);
+    line-height: var(--md-sys-typescale-title-medium-line-height, 1.5rem);
+    letter-spacing: var(--md-sys-typescale-title-medium-tracking, 0.0094em);
+    color: var(--md-sys-color-on-surface, var(--color-text-heading));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__action {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    flex-shrink: 0;
+  }
+
+  &__body-padding {
+    /* Resets so this works whether it renders as a <div> (static) or a
+       <button> (interactive) — the button UA defaults are what actually
+       need overriding here. */
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    background: none;
+    border: none;
+    font: inherit;
+    color: inherit;
+    text-align: inherit;
+  }
+
+  &--interactive {
+    &.BHT__Card {
+      overflow: hidden;
+    }
+
+    .BHT__Card {
+      &__body-padding {
+        position: relative;
+        isolation: isolate;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-2);
+        text-align: center;
+        cursor: pointer;
+
+        // State layer: a veil of the content color, as on Button, so hover and
+        // press follow the palette instead of swapping to a fixed surface.
+        &::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background: currentColor;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity var(--md-sys-motion-duration-short-2, 100ms) var(--md-sys-motion-easing-standard, ease);
+        }
+
+        &:hover::after {
+          opacity: var(--md-sys-state-hover-opacity, 0.08);
+        }
+
+        &:focus-visible::after {
+          opacity: var(--md-sys-state-focus-opacity, 0.1);
+        }
+
+        &:active::after {
+          opacity: var(--md-sys-state-pressed-opacity, 0.1);
+        }
+
+        // Inset rather than the usual +2px offset: the root's `overflow:
+        // hidden` (needed to clip the state layer to the corners) would cut
+        // off a ring drawn outside the body.
+        &:focus-visible {
+          outline: 3px solid var(--md-sys-color-secondary, var(--color-border-focus));
+          outline-offset: -3px;
+        }
+      }
+    }
+  }
+
+  // Header stays put; only the body scrolls when content exceeds the card's
+  // height — for cards given a bounded height (a modal or drawer panel).
+  &--scrollable-body {
+    &.BHT__Card {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .BHT__Card {
+      &__body-padding {
+        overflow-y: auto;
+        flex: 1;
+        min-height: 0;
+      }
+    }
+  }
+
+  // &--padding-none needs no rule — &__body-padding already resets padding to 0 above.
+
+  &--padding-sm {
+    .BHT__Card {
+      &__body-padding {
+        padding: var(--spacing-3);
+      }
+    }
+  }
+
+  &--padding-md {
+    .BHT__Card {
+      &__body-padding {
+        padding: var(--spacing-5);
+      }
+    }
+  }
+
+  &--padding-lg {
+    .BHT__Card {
+      &__body-padding {
+        padding: var(--spacing-8);
+      }
+    }
+  }
+}

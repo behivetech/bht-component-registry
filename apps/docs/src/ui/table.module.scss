@@ -1,0 +1,56 @@
+// Internal copy for the docs site's own chrome; not a registry component, not published. Edit freely.
+//
+// Material Design 3 has no table spec; this follows its data-table guidance:
+// title-small headers on `on-surface-variant`, body-medium cells, and
+// `outline-variant` row dividers.
+
+.BHT__Table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    text-align: left;
+    padding: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
+    font-family: var(--md-sys-typescale-title-small-font, var(--font-body));
+    font-size: var(--md-sys-typescale-title-small-size, 0.875rem);
+    font-weight: var(--md-sys-typescale-title-small-weight, 500);
+    line-height: var(--md-sys-typescale-title-small-line-height, 1.25rem);
+    letter-spacing: var(--md-sys-typescale-title-small-tracking, 0.0071em);
+    color: var(--md-sys-color-on-surface-variant, var(--color-text-muted));
+    background: var(--md-sys-color-surface-container, var(--color-surface-raised));
+    border-bottom: 1px solid var(--md-sys-color-outline-variant, var(--color-border));
+  }
+
+  td {
+    position: relative;
+    padding: var(--spacing-3, 0.75rem) var(--spacing-4, 1rem);
+    font-family: var(--md-sys-typescale-body-medium-font, var(--font-body));
+    font-size: var(--md-sys-typescale-body-medium-size, 0.875rem);
+    font-weight: var(--md-sys-typescale-body-medium-weight, 400);
+    line-height: var(--md-sys-typescale-body-medium-line-height, 1.25rem);
+    letter-spacing: var(--md-sys-typescale-body-medium-tracking, 0.0179em);
+    color: var(--md-sys-color-on-surface, var(--color-text-body));
+    border-bottom: 1px solid var(--md-sys-color-outline-variant, var(--color-border));
+
+    // Row hover state layer. It sits on each cell rather than the `<tr>`
+    // because a positioned table row is still unreliable as a containing
+    // block for an absolutely positioned pseudo-element.
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: currentColor;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--md-sys-motion-duration-short-2, 100ms) var(--md-sys-motion-easing-standard, ease);
+    }
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  tr:hover td::after {
+    opacity: var(--md-sys-state-hover-opacity, 0.08);
+  }
+}

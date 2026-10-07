@@ -1,0 +1,158 @@
+// Internal copy for the docs site's own chrome; not a registry component, not published. Edit freely.
+//
+// Hero banner: full-bleed image under a scrim, with content on top.
+//
+// The text sits on a darkened photograph, not on a theme surface, so it must
+// stay light in both color schemes. MD3 has no "on-scrim" role, and every
+// `on-*` role flips with the theme, so the one light literal lives in
+// `--hero-banner-on-image` below rather than being repeated per rule.
+
+.BHT__hero-banner {
+  --hero-banner-on-image: #ffffff;
+
+  position: relative;
+  min-height: 30rem;
+  display: flex;
+  align-items: center;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--md-sys-color-surface, var(--color-surface));
+  padding: var(--spacing-16, 4rem) var(--spacing-8, 2rem);
+
+  // Scrim over the image. Opacity rather than a translucent color so it stays
+  // on the `scrim` role.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--md-sys-color-scrim, var(--color-overlay));
+    opacity: 0.4;
+  }
+
+  &__content {
+    position: relative;
+    z-index: 1;
+    max-width: 45rem;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  &__headline {
+    font-family: var(--md-sys-typescale-display-medium-font, var(--font-heading));
+    font-size: var(--md-sys-typescale-display-medium-size, 2.8125rem);
+    font-weight: var(--md-sys-typescale-display-medium-weight, 400);
+    line-height: var(--md-sys-typescale-display-medium-line-height, 3.25rem);
+    letter-spacing: var(--md-sys-typescale-display-medium-tracking, 0em);
+    color: var(--hero-banner-on-image);
+    margin: 0 0 var(--spacing-4, 1rem);
+  }
+
+  &__subtext {
+    font-family: var(--md-sys-typescale-title-large-font, var(--font-body));
+    font-size: var(--md-sys-typescale-title-large-size, 1.375rem);
+    font-weight: var(--md-sys-typescale-title-large-weight, 400);
+    line-height: var(--md-sys-typescale-title-large-line-height, 1.75rem);
+    letter-spacing: var(--md-sys-typescale-title-large-tracking, 0em);
+    color: color-mix(in srgb, var(--hero-banner-on-image) 85%, transparent);
+    margin: 0 0 var(--spacing-6, 1.5rem);
+  }
+
+  &__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-3, 0.75rem);
+    justify-content: center;
+  }
+
+  // CTAs follow Button's large filled / outlined treatment: pill shape,
+  // label-large type at title-medium size, and a currentColor state layer.
+  &__cta {
+    position: relative;
+    isolation: isolate;
+    display: inline-block;
+    padding: var(--spacing-3, 0.75rem) var(--spacing-8, 2rem);
+    background: var(--md-sys-color-primary, var(--color-primary));
+    color: var(--md-sys-color-on-primary, var(--color-on-primary));
+    font-family: var(--md-sys-typescale-label-large-font, var(--font-body));
+    font-size: var(--md-sys-typescale-title-medium-size, 1rem);
+    font-weight: var(--md-sys-typescale-label-large-weight, 500);
+    line-height: var(--md-sys-typescale-title-medium-line-height, 1.5rem);
+    letter-spacing: var(--md-sys-typescale-label-large-tracking, 0.0071em);
+    border-radius: var(--md-sys-shape-corner-full, 9999px);
+    text-decoration: none;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: currentColor;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--md-sys-motion-duration-short-2, 100ms) var(--md-sys-motion-easing-standard, ease);
+    }
+
+    &:hover::after {
+      opacity: var(--md-sys-state-hover-opacity, 0.08);
+    }
+
+    &:focus-visible::after {
+      opacity: var(--md-sys-state-focus-opacity, 0.1);
+    }
+
+    &:active::after {
+      opacity: var(--md-sys-state-pressed-opacity, 0.1);
+    }
+
+    // Touch target, as in Button: extends the hit area to 48px without
+    // changing the drawn size. px because it is sized to the finger.
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      translate: 0 -50%;
+      height: 100%;
+      min-height: 48px;
+    }
+
+    &:focus-visible {
+      outline: 3px solid var(--md-sys-color-secondary, var(--color-border-focus));
+      outline-offset: 2px;
+    }
+  }
+
+  &__cta-secondary {
+    background: transparent;
+    color: var(--hero-banner-on-image);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hero-banner-on-image) 70%, transparent);
+  }
+
+  &--align-left {
+    .BHT__hero-banner {
+      &__content {
+        text-align: left;
+        margin-left: 0;
+      }
+
+      &__ctas {
+        justify-content: flex-start;
+      }
+    }
+  }
+
+  &--align-right {
+    .BHT__hero-banner {
+      &__content {
+        text-align: right;
+        margin-right: 0;
+      }
+
+      &__ctas {
+        justify-content: flex-end;
+      }
+    }
+  }
+}

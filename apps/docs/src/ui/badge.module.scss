@@ -1,0 +1,84 @@
+// Internal copy for the docs site's own chrome; not a registry component, not published. Edit freely.
+//
+// Material Design 3 tonal label. MD3's own Badge is a notification dot/count,
+// so this follows the tonal-container pattern instead: each variant pairs a
+// `*-container` fill with its `on-*-container` text.
+//
+// Success and warning have no MD3 role, so they stay on the `--color-*` names.
+
+.BHT__Badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--md-sys-shape-corner-full, 9999px);
+  font-family: var(--md-sys-typescale-label-large-font, var(--font-body));
+  font-weight: var(--md-sys-typescale-label-large-weight, 500);
+  // Held at 1 rather than the role's line-height so badge heights don't grow
+  // inside rows and headings already laid out around them.
+  line-height: 1;
+  white-space: nowrap;
+
+  // --- Size modifiers ------------------------------------------------------
+
+  &--sm {
+    &.BHT__Badge {
+      font-size: var(--md-sys-typescale-label-medium-size, 0.75rem);
+      letter-spacing: var(--md-sys-typescale-label-medium-tracking, 0.0417em);
+      padding: 0.125rem var(--spacing-2, 0.5rem);
+    }
+  }
+
+  &--md {
+    &.BHT__Badge {
+      font-size: var(--md-sys-typescale-label-large-size, 0.875rem);
+      letter-spacing: var(--md-sys-typescale-label-large-tracking, 0.0071em);
+      padding: var(--spacing-1, 0.25rem) var(--spacing-3, 0.75rem);
+    }
+  }
+
+  // --- Variant modifiers ---------------------------------------------------
+
+  &--default {
+    &.BHT__Badge {
+      background: var(--md-sys-color-surface-container-highest, var(--color-border));
+      color: var(--md-sys-color-on-surface-variant, var(--color-text-body));
+    }
+  }
+
+  &--primary {
+    &.BHT__Badge {
+      background: var(--md-sys-color-primary-container, var(--color-primary));
+      color: var(--md-sys-color-on-primary-container, var(--color-on-primary));
+    }
+  }
+
+  &--success {
+    &.BHT__Badge {
+      background: var(--color-success-surface);
+      color: var(--color-success);
+    }
+  }
+
+  &--warning {
+    &.BHT__Badge {
+      background: var(--color-warning-surface);
+      color: var(--color-warning);
+    }
+  }
+
+  &--error {
+    &.BHT__Badge {
+      background: var(--md-sys-color-error-container, var(--color-error-surface));
+      color: var(--md-sys-color-on-error-container, var(--color-error));
+    }
+  }
+
+  // Info already aliases to tertiary in tokens.scss; reading the container
+  // roles directly keeps text contrast right in both schemes.
+  &--info {
+    &.BHT__Badge {
+      background: var(--md-sys-color-tertiary-container, var(--color-info-surface));
+      color: var(--md-sys-color-on-tertiary-container, var(--color-info));
+    }
+  }
+}

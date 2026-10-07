@@ -1,0 +1,64 @@
+// Material Design 3 tokens + reset. Every component under src/ui reads
+// `--md-sys-*` custom properties, so the whole site re-themes by overriding a
+// handful of roles. The sheet is a local copy: the docs site depends on
+// nothing from a registry.
+@use "./tokens.scss";
+
+:root {
+  // next/font loads Inter and exposes it on this variable; the tokens file
+  // names "Inter" directly, which would only work if the font were installed.
+  --md-sys-typescale-body-font: var(--font-inter), system-ui, sans-serif;
+  --md-sys-typescale-headline-font: var(--font-inter), system-ui, sans-serif;
+  --md-sys-typescale-title-font: var(--font-inter), system-ui, sans-serif;
+  --md-sys-typescale-label-font: var(--font-inter), system-ui, sans-serif;
+  --md-sys-typescale-display-font: var(--font-inter), system-ui, sans-serif;
+
+  // Configurable primary. The root layout sets `--site-primary` inline on
+  // <html> when registry.config.json names a `primaryColor`; without it the
+  // sheet's own primary (#64558f) stands. The container tint is derived from
+  // whichever primary is in effect so a brand color re-themes both at once.
+  --md-sys-color-primary: var(--site-primary, #64558f);
+  --md-sys-color-primary-container: color-mix(in srgb, var(--md-sys-color-primary) 22%, white);
+  --md-sys-color-on-primary-container: color-mix(in srgb, var(--md-sys-color-primary) 75%, black);
+}
+
+// Dark scheme: the sheet's dark primary is a lighter tone (#cebdfe), so the
+// same roles are re-derived toward black. These two blocks mirror the sheet's
+// own pair (OS preference unless forced light; or forced dark).
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --md-sys-color-primary: var(--site-primary, #cebdfe);
+    --md-sys-color-primary-container: color-mix(in srgb, var(--md-sys-color-primary) 35%, black);
+    --md-sys-color-on-primary-container: color-mix(in srgb, var(--md-sys-color-primary) 30%, white);
+  }
+}
+
+:root[data-theme="dark"] {
+  --md-sys-color-primary: var(--site-primary, #cebdfe);
+  --md-sys-color-primary-container: color-mix(in srgb, var(--md-sys-color-primary) 35%, black);
+  --md-sys-color-on-primary-container: color-mix(in srgb, var(--md-sys-color-primary) 30%, white);
+}
+
+a {
+  color: var(--md-sys-color-primary);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0 0 0.5rem;
+  line-height: 1.2;
+  color: var(--md-sys-color-on-surface);
+}
+
+p {
+  margin: 0 0 1rem;
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.875em;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: var(--md-sys-color-surface-container-high);
+}

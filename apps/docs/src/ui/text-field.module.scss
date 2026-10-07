@@ -1,0 +1,60 @@
+// Internal copy for the docs site's own chrome; not a registry component, not published. Edit freely.
+//
+// Material Design 3 outlined text field (the input only).
+//
+// The 2px focus/error edge is drawn as a 1px inset shadow on top of the 1px
+// border rather than by widening the border, so the text never shifts when the
+// field gains focus.
+
+.BHT__TextField {
+  width: 100%;
+  padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
+  font-family: var(--md-sys-typescale-body-large-font, var(--font-body));
+  font-size: var(--md-sys-typescale-body-large-size, 1rem);
+  font-weight: var(--md-sys-typescale-body-large-weight, 400);
+  line-height: var(--md-sys-typescale-body-large-line-height, 1.5rem);
+  letter-spacing: var(--md-sys-typescale-body-large-tracking, 0.0313em);
+  color: var(--md-sys-color-on-surface, var(--color-on-surface));
+  caret-color: var(--md-sys-color-primary, var(--color-primary));
+  // Outlined fields have no container fill; they take the surface they sit on.
+  background: transparent;
+  border: 1px solid var(--md-sys-color-outline, var(--color-border-strong));
+  border-radius: var(--md-sys-shape-corner-extra-small, 4px);
+  transition:
+    border-color var(--md-sys-motion-duration-short-3, 150ms) var(--md-sys-motion-easing-standard, ease),
+    box-shadow var(--md-sys-motion-duration-short-3, 150ms) var(--md-sys-motion-easing-standard, ease);
+  outline: none;
+  min-height: 2.5rem;
+
+  &::placeholder {
+    color: var(--md-sys-color-on-surface-variant, var(--color-text-muted));
+  }
+
+  &:hover:not(:disabled, :focus) {
+    border-color: var(--md-sys-color-on-surface, var(--color-on-surface));
+  }
+
+  &:focus {
+    border-color: var(--md-sys-color-primary, var(--color-border-focus));
+    box-shadow: inset 0 0 0 1px var(--md-sys-color-primary, var(--color-border-focus));
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  &[aria-invalid="true"] {
+    border-color: var(--md-sys-color-error, var(--color-error));
+    caret-color: var(--md-sys-color-error, var(--color-error));
+
+    &:hover:not(:disabled, :focus) {
+      border-color: var(--md-sys-color-on-error-container, var(--color-error));
+    }
+
+    &:focus {
+      border-color: var(--md-sys-color-error, var(--color-error));
+      box-shadow: inset 0 0 0 1px var(--md-sys-color-error, var(--color-error));
+    }
+  }
+}

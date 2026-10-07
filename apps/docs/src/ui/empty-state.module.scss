@@ -1,0 +1,30 @@
+// Internal copy for the docs site's own chrome; not a registry component, not published. Edit freely.
+
+.BHT__EmptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-4);
+  text-align: center;
+  color: var(--md-sys-color-on-surface-variant, var(--color-text-muted));
+  font-family: var(--md-sys-typescale-body-medium-font, var(--font-body));
+  font-size: var(--md-sys-typescale-body-medium-size, 0.875rem);
+  font-weight: var(--md-sys-typescale-body-medium-weight, 400);
+  line-height: var(--md-sys-typescale-body-medium-line-height, 1.25rem);
+  letter-spacing: var(--md-sys-typescale-body-medium-tracking, 0.0179em);
+
+  &__icon {
+    font-size: 2.5rem;
+    line-height: 1;
+    opacity: 0.4;
+  }
+
+  &__description {
+    margin: 0;
+  }
+
+  &__action {
+    display: inline-flex;
+  }
+}

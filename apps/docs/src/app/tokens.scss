@@ -1,0 +1,459 @@
+// Material Design 3 token sheet + reset for the docs site's own chrome.
+//
+// A local copy, so the site depends on nothing from a registry. It was
+// generated from source color #2C1760 (scheme: tonalspot, tertiary derived).
+// The `--md-sys-*` names are the MD3 roles; the `--color-*` / `--spacing-*`
+// names at the bottom are compatibility aliases the internal ui/ components
+// fall back to.
+//
+// Both schemes are emitted from one palette. A consumer picks between them by
+// doing nothing (the `prefers-color-scheme` query answers the OS) or by setting
+// `data-theme="light" | "dark"` on a root element to force one. Re-theme by
+// overriding roles (globals.scss does this for `--site-primary`), never by
+// re-declaring values to select a theme.
+
+:root {
+  color-scheme: light dark;
+
+  // ---- Color: light scheme -------------------------------------------------
+  --md-sys-color-primary: #64558f;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #e8ddff;
+  --md-sys-color-on-primary-container: #4c3e76;
+  --md-sys-color-secondary: #615b71;
+  --md-sys-color-on-secondary: #ffffff;
+  --md-sys-color-secondary-container: #e8def8;
+  --md-sys-color-on-secondary-container: #494458;
+  --md-sys-color-tertiary: #7d5261;
+  --md-sys-color-on-tertiary: #ffffff;
+  --md-sys-color-tertiary-container: #ffd9e3;
+  --md-sys-color-on-tertiary-container: #633b49;
+  --md-sys-color-error: #ba1a1a;
+  --md-sys-color-on-error: #ffffff;
+  --md-sys-color-error-container: #ffdad6;
+  --md-sys-color-on-error-container: #93000a;
+  --md-sys-color-background: #f9f9f9;
+  --md-sys-color-on-background: #1b1b1b;
+  --md-sys-color-surface: #f9f9f9;
+  --md-sys-color-on-surface: #1b1b1b;
+  --md-sys-color-surface-variant: #e2e2e2;
+  --md-sys-color-on-surface-variant: #474747;
+  --md-sys-color-surface-dim: #dadada;
+  --md-sys-color-surface-bright: #f9f9f9;
+  --md-sys-color-surface-container-lowest: #ffffff;
+  --md-sys-color-surface-container-low: #f3f3f3;
+  --md-sys-color-surface-container: #eeeeee;
+  --md-sys-color-surface-container-high: #e8e8e8;
+  --md-sys-color-surface-container-highest: #e2e2e2;
+  --md-sys-color-outline: #777777;
+  --md-sys-color-outline-variant: #c6c6c6;
+  --md-sys-color-inverse-surface: #303030;
+  --md-sys-color-inverse-on-surface: #f1f1f1;
+  --md-sys-color-inverse-primary: #cebdfe;
+  --md-sys-color-scrim: #000000;
+  --md-sys-color-shadow: #000000;
+
+  // ---- Typography ----------------------------------------------------------
+  //
+  // Families are indirected through two variables so an app re-points the whole
+  // scale in two lines instead of fifteen.
+  --md-sys-typescale-body-font: "Inter", system-ui, -apple-system, sans-serif;
+  --md-sys-typescale-heading-font:
+    "Inter", system-ui, -apple-system, sans-serif;
+  --md-sys-typescale-mono-font: "JetBrains Mono", "Fira Code", monospace;
+
+  --md-sys-typescale-display-large-font: var(--md-sys-typescale-heading-font);
+  --md-sys-typescale-display-large-size: 3.5625rem;
+  --md-sys-typescale-display-large-line-height: 4rem;
+  --md-sys-typescale-display-large-weight: 400;
+  --md-sys-typescale-display-large-tracking: -0.0044em;
+
+  --md-sys-typescale-display-medium-font: var(--md-sys-typescale-heading-font);
+  --md-sys-typescale-display-medium-size: 2.8125rem;
+  --md-sys-typescale-display-medium-line-height: 3.25rem;
+  --md-sys-typescale-display-medium-weight: 400;
+  --md-sys-typescale-display-medium-tracking: 0em;
+
+  --md-sys-typescale-display-small-font: var(--md-sys-typescale-heading-font);
+  --md-sys-typescale-display-small-size: 2.25rem;
+  --md-sys-typescale-display-small-line-height: 2.75rem;
+  --md-sys-typescale-display-small-weight: 400;
+  --md-sys-typescale-display-small-tracking: 0em;
+
+  --md-sys-typescale-headline-large-font: var(--md-sys-typescale-heading-font);
+  --md-sys-typescale-headline-large-size: 2rem;
+  --md-sys-typescale-headline-large-line-height: 2.5rem;
+  --md-sys-typescale-headline-large-weight: 400;
+  --md-sys-typescale-headline-large-tracking: 0em;
+
+  --md-sys-typescale-headline-medium-font: var(--md-sys-typescale-heading-font);
+  --md-sys-typescale-headline-medium-size: 1.75rem;
+  --md-sys-typescale-headline-medium-line-height: 2.25rem;
+  --md-sys-typescale-headline-medium-weight: 400;
+  --md-sys-typescale-headline-medium-tracking: 0em;
+
+  --md-sys-typescale-headline-small-font: var(--md-sys-typescale-heading-font);
+  --md-sys-typescale-headline-small-size: 1.5rem;
+  --md-sys-typescale-headline-small-line-height: 2rem;
+  --md-sys-typescale-headline-small-weight: 400;
+  --md-sys-typescale-headline-small-tracking: 0em;
+
+  --md-sys-typescale-title-large-font: var(--md-sys-typescale-body-font);
+  --md-sys-typescale-title-large-size: 1.375rem;
+  --md-sys-typescale-title-large-line-height: 1.75rem;
+  --md-sys-typescale-title-large-weight: 400;
+  --md-sys-typescale-title-large-tracking: 0em;
+
+  --md-sys-typescale-title-medium-font: var(--md-sys-typescale-body-font);
+  --md-sys-typescale-title-medium-size: 1rem;
+  --md-sys-typescale-title-medium-line-height: 1.5rem;
+  --md-sys-typescale-title-medium-weight: 500;
+  --md-sys-typescale-title-medium-tracking: 0.0094em;
+
+  --md-sys-typescale-title-small-font: var(--md-sys-typescale-body-font);
+  --md-sys-typescale-title-small-size: 0.875rem;
+  --md-sys-typescale-title-small-line-height: 1.25rem;
+  --md-sys-typescale-title-small-weight: 500;
+  --md-sys-typescale-title-small-tracking: 0.0071em;
+
+  --md-sys-typescale-body-large-font: var(--md-sys-typescale-body-font);
+  --md-sys-typescale-body-large-size: 1rem;
+  --md-sys-typescale-body-large-line-height: 1.5rem;
+  --md-sys-typescale-body-large-weight: 400;
+  --md-sys-typescale-body-large-tracking: 0.0313em;
+
+  --md-sys-typescale-body-medium-font: var(--md-sys-typescale-body-font);
+  --md-sys-typescale-body-medium-size: 0.875rem;
+  --md-sys-typescale-body-medium-line-height: 1.25rem;
+  --md-sys-typescale-body-medium-weight: 400;
+  --md-sys-typescale-body-medium-tracking: 0.0179em;
+
+  --md-sys-typescale-body-small-font: var(--md-sys-typescale-body-font);
+  --md-sys-typescale-body-small-size: 0.75rem;
+  --md-sys-typescale-body-small-line-height: 1rem;
+  --md-sys-typescale-body-small-weight: 400;
+  --md-sys-typescale-body-small-tracking: 0.0333em;
+
+  --md-sys-typescale-label-large-font: var(--md-sys-typescale-body-font);
+  --md-sys-typescale-label-large-size: 0.875rem;
+  --md-sys-typescale-label-large-line-height: 1.25rem;
+  --md-sys-typescale-label-large-weight: 500;
+  --md-sys-typescale-label-large-tracking: 0.0071em;
+
+  --md-sys-typescale-label-medium-font: var(--md-sys-typescale-body-font);
+  --md-sys-typescale-label-medium-size: 0.75rem;
+  --md-sys-typescale-label-medium-line-height: 1rem;
+  --md-sys-typescale-label-medium-weight: 500;
+  --md-sys-typescale-label-medium-tracking: 0.0417em;
+
+  --md-sys-typescale-label-small-font: var(--md-sys-typescale-body-font);
+  --md-sys-typescale-label-small-size: 0.6875rem;
+  --md-sys-typescale-label-small-line-height: 1rem;
+  --md-sys-typescale-label-small-weight: 500;
+  --md-sys-typescale-label-small-tracking: 0.0455em;
+
+  // ---- Elevation -----------------------------------------------------------
+  --md-sys-elevation-0: none;
+  --md-sys-elevation-1:
+    0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+  --md-sys-elevation-2:
+    0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 2px 6px 2px rgba(0, 0, 0, 0.15);
+  --md-sys-elevation-3:
+    0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 4px 8px 3px rgba(0, 0, 0, 0.15);
+  --md-sys-elevation-4:
+    0 2px 3px 0 rgba(0, 0, 0, 0.3), 0 6px 10px 4px rgba(0, 0, 0, 0.15);
+  --md-sys-elevation-5:
+    0 4px 4px 0 rgba(0, 0, 0, 0.3), 0 8px 12px 6px rgba(0, 0, 0, 0.15);
+
+  // ---- Shape ---------------------------------------------------------------
+  --md-sys-shape-corner-none: 0;
+  --md-sys-shape-corner-extra-small: 4px;
+  --md-sys-shape-corner-small: 8px;
+  --md-sys-shape-corner-medium: 12px;
+  --md-sys-shape-corner-large: 16px;
+  --md-sys-shape-corner-extra-large: 28px;
+  --md-sys-shape-corner-full: 9999px;
+
+  // ---- State layers --------------------------------------------------------
+  --md-sys-state-hover-opacity: 0.08;
+  --md-sys-state-focus-opacity: 0.1;
+  --md-sys-state-pressed-opacity: 0.1;
+  --md-sys-state-dragged-opacity: 0.16;
+
+  // ---- Motion --------------------------------------------------------------
+  --md-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-easing-standard-accelerate: cubic-bezier(0.3, 0, 1, 1);
+  --md-sys-motion-easing-standard-decelerate: cubic-bezier(0, 0, 0, 1);
+  --md-sys-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --md-sys-motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --md-sys-motion-easing-linear: linear;
+
+  --md-sys-motion-duration-short-1: 50ms;
+  --md-sys-motion-duration-short-2: 100ms;
+  --md-sys-motion-duration-short-3: 150ms;
+  --md-sys-motion-duration-short-4: 200ms;
+  --md-sys-motion-duration-medium-1: 250ms;
+  --md-sys-motion-duration-medium-2: 300ms;
+  --md-sys-motion-duration-medium-3: 350ms;
+  --md-sys-motion-duration-medium-4: 400ms;
+  --md-sys-motion-duration-long-1: 450ms;
+  --md-sys-motion-duration-long-2: 500ms;
+  --md-sys-motion-duration-long-3: 550ms;
+  --md-sys-motion-duration-long-4: 600ms;
+  --md-sys-motion-duration-extra-long-1: 700ms;
+  --md-sys-motion-duration-extra-long-2: 800ms;
+  --md-sys-motion-duration-extra-long-3: 900ms;
+  --md-sys-motion-duration-extra-long-4: 1000ms;
+}
+
+// ---- Color: dark scheme ----------------------------------------------------
+//
+// Applied when the OS asks for dark and the document has not forced light, or
+// when a root element forces dark outright.
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --md-sys-color-primary: #cebdfe;
+    --md-sys-color-on-primary: #35275d;
+    --md-sys-color-primary-container: #4c3e76;
+    --md-sys-color-on-primary-container: #e8ddff;
+    --md-sys-color-secondary: #cbc3dc;
+    --md-sys-color-on-secondary: #332e41;
+    --md-sys-color-secondary-container: #494458;
+    --md-sys-color-on-secondary-container: #e8def8;
+    --md-sys-color-tertiary: #efb8c9;
+    --md-sys-color-on-tertiary: #492532;
+    --md-sys-color-tertiary-container: #633b49;
+    --md-sys-color-on-tertiary-container: #ffd9e3;
+    --md-sys-color-error: #ffb4ab;
+    --md-sys-color-on-error: #690005;
+    --md-sys-color-error-container: #93000a;
+    --md-sys-color-on-error-container: #ffdad6;
+    --md-sys-color-background: #131313;
+    --md-sys-color-on-background: #e2e2e2;
+    --md-sys-color-surface: #131313;
+    --md-sys-color-on-surface: #e2e2e2;
+    --md-sys-color-surface-variant: #474747;
+    --md-sys-color-on-surface-variant: #c6c6c6;
+    --md-sys-color-surface-dim: #131313;
+    --md-sys-color-surface-bright: #393939;
+    --md-sys-color-surface-container-lowest: #0e0e0e;
+    --md-sys-color-surface-container-low: #1b1b1b;
+    --md-sys-color-surface-container: #1f1f1f;
+    --md-sys-color-surface-container-high: #2a2a2a;
+    --md-sys-color-surface-container-highest: #353535;
+    --md-sys-color-outline: #919191;
+    --md-sys-color-outline-variant: #474747;
+    --md-sys-color-inverse-surface: #e2e2e2;
+    --md-sys-color-inverse-on-surface: #303030;
+    --md-sys-color-inverse-primary: #64558f;
+    --md-sys-color-scrim: #000000;
+    --md-sys-color-shadow: #000000;
+  }
+}
+
+:root[data-theme="dark"] {
+  --md-sys-color-primary: #cebdfe;
+  --md-sys-color-on-primary: #35275d;
+  --md-sys-color-primary-container: #4c3e76;
+  --md-sys-color-on-primary-container: #e8ddff;
+  --md-sys-color-secondary: #cbc3dc;
+  --md-sys-color-on-secondary: #332e41;
+  --md-sys-color-secondary-container: #494458;
+  --md-sys-color-on-secondary-container: #e8def8;
+  --md-sys-color-tertiary: #efb8c9;
+  --md-sys-color-on-tertiary: #492532;
+  --md-sys-color-tertiary-container: #633b49;
+  --md-sys-color-on-tertiary-container: #ffd9e3;
+  --md-sys-color-error: #ffb4ab;
+  --md-sys-color-on-error: #690005;
+  --md-sys-color-error-container: #93000a;
+  --md-sys-color-on-error-container: #ffdad6;
+  --md-sys-color-background: #131313;
+  --md-sys-color-on-background: #e2e2e2;
+  --md-sys-color-surface: #131313;
+  --md-sys-color-on-surface: #e2e2e2;
+  --md-sys-color-surface-variant: #474747;
+  --md-sys-color-on-surface-variant: #c6c6c6;
+  --md-sys-color-surface-dim: #131313;
+  --md-sys-color-surface-bright: #393939;
+  --md-sys-color-surface-container-lowest: #0e0e0e;
+  --md-sys-color-surface-container-low: #1b1b1b;
+  --md-sys-color-surface-container: #1f1f1f;
+  --md-sys-color-surface-container-high: #2a2a2a;
+  --md-sys-color-surface-container-highest: #353535;
+  --md-sys-color-outline: #919191;
+  --md-sys-color-outline-variant: #474747;
+  --md-sys-color-inverse-surface: #e2e2e2;
+  --md-sys-color-inverse-on-surface: #303030;
+  --md-sys-color-inverse-primary: #64558f;
+  --md-sys-color-scrim: #000000;
+  --md-sys-color-shadow: #000000;
+}
+
+// ---- Compatibility aliases -------------------------------------------------
+//
+// The pre-MD3 token names, re-pointed at their nearest MD3 role so that every
+// existing component keeps working unchanged while packages migrate one at a
+// time. **These are scheduled for removal** — a component still reading
+// `--color-primary` has not been migrated yet, and grepping for these names is
+// how you find the remaining work.
+//
+// Two of them cannot be faithful and are called out rather than fudged:
+//   * `--color-surface-light` had no MD3 equivalent; it maps to
+//     `surface-container-high`, which is the nearest role by intent.
+//   * `--color-text-disabled` was a fixed translucent black/white. MD3 expresses
+//     disabled as 38% of `on-surface`, which `color-mix` reproduces exactly.
+:root {
+  --color-background: var(--md-sys-color-background);
+  --color-primary: var(--md-sys-color-primary);
+  --color-on-primary: var(--md-sys-color-on-primary);
+
+  --color-text-body: var(--md-sys-color-on-surface);
+  --color-text-heading: var(--md-sys-color-on-surface);
+  --color-text-muted: var(--md-sys-color-on-surface-variant);
+  --color-text-disabled: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) 38%,
+    transparent
+  );
+
+  --color-link: var(--md-sys-color-primary);
+  --color-link-hover: var(--md-sys-color-primary);
+  --color-link-active: var(--md-sys-color-primary);
+  --color-link-visited: var(--md-sys-color-primary);
+
+  --color-surface: var(--md-sys-color-surface);
+  --color-on-surface: var(--md-sys-color-on-surface);
+  --color-surface-light: var(--md-sys-color-surface-container-high);
+  --color-on-surface-light: var(--md-sys-color-on-surface);
+  --color-surface-raised: var(--md-sys-color-surface-container);
+  --color-overlay: color-mix(
+    in srgb,
+    var(--md-sys-color-scrim) 50%,
+    transparent
+  );
+
+  --color-border: var(--md-sys-color-outline-variant);
+  --color-border-strong: var(--md-sys-color-outline);
+  --color-border-focus: var(--md-sys-color-primary);
+
+  --color-error: var(--md-sys-color-error);
+  --color-error-surface: var(--md-sys-color-error-container);
+  --color-success: #48bb78;
+  --color-success-surface: rgba(72, 187, 120, 0.15);
+  --color-warning: #ed8936;
+  --color-warning-surface: rgba(237, 137, 54, 0.15);
+  --color-info: var(--md-sys-color-tertiary);
+  --color-info-surface: var(--md-sys-color-tertiary-container);
+
+  // Spacing, radius, shadow, type scale and z-index keep their old names and
+  // values: nothing about them was wrong, and renaming them would churn every
+  // stylesheet for no gain. Radius and shadow stay in px on purpose — corners
+  // and shadow geometry are not text metrics and should not scale with the
+  // reader's font size. Spacing and type sizes are rem, which is why they do.
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-10: 2.5rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+  --spacing-20: 5rem;
+  --spacing-24: 6rem;
+
+  --font-body: var(--md-sys-typescale-body-font);
+  --font-heading: var(--md-sys-typescale-heading-font);
+  --font-mono: var(--md-sys-typescale-mono-font);
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --leading-none: 1;
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 2;
+
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.025em;
+  --tracking-wider: 0.05em;
+  --tracking-widest: 0.1em;
+
+  --radius-sm: var(--md-sys-shape-corner-extra-small);
+  --radius-md: var(--md-sys-shape-corner-small);
+  --radius-lg: var(--md-sys-shape-corner-medium);
+  --radius-xl: var(--md-sys-shape-corner-large);
+  --radius-2xl: var(--md-sys-shape-corner-extra-large);
+  --radius-full: var(--md-sys-shape-corner-full);
+
+  --shadow-sm: var(--md-sys-elevation-1);
+  --shadow-md: var(--md-sys-elevation-2);
+  --shadow-lg: var(--md-sys-elevation-3);
+  --shadow-xl: var(--md-sys-elevation-4);
+  --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+
+  // Z-index is unchanged. See the note kept from the original file: surfaces
+  // (base -> modal) nest normally, while transient layers (dropdown -> tooltip)
+  // are portalled to document.body and are therefore *siblings* of the modal
+  // that opened them — raw z-index is the only thing ordering them, so every
+  // transient layer must outrank every surface.
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 200;
+  --z-overlay: 300;
+  --z-modal: 400;
+  --z-dropdown: 450;
+  --z-toast: 500;
+  --z-tooltip: 600;
+
+  --transition-fast: var(--md-sys-motion-duration-short-3)
+    var(--md-sys-motion-easing-standard);
+  --transition-base: var(--md-sys-motion-duration-short-4)
+    var(--md-sys-motion-easing-standard);
+  --transition-slow: var(--md-sys-motion-duration-medium-2)
+    var(--md-sys-motion-easing-standard);
+  --transition-slower: var(--md-sys-motion-duration-long-2)
+    var(--md-sys-motion-easing-standard);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+html {
+  font-family: var(--md-sys-typescale-body-font);
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+  letter-spacing: var(--md-sys-typescale-body-large-tracking);
+  color: var(--md-sys-color-on-background);
+  background-color: var(--md-sys-color-background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

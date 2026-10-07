@@ -1,0 +1,53 @@
+.page {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 1rem 1.5rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.lead {
+  max-width: 48rem;
+  font-size: 1.0625rem;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.swatchCell {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.swatch {
+  display: inline-block;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.shapes {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+}
+
+.shape {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+}
+
+.shapeSample {
+  width: 4rem;
+  height: 4rem;
+  background: var(--md-sys-color-primary-container);
+  border: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.muted {
+  color: var(--md-sys-color-on-surface-variant);
+}

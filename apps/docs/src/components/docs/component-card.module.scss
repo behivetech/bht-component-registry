@@ -1,0 +1,92 @@
+.card {
+  // Containing block for the title's stretched ::after — without it every
+  // card's overlay spans the whole page and the last card wins every click.
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.thumb {
+  min-height: 7.5rem;
+  // A page template or a sidebar renders at viewport height; the tile shows
+  // the top of it and clips the rest.
+  max-height: 11rem;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: var(--md-sys-color-surface-container-low);
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  overflow: hidden;
+}
+
+.thumbExample {
+  border: 0;
+  background: transparent;
+  max-width: 100%;
+  // Thumbnails are for recognition, not interaction — the page behind them is
+  // the link, and a Modal or Drawer composition must not open on hover.
+  pointer-events: none;
+}
+
+.noPreview {
+  font-size: 0.8125rem;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.body {
+  padding: 0.875rem 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.titleRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.title {
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--md-sys-color-on-surface);
+
+  &::after {
+    // Make the whole card the link target.
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+}
+
+.version {
+  font-size: 0.75rem;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.summary {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--md-sys-color-on-surface-variant);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.package {
+  font-size: 0.75rem;
+  background: transparent;
+  padding: 0;
+  color: var(--md-sys-color-on-surface-variant);
+}

@@ -1,0 +1,43 @@
+.markdown {
+  max-width: 52rem;
+  line-height: 1.65;
+
+  h2 {
+    margin-top: 2rem;
+    font-size: 1.375rem;
+  }
+
+  h3 {
+    margin-top: 1.5rem;
+    font-size: 1.125rem;
+  }
+
+  ul,
+  ol {
+    padding-left: 1.5rem;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.9375rem;
+  }
+
+  th,
+  td {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  }
+
+  blockquote {
+    margin: 1rem 0;
+    padding: 0.5rem 1rem;
+    border-left: 3px solid var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-surface-variant);
+  }
+}
+
+.example {
+  margin: 1rem 0 1.5rem;
+}

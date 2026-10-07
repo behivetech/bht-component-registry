@@ -1,0 +1,223 @@
+// Internal copy for the docs site's own chrome; not a registry component, not published. Edit freely.
+//
+// Material Design 3 button. `variant` × `size`, plus `loading`, `iconOnly` and
+// `asChild`. Every value comes from an `--md-sys-*` token, so the component
+// re-themes with the palette instead of carrying a brand of its own.
+//
+//   primary   -> Filled      secondary -> Outlined
+//   ghost     -> Text        danger    -> Filled, on the error role
+//
+// Each color falls back to the pre-MD3 `--color-*` name, which tokens.scss
+// aliases to the matching MD3 role.
+//
+// **Structure.** Modifiers belong to the root only — a child never carries
+// `--sm`. Inside a modifier block, `&.BHT__Button` is the root element
+// (compound) and `.BHT__Button` without the `&` is a descendant (a child node).
+
+.BHT__Button {
+  // `isolation` keeps the state layer's stacking context local, so a button
+  // inside a positioned parent can't have its ::after escape behind a sibling.
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2, 0.5rem);
+  border: 1px solid transparent;
+  border-radius: var(--md-sys-shape-corner-full, 9999px);
+  font-family: var(--md-sys-typescale-label-large-font, var(--font-body));
+  font-size: var(--md-sys-typescale-label-large-size, 0.875rem);
+  font-weight: var(--md-sys-typescale-label-large-weight, 500);
+  line-height: var(--md-sys-typescale-label-large-line-height, 1.25rem);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking, 0.0071em);
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+  user-select: none;
+  transition:
+    background var(--md-sys-motion-duration-short-3, 150ms) var(--md-sys-motion-easing-standard, ease),
+    color var(--md-sys-motion-duration-short-3, 150ms) var(--md-sys-motion-easing-standard, ease),
+    border-color var(--md-sys-motion-duration-short-3, 150ms) var(--md-sys-motion-easing-standard, ease);
+
+  // --- Children ------------------------------------------------------------
+
+  &__label {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  &__spinner {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: var(--md-sys-shape-corner-full, 9999px);
+    animation: button-spin 0.6s linear infinite;
+  }
+
+  // --- State layer ---------------------------------------------------------
+  //
+  // MD3 expresses interaction as a translucent veil of the *content* color over
+  // the container. `currentColor` is already that content color in every
+  // variant, so one rule serves all four and follows the palette for free.
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: currentColor;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--md-sys-motion-duration-short-2, 100ms) var(--md-sys-motion-easing-standard, ease);
+  }
+
+  &:hover:not(:disabled)::after {
+    opacity: var(--md-sys-state-hover-opacity, 0.08);
+  }
+
+  &:focus-visible::after {
+    opacity: var(--md-sys-state-focus-opacity, 0.1);
+  }
+
+  &:active:not(:disabled)::after {
+    opacity: var(--md-sys-state-pressed-opacity, 0.1);
+  }
+
+  // --- Touch target --------------------------------------------------------
+  //
+  // An invisible pseudo-element extends the *hit area* to 48px while the
+  // button keeps its drawn height. Deliberately px, not rem: a touch target is
+  // a physical property of the finger, not of the type size.
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    translate: 0 -50%;
+    height: 100%;
+    min-height: 48px;
+  }
+
+  // --- Focus ---------------------------------------------------------------
+  &:focus-visible {
+    outline: 3px solid var(--md-sys-color-secondary, var(--color-border-focus));
+    outline-offset: 2px;
+  }
+
+  // --- Size modifiers ------------------------------------------------------
+
+  &--sm {
+    &.BHT__Button {
+      padding: var(--spacing-1, 0.25rem) var(--spacing-3, 0.75rem);
+      min-height: 2rem;
+    }
+  }
+
+  &--md {
+    &.BHT__Button {
+      padding: var(--spacing-2, 0.5rem) var(--spacing-5, 1.25rem);
+      min-height: 2.5rem;
+    }
+  }
+
+  &--lg {
+    &.BHT__Button {
+      font-size: var(--md-sys-typescale-title-medium-size, 1rem);
+      padding: var(--spacing-3, 0.75rem) var(--spacing-6, 1.5rem);
+      min-height: 3rem;
+    }
+  }
+
+  // --- Variant modifiers ---------------------------------------------------
+
+  &--primary {
+    &.BHT__Button {
+      background: var(--md-sys-color-primary, var(--color-primary));
+      color: var(--md-sys-color-on-primary, var(--color-on-primary));
+      border-color: transparent;
+    }
+  }
+
+  &--secondary {
+    &.BHT__Button {
+      background: transparent;
+      color: var(--md-sys-color-primary, var(--color-primary));
+      border-color: var(--md-sys-color-outline, var(--color-border-strong));
+    }
+  }
+
+  &--ghost {
+    &.BHT__Button {
+      background: transparent;
+      color: var(--md-sys-color-primary, var(--color-primary));
+      border-color: transparent;
+    }
+  }
+
+  &--danger {
+    &.BHT__Button {
+      background: var(--md-sys-color-error, var(--color-error));
+      color: var(--md-sys-color-on-error, #ffffff);
+      border-color: transparent;
+    }
+  }
+
+  // --- Icon-only -----------------------------------------------------------
+
+  &--icon-only {
+    &.BHT__Button {
+      padding: 0;
+
+      &--sm {
+        width: 2rem;
+      }
+
+      &--md {
+        width: 2.5rem;
+      }
+
+      &--lg {
+        width: 3rem;
+      }
+    }
+
+    .BHT__Button {
+      &__label {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+
+  // --- Disabled / loading --------------------------------------------------
+
+  &--disabled {
+    &.BHT__Button {
+      opacity: 0.45;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  &--loading {
+    &.BHT__Button {
+      cursor: wait;
+      pointer-events: none;
+    }
+  }
+}
+
+@keyframes button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

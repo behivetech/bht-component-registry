@@ -1,0 +1,49 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 0.875rem 1.5rem;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.125rem;
+  text-decoration: none;
+  color: var(--md-sys-color-on-surface);
+}
+
+.logo {
+  display: block;
+  height: 1.75rem;
+  width: auto;
+}
+
+.links,
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.9375rem;
+  min-height: 2.5rem;
+
+  a {
+    text-decoration: none;
+    color: var(--md-sys-color-on-surface-variant);
+
+    &:hover {
+      color: var(--md-sys-color-primary);
+    }
+  }
+}

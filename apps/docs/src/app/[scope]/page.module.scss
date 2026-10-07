@@ -1,0 +1,28 @@
+.page {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 1rem 1.5rem 4rem;
+}
+
+.header {
+  padding-bottom: 1.5rem;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.tagline {
+  font-size: 1.125rem;
+  color: var(--md-sys-color-on-surface-variant);
+  max-width: 48rem;
+}
+
+.install {
+  font-size: 0.875rem;
+  color: var(--md-sys-color-on-surface-variant);
+}

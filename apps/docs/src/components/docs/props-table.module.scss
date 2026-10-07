@@ -1,0 +1,32 @@
+.section {
+  margin-top: 1.5rem;
+}
+
+.heading {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.name {
+  font-weight: 600;
+}
+
+.required {
+  margin-left: 0.15em;
+  color: var(--md-sys-color-error);
+}
+
+.type {
+  color: var(--md-sys-color-tertiary);
+  white-space: pre-wrap;
+}
+
+.muted {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.note {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--md-sys-color-on-surface-variant);
+}
