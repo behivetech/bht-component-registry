@@ -5,13 +5,17 @@
 # when that PR has just been merged, publishes the bumped packages to the
 # registry in registry.config.json.
 #
-# Default: npmjs. Create an automation token at https://www.npmjs.com/settings
-# and store it as the repository secret NPM_TOKEN. Create the org for your
-# scope first (https://www.npmjs.com/org/create) or the first publish fails.
+# Default: npm trusted publishing (OIDC). No secret: after the first manual
+# publish of each package, add a trusted publisher on its npmjs settings page
+# (owner, this repository, workflow file "release.yml"), then set the
+# repository variable NPM_TRUSTED_PUBLISHING=true. Provenance is automatic.
+#
+# Fallback: a granular access token (write, "Bypass 2FA", 90 days at most)
+# stored as the secret NPM_TOKEN. The variable wins when both exist.
 #
 # GitHub Packages instead: set "npmRegistry" to https://npm.pkg.github.com in
-# registry.config.json, give this job `packages: write`, and use
-# `NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}` below.
+# registry.config.json, give this job `packages: write`, and pass
+# `NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}` below instead of the npm token.
 #
 # See docs/publishing.md.
 name: Release
@@ -40,27 +44,31 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-          registry-url: https://registry.npmjs.org
       - run: pnpm install --frozen-lockfile
 
       # changesets/action publishes whenever there are no pending changesets,
       # which on a fresh repo would try to push every package on the first
-      # merge to main. Without a token that only fails noisily, so skip
-      # publishing until NPM_TOKEN exists and say so.
-      - name: Check for a publish token
-        id: token
+      # merge to main. Until a publish method is configured, skip and say so,
+      # so a fresh repo's first pushes stay green.
+      - name: Decide how to publish
+        id: publish
         env:
+          NPM_TRUSTED_PUBLISHING: ${{ vars.NPM_TRUSTED_PUBLISHING }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          if [ -z "$NPM_TOKEN" ]; then
-            echo "has=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::NPM_TOKEN is not set; skipping version/publish. Add the secret to enable releases (docs/publishing.md)."
+          if [ "$NPM_TRUSTED_PUBLISHING" = "true" ]; then
+            echo "method=trusted" >> "$GITHUB_OUTPUT"
+          elif [ -n "$NPM_TOKEN" ]; then
+            echo "method=token" >> "$GITHUB_OUTPUT"
           else
-            echo "has=true" >> "$GITHUB_OUTPUT"
+            echo "method=none" >> "$GITHUB_OUTPUT"
+            echo "::notice::Releases are off: set the repository variable NPM_TRUSTED_PUBLISHING=true (after adding a trusted publisher on npmjs) or the secret NPM_TOKEN. See docs/publishing.md."
           fi
 
+      # With no NPM_TOKEN the action writes no .npmrc and `changeset publish`
+      # (pnpm publish) authenticates with the job's OIDC token.
       - name: Version or publish
-        if: steps.token.outputs.has == 'true'
+        if: steps.publish.outputs.method != 'none'
         id: changesets
         uses: changesets/action@v1
         with:
@@ -70,7 +78,7 @@ jobs:
           title: "chore: release packages"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ steps.publish.outputs.method == 'token' && secrets.NPM_TOKEN || '' }}
 
       # Optional, for the hosted/expanded version at platform.behivetech.com:
       # tell it which packages were just published so their docs appear
@@ -78,7 +86,7 @@ jobs:
       # once you have a scope there and store its secret as REGISTRY_NOTIFY_TOKEN.
       #
       # - name: Notify the hosted registry
-      #   if: steps.token.outputs.has == 'true' && steps.changesets.outputs.published == 'true'
+      #   if: steps.publish.outputs.method != 'none' && steps.changesets.outputs.published == 'true'
       #   run: |
       #     curl -fsS -X POST https://platform.behivetech.com/api/published \
       #       -H "Authorization: Bearer ${{ secrets.REGISTRY_NOTIFY_TOKEN }}" \

@@ -46,7 +46,7 @@ The Changelog tab on the docs site is the package's `CHANGELOG.md`, so releases 
 `registry.config.json#npmRegistry` is `https://registry.npmjs.org`. Before the first publish:
 
 1. Create the org for your scope at https://www.npmjs.com/org/create. The scope is `registry.config.json#scope`.
-2. Log in locally with `npm login`; publishing from a terminal needs 2FA on your account. For CI, either set up trusted publishing for each package once it exists on npm, or create a granular access token (write, "Bypass 2FA", 90 days at most) and store it as `NPM_TOKEN`.
+2. Log in locally with `npm login`; publishing from a terminal needs 2FA on your account. CI publishes with trusted publishing once each package exists on npm (see the release workflow below); a granular access token (write, "Bypass 2FA", 90 days at most) stored as `NPM_TOKEN` is the fallback.
 3. For public packages, make sure the publish access is `public`. Scoped packages default to restricted on npmjs, which requires a paid org. Set `"access": "public"` in `.changeset/config.json` (or `publishConfig.access` in the packages).
 
 Locally, with 2FA on your account, publish each package directly rather than through `pnpm release`: `changeset publish` runs `pnpm publish` as a child process with its output captured, so the 2FA prompt cannot appear and it fails with `ERR_PNPM_OTP_NON_INTERACTIVE`. Then let Changesets tag what is published:
@@ -118,9 +118,15 @@ tar -tzf acme-atoms.button-*.tgz
 `.github/workflows/release.yml` runs on pushes to `main` and uses `changesets/action`:
 
 - With pending changesets, it opens (or updates) a "Version Packages" pull request that runs `pnpm version-packages` for you. Merge it to release.
-- With no pending changesets and unpublished versions, it runs `pnpm release` with `NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}`.
+- With no pending changesets and unpublished versions, it runs `pnpm release`.
 
-Add `NPM_TOKEN` under Settings, Secrets and variables, Actions. Until it exists the workflow skips versioning and publishing with a notice rather than failing, so your first pushes to `main` stay green. For GitHub Packages, swap in the commented `GITHUB_TOKEN` lines and give the workflow `packages: write`.
+How it authenticates, in order of preference:
+
+1. **Trusted publishing (no secret).** npm only lets a package that already exists name a trusted publisher, so publish each package's first version from your terminal (above). Then on the package's npmjs page, Settings, add a trusted publisher: your GitHub owner, this repository, workflow file `release.yml`. Finally set the repository variable `NPM_TRUSTED_PUBLISHING` to `true` under Settings, Secrets and variables, Actions, Variables. The job's `id-token: write` permission does the rest, and npm attaches provenance to every version it publishes this way.
+2. **A token.** Store a granular access token as the secret `NPM_TOKEN`. It expires within 90 days, so expect to rotate it.
+3. **Neither.** The workflow skips versioning and publishing with a notice rather than failing, so a fresh repo's first pushes to `main` stay green.
+
+For GitHub Packages, pass `GITHUB_TOKEN` as `NPM_TOKEN` as the commented lines show and give the workflow `packages: write`.
 
 Two things to know about what gets published:
 

@@ -128,16 +128,17 @@ Verified locally on 2026-10-07:
    template-owned (CLAUDE.md, Gotchas below) but are not in `template.manifest.json#owned`, so
    `update` never refreshes them. Either add them to `owned` (and `DEFAULT_MANIFEST` in the
    CLI, plus `docs/updating.md`) or fix the wording.
-2. **npm.** Create the `behivetech` org on npmjs (0 packages exist under `@behivetech` there
-   today). Then publish `create-bht-component-registry` (unscoped, public) so `npx` works;
-   it needs `pnpm --filter create-bht-component-registry build` first (the root `release`
-   script does that). Store `NPM_TOKEN` as a repo secret for release.yml.
-3. **First CLI release, locally**: `pnpm version-packages` (consumes the pending changesets,
-   bumps the CLI and syncs `registry.config.json#templateVersion` to it), commit, then
-   `pnpm release` (prompts for the 2FA code) and `git push --follow-tags`. `create` downloads
-   `archive/refs/tags/create-bht-component-registry@<version>.tar.gz`, the tag
-   `changeset publish` makes, and falls back to `main` with a warning. Then add a trusted
-   publisher for the package on npmjs and switch `release.yml` off `NPM_TOKEN`.
+2. **npm: done.** `create-bht-component-registry@0.2.0` is published (2026-10-07) and
+   `npx create-bht-component-registry@0.2.0` scaffolds from the tagged template. Left: on the
+   package's npmjs settings add a trusted publisher (owner `behivetech`, repo
+   `bht-component-registry`, workflow `release.yml`), then set the repository variable
+   `NPM_TRUSTED_PUBLISHING=true`; the next merge to main with unpublished versions publishes
+   from CI with no token. Optional: `npm deprecate create-bht-component-registry@0.0.0-stage
+   "…"` to hide the placeholder an aborted staged publish left (needs a browser login).
+3. **Local releases, if ever needed again**: `pnpm version-packages` (bumps and syncs
+   `templateVersion`), commit, `pnpm --filter <pkg> publish --access public` per package
+   (`changeset publish` cannot show the 2FA prompt), `pnpm changeset tag`,
+   `git push --follow-tags`.
 4. **Platform repo (round two)**: pages `/docs`, `/services`, `/expanded` on
    platform.behivetech.com; this repo's README and footer already link to them.
 5. **Round three**: per-version docs with live examples. With self-describing tarballs, old
@@ -158,8 +159,9 @@ Verified locally on 2026-10-07:
   `.changeset/config.json` sets `privatePackages: { version: false, tag: false }`, so private
   packages never appear in `pnpm changeset`; in this repo that leaves only the CLI and the
   picker is skipped (bump → summary → confirm). An empty summary opens `$EDITOR`.
-- **release.yml skips version/publish when `NPM_TOKEN` is unset** (a notice, not a failure),
-  so a fresh repo's first push to main is green. Add the secret to enable releases.
+- **release.yml skips version/publish until a publish method exists** (a notice, not a
+  failure), so a fresh repo's first push to main is green: the repository variable
+  `NPM_TRUSTED_PUBLISHING=true` (OIDC, preferred) or the secret `NPM_TOKEN`.
 - **`check-types` regenerates the catalog first** (`precheck-types`); on a fresh machine the
   generated files do not exist and `tsc` fails without it. This is what broke the first CI run.
 
