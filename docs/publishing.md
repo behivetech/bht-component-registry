@@ -27,7 +27,15 @@ Every component is its own npm package with its own semver. Changesets records w
    pnpm release
    ```
 
-   This builds the registry packages and what they depend on (`pnpm --filter "{./registry/**}..." run build`, so every package's `dist/` and `docs.json` are fresh) and then `changeset publish`, which publishes every package whose version is not yet on the registry.
+   This builds the registry packages and what they depend on (`pnpm --filter "{./registry/**}..." run build`, so every package's `dist/` and `docs.json` are fresh) and then `changeset publish`, which publishes every package whose version is not yet on the registry and tags the commit `<package>@<version>` for each one.
+
+5. Push the tags:
+
+   ```bash
+   git push --follow-tags
+   ```
+
+   The release workflow does steps 3 to 5 for you (see below); these are the manual equivalent.
 
 The Changelog tab on the docs site is the package's `CHANGELOG.md`, so releases show up in the docs as soon as the site is rebuilt.
 
@@ -36,7 +44,7 @@ The Changelog tab on the docs site is the package's `CHANGELOG.md`, so releases 
 `registry.config.json#npmRegistry` is `https://registry.npmjs.org`. Before the first publish:
 
 1. Create the org for your scope at https://www.npmjs.com/org/create. The scope is `registry.config.json#scope`.
-2. Create an automation token (Access Tokens, type Automation) for CI, or log in locally with `npm login`.
+2. Log in locally with `npm login`; publishing from a terminal needs 2FA on your account. For CI, either set up trusted publishing for each package once it exists on npm, or create a granular access token (write, "Bypass 2FA", 90 days at most) and store it as `NPM_TOKEN`.
 3. For public packages, make sure the publish access is `public`. Scoped packages default to restricted on npmjs, which requires a paid org. Set `"access": "public"` in `.changeset/config.json` (or `publishConfig.access` in the packages).
 
 Locally:

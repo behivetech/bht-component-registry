@@ -7,7 +7,7 @@ export const CLI_NAME = "create-bht-component-registry";
 /**
  * The CLI's own version doubles as the default template version: this package
  * and the template repo are released together, so `npx create-bht-component-registry@0.3.0`
- * scaffolds from the `v0.3.0` tag. It is read from package.json at runtime
+ * scaffolds from the `create-bht-component-registry@0.3.0` tag that `changeset publish` made. It is read from package.json at runtime
  * rather than baked in with a build-time define so the same code works from
  * `src/` under vitest and from the bundled `dist/cli.js`.
  */

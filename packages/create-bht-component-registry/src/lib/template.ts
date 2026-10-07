@@ -8,6 +8,18 @@ import type { Logger } from "./log.js";
 
 export const TEMPLATE_REPO = "behivetech/bht-component-registry";
 
+/** The npm package whose Changesets release tag doubles as the template's release tag. */
+export const TEMPLATE_PACKAGE = "create-bht-component-registry";
+
+/**
+ * `changeset publish` tags each published version `<package>@<version>`, so
+ * the CLI's own release tag marks the template tree it was released from.
+ * No separate `v<version>` tag is needed.
+ */
+export function templateTag(version: string): string {
+  return `${TEMPLATE_PACKAGE}@${version}`;
+}
+
 export interface TemplateRequest {
   /** The release to download; ignored when `from` is set. */
   version: string;
@@ -27,7 +39,7 @@ export interface TemplateResult {
 export type TemplateFetcher = (request: TemplateRequest, log: Logger) => Promise<TemplateResult>;
 
 export function tagTarballUrl(version: string): string {
-  return `https://github.com/${TEMPLATE_REPO}/archive/refs/tags/v${version}.tar.gz`;
+  return `https://github.com/${TEMPLATE_REPO}/archive/refs/tags/${encodeURIComponent(templateTag(version))}.tar.gz`;
 }
 
 export function mainTarballUrl(): string {
@@ -35,18 +47,18 @@ export function mainTarballUrl(): string {
 }
 
 /**
- * The template IS the public repo: a release tag's tarball, so there is no
- * separate template store to publish or keep in sync. The tag is tried first;
- * `main` is the fallback so the CLI keeps working between a package publish
- * and its tag landing, with a warning because `main` may be ahead of what
- * `templateVersion` will claim.
+ * The template IS the public repo: the tarball of the CLI's own release tag,
+ * so there is no separate template store to publish or keep in sync. The tag
+ * is tried first; `main` is the fallback so the CLI keeps working between a
+ * package publish and its tag landing, with a warning because `main` may be
+ * ahead of what `templateVersion` will claim.
  */
 async function download(version: string, log: Logger): Promise<{ bytes: Buffer; url: string }> {
   let url = tagTarballUrl(version);
-  log.info(`Downloading template v${version} from GitHub...`);
+  log.info(`Downloading template ${templateTag(version)} from GitHub...`);
   let response = await fetch(url, { redirect: "follow" });
   if (response.status === 404) {
-    log.warn(`No release tag v${version} on GitHub; falling back to the main branch.`);
+    log.warn(`No release tag ${templateTag(version)} on GitHub; falling back to the main branch.`);
     url = mainTarballUrl();
     response = await fetch(url, { redirect: "follow" });
   }

@@ -27,7 +27,8 @@ Made with Bruce over a long planning session; the full plan is in
   will host the guide for this repo plus services and "expanded version" pages. This repo is
   the free, simple one anyone can clone. The platform site is this repo's documentation site.
 - **Git is the source of truth. No artifact store. No bit CLI.** Versions are Changesets +
-  git tags; publishing is `changeset publish` to the registry in `registry.config.json`;
+  git tags (the CLI's `create-bht-component-registry@<version>` tag is also the template
+  release; `version-packages` keeps `registry.config.json#templateVersion` equal to it); publishing is `changeset publish` to the registry in `registry.config.json`;
   deleting a component is deleting a folder. The hosted expanded version, when it comes, is a
   *reader* over registries clients already use (npmjs default), never a store Behive runs.
 - **Self-describing tarballs.** Every component's build runs `tsup && bht-registry-docgen`
@@ -131,8 +132,12 @@ Verified locally on 2026-10-07:
    today). Then publish `create-bht-component-registry` (unscoped, public) so `npx` works;
    it needs `pnpm --filter create-bht-component-registry build` first (the root `release`
    script does that). Store `NPM_TOKEN` as a repo secret for release.yml.
-3. **Tag `v0.1.0`** once published: `create` downloads
-   `archive/refs/tags/v<templateVersion>.tar.gz` and falls back to `main` with a warning.
+3. **First CLI release, locally**: `pnpm version-packages` (consumes the pending changesets,
+   bumps the CLI and syncs `registry.config.json#templateVersion` to it), commit, then
+   `pnpm release` (prompts for the 2FA code) and `git push --follow-tags`. `create` downloads
+   `archive/refs/tags/create-bht-component-registry@<version>.tar.gz`, the tag
+   `changeset publish` makes, and falls back to `main` with a warning. Then add a trusted
+   publisher for the package on npmjs and switch `release.yml` off `NPM_TOKEN`.
 4. **Platform repo (round two)**: pages `/docs`, `/services`, `/expanded` on
    platform.behivetech.com; this repo's README and footer already link to them.
 5. **Round three**: per-version docs with live examples. With self-describing tarballs, old

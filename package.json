@@ -18,7 +18,7 @@
     "verify": "pnpm build && pnpm lint && pnpm check-types && pnpm test",
     "gen": "tsx scripts/gen.mts",
     "changeset": "changeset",
-    "version-packages": "changeset version",
+    "version-packages": "changeset version && node scripts/sync-template-version.mjs",
     "release": "pnpm --filter \"{./registry/**}...\" --filter create-bht-component-registry run build && changeset publish",
     "serve": "pnpm --filter docs serve"
   },

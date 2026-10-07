@@ -102,7 +102,8 @@ With `--from` and no `--to`, `update` takes the target version from the checkout
 
 ## Where the template comes from
 
-The template is the public repo itself: `https://github.com/behivetech/bht-component-registry/archive/refs/tags/v<version>.tar.gz`.
+The template is the public repo itself, at the tag `changeset publish` creates for this package:
+`https://github.com/behivetech/bht-component-registry/archive/refs/tags/create-bht-component-registry@<version>.tar.gz`.
 If that tag does not exist yet the CLI falls back to the `main` branch with a warning. No separate
 template store exists, so there is nothing else to keep in sync.
 
