@@ -11,7 +11,9 @@ Every component is its own npm package with its own semver. Changesets records w
    pnpm changeset
    ```
 
-   Pick the affected packages, a bump (patch, minor, major) and write a line for the changelog. This writes a Markdown file into `.changeset/`. Commit it with your change.
+   Pick the affected packages (space to mark, Enter to confirm; with a single package the picker is skipped), a bump (patch, minor, major) and write a one-line summary for the changelog. Submitting an empty summary opens `$EDITOR` instead. The result is a Markdown file in `.changeset/`; commit it with your change.
+
+   Only publishable packages are offered. Private ones (the docs app, the workspace tooling, and the example scope while it is still `"private": true`) are hidden from the picker and never versioned: `privatePackages` in `.changeset/config.json` is `{ "version": false, "tag": false }`.
 
 3. When you are ready to release, apply the pending changesets:
 

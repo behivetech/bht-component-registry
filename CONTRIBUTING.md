@@ -32,7 +32,7 @@ Conventional subject lines: `feat(docs): …`, `fix(gen): …`, `docs: …`, `ch
 
 ## Changesets
 
-Published packages (`packages/create-bht-component-registry`, the example scope) are versioned with Changesets. If your change affects one, add a changeset:
+Published packages are versioned with Changesets: in this repo that is `packages/create-bht-component-registry` (the example scope is private and never versioned). If your change affects it, add a changeset:
 
 ```bash
 pnpm changeset
