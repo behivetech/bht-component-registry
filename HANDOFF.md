@@ -104,7 +104,8 @@ Verified locally on 2026-10-07:
   (+ LICENSE, which pnpm adds). Test scope removed afterwards.
 - CLI smoke test by its author: `create demo --scope bobsburgers --from . --no-install`,
   `update` no-op / `--dry-run` / dirty-tree refusal / apply.
-- Docker: see "Open items" (daemon was not running when first tried).
+- Docker: `docker build` + `docker run -p 8089:80` → `/`, `/example`, a component page and its
+  changelog 200; `/no-such-scope` 404 with the site's "Not found" page through nginx.
 
 ## Open items / next steps
 
@@ -116,17 +117,13 @@ Verified locally on 2026-10-07:
    script does that). Store `NPM_TOKEN` as a repo secret for release.yml.
 3. **Tag `v0.1.0`** once published: `create` downloads
    `archive/refs/tags/v<templateVersion>.tar.gz` and falls back to `main` with a warning.
-4. **Docker**: run `docker build -t x . && docker run --rm -p 8080:80 x` and check `/`,
-   `/example`, `/no-such-scope` (expect 200/200/404 with the site's 404 page). The Dockerfile's
-   manifest-only first COPY is an optimisation that may need tightening; if the build is
-   awkward, simplify to a single `COPY . .` after `pnpm install`.
-5. **Platform repo (round two)**: pages `/docs`, `/services`, `/expanded` on
+4. **Platform repo (round two)**: pages `/docs`, `/services`, `/expanded` on
    platform.behivetech.com; this repo's README and footer already link to them.
-6. **Round three**: per-version docs with live examples. With self-describing tarballs, old
+5. **Round three**: per-version docs with live examples. With self-describing tarballs, old
    versions come from the registry (versions + tarballs); serve each version's `dist` as
    ESM and pin React with an import map. Then extract the docs engine into
    `@behivetech/bht-registry-docs` so both repos consume it (today it is a copy; see drift).
-7. **Later**: `pnpm component:remove <pkg>`; the hosted reader (per-scope read token,
+6. **Later**: `pnpm component:remove <pkg>`; the hosted reader (per-scope read token,
    release-workflow notify to `/api/published`, Clerk waitlist + billing) lives in the
    platform repo.
 
