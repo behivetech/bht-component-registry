@@ -47,12 +47,16 @@ The Changelog tab on the docs site is the package's `CHANGELOG.md`, so releases 
 2. Log in locally with `npm login`; publishing from a terminal needs 2FA on your account. For CI, either set up trusted publishing for each package once it exists on npm, or create a granular access token (write, "Bypass 2FA", 90 days at most) and store it as `NPM_TOKEN`.
 3. For public packages, make sure the publish access is `public`. Scoped packages default to restricted on npmjs, which requires a paid org. Set `"access": "public"` in `.changeset/config.json` (or `publishConfig.access` in the packages).
 
-Locally:
+Locally, with 2FA on your account, publish each package directly rather than through `pnpm release`: `changeset publish` runs `pnpm publish` as a child process with its output captured, so the 2FA prompt cannot appear and it fails with `ERR_PNPM_OTP_NON_INTERACTIVE`. Then let Changesets tag what is published:
 
 ```bash
 npm login
-pnpm release
+pnpm --filter @acme/atoms.button publish --access public   # opens the 2FA prompt; repeat per package
+pnpm changeset tag                                         # tags every published package at its current version
+git push --follow-tags
 ```
+
+`pnpm release` is for CI, where trusted publishing or a token answers for you.
 
 ## GitHub Packages
 
