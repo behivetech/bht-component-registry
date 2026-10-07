@@ -155,6 +155,9 @@ Verified locally on 2026-10-07:
   public package not yet on the registry; the first CI run tried to publish `@example/*` to
   npmjs. `create` flips `private` to false for the renamed scope, so clients' packages publish.
   Anyone who clones instead of using `create` deletes the example scope anyway.
+  `.changeset/config.json` sets `privatePackages: { version: false, tag: false }`, so private
+  packages never appear in `pnpm changeset`; in this repo that leaves only the CLI and the
+  picker is skipped (bump → summary → confirm). An empty summary opens `$EDITOR`.
 - **release.yml skips version/publish when `NPM_TOKEN` is unset** (a notice, not a failure),
   so a fresh repo's first push to main is green. Add the secret to enable releases.
 - **`check-types` regenerates the catalog first** (`precheck-types`); on a fresh machine the
