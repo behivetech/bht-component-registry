@@ -114,13 +114,19 @@ Verified locally on 2026-10-07:
   `scripts/**` and no `turbo.json`; `update --dry-run` on a repo created from the pre-change
   tree lists `turbo.json` + `turbo/generators/**` under Removed and `scripts/**` under Added
   (`update` short-circuits when `templateVersion` already matches, so bump it down to test).
-- Docker: `docker build` + `docker run -p 8089:80` → `/`, `/example`, a component page and its
-  changelog 200; `/no-such-scope` 404 with the site's "Not found" page through nginx.
+- Docker: `docker build` + `docker run -p 8089:80` → `/`, `/example`, a component page 200;
+  `/no-such-scope` 404 with the site's "Not found" page through nginx.
+- Pushed to GitHub; CI (verify + Playwright) green on the plain-pnpm tree. One Playwright job
+  hit the 25-minute timeout because `apt-get` stalled on an Ubuntu mirror during
+  `playwright install --with-deps`, before the tests started; a rerun passed in about a
+  minute. Runner infrastructure, not the repo.
 
 ## Open items / next steps
 
-1. **First push and CI.** Confirm `.github/workflows/ci.yml` is green on GitHub (the
-   no-private-registry check, verify, Playwright).
+1. **Decide: own the root Vitest config?** `vitest.config.ts` / `vitest.setup.ts` are called
+   template-owned (CLAUDE.md, Gotchas below) but are not in `template.manifest.json#owned`, so
+   `update` never refreshes them. Either add them to `owned` (and `DEFAULT_MANIFEST` in the
+   CLI, plus `docs/updating.md`) or fix the wording.
 2. **npm.** Create the `behivetech` org on npmjs (0 packages exist under `@behivetech` there
    today). Then publish `create-bht-component-registry` (unscoped, public) so `npx` works;
    it needs `pnpm --filter create-bht-component-registry build` first (the root `release`
