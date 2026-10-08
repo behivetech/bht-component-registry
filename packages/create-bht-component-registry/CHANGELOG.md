@@ -1,5 +1,11 @@
 # create-bht-component-registry
 
+## 0.2.1
+
+### Patch Changes
+
+- d9ea91c: Template: the release workflow publishes with npm trusted publishing by default (repository variable `NPM_TRUSTED_PUBLISHING=true`), with `NPM_TOKEN` as the fallback, and private packages are hidden from `pnpm changeset` and never versioned.
+
 ## 0.2.0
 
 ### Minor Changes
