@@ -134,9 +134,11 @@ Verified locally on 2026-10-07:
 2. **npm: trusted publishing works.** 0.2.0 was published by hand (2026-10-07); 0.2.1 was
    published by `release.yml` through OIDC on 2026-10-08 (trusted publisher on npmjs: owner
    `behivetech`, repo `bht-component-registry`, workflow `release.yml`, "Allow npm publish";
-   repo variable `NPM_TRUSTED_PUBLISHING=true`; Actions allowed to open PRs). The CI publish
-   landed in npm's staging queue rather than going live, so each release may need an approval
-   on npmjs with 2FA; if that is unwanted, check the trusted publisher's permissions. Optional:
+   repo variable `NPM_TRUSTED_PUBLISHING=true`; Actions allowed to open PRs). 0.2.1 is
+   `latest`, `_npmUser` is "GitHub Actions" with `trustedPublisher`, and it has SLSA
+   provenance. `npm view` lagged the publish by a minute or two; read
+   `https://registry.npmjs.org/<pkg>` directly if in doubt. The Version Packages PR gets no
+   CI run (pushed with GITHUB_TOKEN); it only holds version bumps. Optional:
    `npm deprecate create-bht-component-registry@0.0.0-stage "…"` to hide the placeholder an
    aborted staged publish left (needs a browser login).
 3. **Local releases, if ever needed again**: `pnpm version-packages` (bumps and syncs
