@@ -2,7 +2,7 @@
   "$schema": "./registry.config.schema.json",
   "scope": "example",
   "npmRegistry": "https://registry.npmjs.org",
-  "templateVersion": "0.2.0",
+  "templateVersion": "0.2.1",
   "site": {
     "title": "Example Component Registry",
     "description": "A component registry that stays in git: docs from source, live examples, versions via Changesets.",
