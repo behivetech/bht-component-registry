@@ -23,7 +23,6 @@ name: Release
 on:
   push:
     branches: [main]
-  workflow_dispatch:
 
 concurrency: release-${{ github.ref }}
 
@@ -69,7 +68,7 @@ jobs:
       # With no NPM_TOKEN the action writes no .npmrc and `changeset publish`
       # (pnpm publish) authenticates with the job's OIDC token.
       - name: Version or publish
-        if: steps.publish.outputs.method != 'none' && github.event_name == 'push'
+        if: steps.publish.outputs.method != 'none'
         id: changesets
         uses: changesets/action@v1
         with:
@@ -80,14 +79,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ steps.publish.outputs.method == 'token' && secrets.NPM_TOKEN || '' }}
-
-      # Diagnostic (manual runs only): publish the CLI directly so pnpm's own
-      # output is visible; `changeset publish` hides it on success.
-      - name: Publish directly (diagnostic)
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-          pnpm --filter create-bht-component-registry run build
-          pnpm --filter create-bht-component-registry publish --access public --tag latest --no-git-checks
 
       # Optional, for the hosted/expanded version at platform.behivetech.com:
       # tell it which packages were just published so their docs appear
