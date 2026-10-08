@@ -131,13 +131,14 @@ Verified locally on 2026-10-07:
    template-owned (CLAUDE.md, Gotchas below) but are not in `template.manifest.json#owned`, so
    `update` never refreshes them. Either add them to `owned` (and `DEFAULT_MANIFEST` in the
    CLI, plus `docs/updating.md`) or fix the wording.
-2. **npm: done.** `create-bht-component-registry@0.2.0` is published (2026-10-07) and
-   `npx create-bht-component-registry@0.2.0` scaffolds from the tagged template. Left: on the
-   package's npmjs settings add a trusted publisher (owner `behivetech`, repo
-   `bht-component-registry`, workflow `release.yml`), then set the repository variable
-   `NPM_TRUSTED_PUBLISHING=true`; the next merge to main with unpublished versions publishes
-   from CI with no token. Optional: `npm deprecate create-bht-component-registry@0.0.0-stage
-   "…"` to hide the placeholder an aborted staged publish left (needs a browser login).
+2. **npm: trusted publishing works.** 0.2.0 was published by hand (2026-10-07); 0.2.1 was
+   published by `release.yml` through OIDC on 2026-10-08 (trusted publisher on npmjs: owner
+   `behivetech`, repo `bht-component-registry`, workflow `release.yml`, "Allow npm publish";
+   repo variable `NPM_TRUSTED_PUBLISHING=true`; Actions allowed to open PRs). The CI publish
+   landed in npm's staging queue rather than going live, so each release may need an approval
+   on npmjs with 2FA; if that is unwanted, check the trusted publisher's permissions. Optional:
+   `npm deprecate create-bht-component-registry@0.0.0-stage "…"` to hide the placeholder an
+   aborted staged publish left (needs a browser login).
 3. **Local releases, if ever needed again**: `pnpm version-packages` (bumps and syncs
    `templateVersion`), commit, `pnpm --filter <pkg> publish --access public` per package
    (`changeset publish` cannot show the 2FA prompt), `pnpm changeset tag`,
