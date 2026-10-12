@@ -13,7 +13,7 @@ replaced by `npx create-bht-component-registry update`.
 - `apps/docs` — the only app. `scripts/generate-catalog.ts` reads the registry before dev/build and
   writes `src/generated/` (gitignored). Pages under `src/app/(site)/`; docs UI in `src/components/docs/`;
   catalog access and README/CHANGELOG parsing in `src/lib/catalog/`; e2e in `e2e/`.
-- `packages/env` — shared tsup config and the `bht-registry-docgen` bin (writes `docs.json` per package).
+- `packages/env` — everything a component package builds, lints, type-checks and tests with: tsup config, `tsconfig.json` (carries the `*.module.scss` typings via `files`), ESLint config, Vitest config + setup (root `vitest.config.ts` re-exports it), and the `bht-registry-docgen` bin (writes `docs.json` per package).
 - `packages/class-names`, `eslint-config`, `typescript-config`, `scope` — workspace-only (`@bht-component-registry/*`).
 - `packages/create-bht-component-registry` — the npx `create` and `update` CLI; `template.manifest.json` lists what `update` may replace.
 - `registry/<scope>/` — `scope.json` plus one package per component. `registry/example` is the shipped example; deleting it must not break the build.

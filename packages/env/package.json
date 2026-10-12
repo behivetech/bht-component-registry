@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "type": "module",
   "private": true,
-  "description": "Shared build config for every component package, plus the docgen used by both the docs site and the bht-registry-docgen bin.",
+  "description": "Everything a component package builds, lints, type-checks and tests with — tsup config, tsconfig, ESLint config, Vitest config and setup, SCSS-module typings — plus the docgen used by both the docs site and the bht-registry-docgen bin.",
   "exports": {
     ".": {
       "types": "./index.d.mts",
@@ -14,7 +14,10 @@
       "default": "./docgen.mjs"
     },
     "./tsconfig.json": "./tsconfig.json",
-    "./eslint.config.mjs": "./eslint.config.mjs"
+    "./eslint.config.mjs": "./eslint.config.mjs",
+    "./vitest.config.mjs": "./vitest.config.mjs",
+    "./vitest.setup.ts": "./vitest.setup.ts",
+    "./global.d.ts": "./global.d.ts"
   },
   "bin": {
     "bht-registry-docgen": "./bin/bht-registry-docgen.mjs"

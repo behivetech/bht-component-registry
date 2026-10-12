@@ -5,6 +5,7 @@
     "packages/**",
     "scripts/**",
     "plopfile.ts",
+    "vitest.config.ts",
     "turbo/generators/**",
     ".github/workflows/**",
     ".github/copilot-instructions.md",

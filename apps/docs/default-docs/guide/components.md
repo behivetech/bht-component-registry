@@ -17,10 +17,11 @@ registry/acme/atoms/button/
 ├─ CHANGELOG.md               written by Changesets; the Changelog tab
 ├─ package.json               @acme/atoms.button, scripts, files, publishConfig, registry
 ├─ tsup.config.ts             createComponentConfig() from @bht-component-registry/env
-├─ tsconfig.json              extends the shared config; excludes specs and compositions from the build
-├─ eslint.config.mjs          re-exports the shared config
-└─ global.d.ts                types *.module.scss imports
+├─ tsconfig.json              extends the env's tsconfig (which also types *.module.scss imports); excludes specs and compositions from the build
+└─ eslint.config.mjs          re-exports the env's ESLint config
 ```
+
+The last three are one line each: everything a package builds, lints, type-checks and tests with comes from `packages/env`, so a change there reaches every component. See [The env package](env.md).
 
 Two files appear after a build and are gitignored:
 
@@ -155,6 +156,8 @@ Changing status or tags is a commit, reviewed like any other change. The hosted 
 ## Related
 
 - [Getting started](getting-started.md)
+- [Generators](generators.md)
+- [The env package](env.md)
 - [Scopes](scopes.md)
 - [Publishing](publishing.md)
 - [Design tokens](design-tokens.md)
