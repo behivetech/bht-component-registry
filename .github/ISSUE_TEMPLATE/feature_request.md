@@ -18,7 +18,7 @@ What would you like to see? If it touches a file a user owns (`registry/**`, `do
 
 ## Fit
 
-This repo stays docs-only: a static export with no auth, no database and no required environment variables. Features that need a server belong to the hosted version (https://platform.behivetech.com/expanded). If you are unsure which side your idea falls on, say so and we will work it out here.
+This repo stays docs-only: a static export with no auth, no database and no required environment variables. Features that need a server belong to the expanded version (apps/docs/default-docs/guide/expanded.md). If you are unsure which side your idea falls on, say so and we will work it out here.
 
 ## Anything else
 

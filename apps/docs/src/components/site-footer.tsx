@@ -1,15 +1,18 @@
+import Link from "next/link";
 import { catalog } from "@/lib/catalog";
+import { getDocPage } from "@/lib/docs";
 import styles from "./site-footer.module.scss";
 
 const isExternal = (href: string) => /^https?:\/\//.test(href);
 
 /**
  * A small footer on every page: the configured site links again (the header
- * scrolls away on long catalog pages) and a fixed credit line pointing at the
- * open-source repo and its hosted, expanded counterpart.
+ * scrolls away on long catalog pages), a credit line pointing at the
+ * open-source template, and the Terms page while the owner keeps it.
  */
 export function SiteFooter() {
   const { site } = catalog;
+  const terms = getDocPage("guide/terms");
   return (
     <footer className={styles.footer}>
       {site.links.length > 0 && (
@@ -22,8 +25,13 @@ export function SiteFooter() {
         </nav>
       )}
       <p className={styles.credit}>
-        Built with <a href="https://github.com/behivetech/bht-component-registry">bht-component-registry</a> ·{" "}
-        <a href="https://platform.behivetech.com/expanded">Hosted &amp; expanded version</a>
+        Built with <a href="https://github.com/behivetech/bht-component-registry">bht-component-registry</a>
+        {terms && (
+          <>
+            {" · "}
+            <Link href={`/docs/${terms.slug}`}>{terms.title}</Link>
+          </>
+        )}
       </p>
     </footer>
   );

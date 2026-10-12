@@ -5,7 +5,7 @@ A component registry that stays in git. One npm package per component, docs gene
 [![CI](https://github.com/behivetech/bht-component-registry/actions/workflows/ci.yml/badge.svg)](https://github.com/behivetech/bht-component-registry/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Made by [Behive Tech](https://platform.behivetech.com). This repo is the open, self-hosted version. A [hosted and expanded version](https://platform.behivetech.com/expanded) and the [full guide](https://platform.behivetech.com/docs) live on the platform site.
+Made by [Behive Tech](https://platform.behivetech.com). This repo is the open version; the guide is in [the guide](apps/docs/default-docs/guide/getting-started.md) and on every registry's own site under `/docs`. An [expanded version](apps/docs/default-docs/guide/expanded.md) with a dashboard, roles and an audit log is available through consulting.
 
 ## Quick start
 
@@ -64,19 +64,19 @@ Then set `scope` in `registry.config.json`, rename `registry/example` to your sc
 - [Design tokens](apps/docs/default-docs/guide/design-tokens.md): the optional tokens page.
 - [FAQ](apps/docs/default-docs/guide/faq.md): why no database, why a static export, why git and npm rather than a hosted component platform, what the expanded version adds.
 
-## Hosted and expanded version
+## Expanded version
 
-The same registry, hosted, with a dashboard: sign-in with SSO, role-based curation of each component's status and tags, an audit log, and hosted docs that read the packages you have already published. Your git repo stays the source; the hosted version only reads your registry. See https://platform.behivetech.com/expanded.
+The same registry with a workspace for the team on top: a dashboard, status/tags/descriptions edited in place, roles, an audit log and SSO — running on your infrastructure, with this registry unchanged underneath. It is set up for your team as a consulting engagement; see [The expanded version](apps/docs/default-docs/guide/expanded.md).
 
 ## Consulting
 
-Behive Tech builds and runs component libraries and design systems for teams: https://platform.behivetech.com/services.
+Behive Tech builds and runs component libraries and design systems for teams: https://platform.behivetech.com.
 
-## Contributing, security, license
+## Contributing, security, licence, terms
 
 - [CONTRIBUTING.md](CONTRIBUTING.md) for setup, `pnpm verify`, commit and changeset conventions.
 - [SECURITY.md](SECURITY.md) for reporting a vulnerability.
-- [MIT](LICENSE), copyright 2026 Behive Tech.
+- [MIT](LICENSE), copyright 2026 Behive Tech. Provided as is, without warranty — see [TERMS.md](TERMS.md).
 
 <!-- your notes below this line are kept by update -->
 

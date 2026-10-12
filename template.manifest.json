@@ -22,7 +22,8 @@
     "CLAUDE.md",
     "CONTRIBUTING.md",
     "SECURITY.md",
-    "LICENSE"
+    "LICENSE",
+    "TERMS.md"
   ],
   "never": [
     "registry/**",

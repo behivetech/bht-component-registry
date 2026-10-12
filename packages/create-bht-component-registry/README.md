@@ -4,7 +4,7 @@ Scaffold a [bht-component-registry](https://github.com/behivetech/bht-component-
 component registry that stays in git: docs generated from source, live examples,
 versions via Changesets, a static site you can deploy anywhere — and keep it current with `update`.
 
-Hosted & expanded version, guides and consulting: https://platform.behivetech.com
+The expanded version, guides and consulting: https://platform.behivetech.com
 
 ## Create a registry
 

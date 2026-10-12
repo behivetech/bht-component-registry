@@ -49,4 +49,4 @@ Commit the generated `.changeset/*.md` with your change. Changes to the docs app
 
 ## Questions
 
-Open a discussion or an issue. For the hosted version and consulting, see https://platform.behivetech.com.
+Open a discussion or an issue. For the expanded version and consulting, see https://platform.behivetech.com.

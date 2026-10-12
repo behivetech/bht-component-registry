@@ -8,8 +8,10 @@
     "description": "A component registry that stays in git: docs from source, live examples, versions via Changesets.",
     "primaryColor": "#6750a4",
     "links": [
-      { "label": "GitHub", "href": "https://github.com/behivetech/bht-component-registry" },
-      { "label": "Hosted & expanded version", "href": "https://platform.behivetech.com/expanded" }
+      {
+        "label": "GitHub",
+        "href": "https://github.com/behivetech/bht-component-registry"
+      }
     ]
   }
 }

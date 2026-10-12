@@ -149,7 +149,7 @@ Each component's `package.json` may carry:
 - `status` is one of `stable`, `beta`, `draft`, `deprecated`. It defaults to `stable` when omitted and shows as a badge in the component header and on the catalog card.
 - `tags` is a list of short strings, shown as a tag list in the same places. They are display-only; search on the scope page matches titles.
 
-Changing status or tags is a commit, reviewed like any other change. The hosted version adds a dashboard and roles for this; see [FAQ](faq.md).
+Changing status or tags is a commit, reviewed like any other change. The [expanded version](expanded.md) adds a dashboard and roles for this.
 
 ## Removing a component
 

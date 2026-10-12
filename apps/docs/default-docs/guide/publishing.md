@@ -143,7 +143,7 @@ Two things to know about what gets published:
 - `changeset publish` publishes every package that is not `"private": true` and whose version is not already on the registry. That is why the template's own example packages are marked private: `create` makes the packages in your renamed scope publishable, and if you cloned instead, you will be deleting the example scope anyway.
 - Scoped packages on a free npmjs org must publish with `access: public`; `.changeset/config.json` and every generated `publishConfig` already say so. Set `restricted` only for a private registry that supports it.
 
-The workflow also has a commented-out "notify the hosted platform" step: one `curl` that tells the hosted version a release happened, for private registries it cannot discover on its own. Leave it commented unless you use the hosted version.
+The workflow also has a commented-out "notify" step: one `curl` that tells an [expanded version](expanded.md) a release happened. Leave it commented unless you run one and it asks for it.
 
 ## Consuming a component
 

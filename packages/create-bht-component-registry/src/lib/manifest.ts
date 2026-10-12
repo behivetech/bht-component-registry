@@ -63,6 +63,7 @@ export const DEFAULT_MANIFEST: TemplateManifest = {
     "CONTRIBUTING.md",
     "SECURITY.md",
     "LICENSE",
+    "TERMS.md",
   ],
   // docs/ is the owner's: their pages, and their copies of the template's
   // guide (which ships under apps/docs/default-docs/ and is owned with the app).

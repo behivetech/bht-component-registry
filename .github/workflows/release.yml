@@ -80,12 +80,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ steps.publish.outputs.method == 'token' && secrets.NPM_TOKEN || '' }}
 
-      # Optional, for the hosted/expanded version at platform.behivetech.com:
+      # Optional, for an expanded version that tracks releases:
       # tell it which packages were just published so their docs appear
       # immediately rather than on its next look at the registry. Uncomment
       # once you have a scope there and store its secret as REGISTRY_NOTIFY_TOKEN.
       #
-      # - name: Notify the hosted registry
+      # - name: Notify the expanded version
       #   if: steps.publish.outputs.method != 'none' && steps.changesets.outputs.published == 'true'
       #   run: |
       #     curl -fsS -X POST https://platform.behivetech.com/api/published \

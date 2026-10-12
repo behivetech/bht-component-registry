@@ -48,7 +48,7 @@ async function makeTemplate(dir: string): Promise<void> {
           primaryColor: "#6750a4",
           links: [
             { label: "GitHub", href: "https://github.com/behivetech/bht-component-registry" },
-            { label: "Hosted & expanded version", href: "https://platform.behivetech.com/expanded" },
+            { label: "Docs", href: "https://docs.example.test" },
           ],
         },
       },
@@ -215,13 +215,13 @@ describe("create", () => {
         title: "Bobsburgers Component Registry",
         description: "A component registry that stays in git.",
         primaryColor: "#6750a4",
-        links: [{ label: "Hosted & expanded version", href: "https://platform.behivetech.com/expanded" }],
+        links: [{ label: "Docs", href: "https://docs.example.test" }],
       },
     });
 
     expect(pnpmCalls).toEqual([]);
     expect(lines.some((line) => line.includes("https://www.npmjs.com/org/create"))).toBe(true);
-    expect(lines.some((line) => line.includes("https://platform.behivetech.com/expanded"))).toBe(true);
+    expect(lines.some((line) => line.includes("apps/docs/default-docs/guide/expanded.md"))).toBe(true);
     expect(lines.some((line) => line.includes("apps/docs/default-docs/guide/getting-started.md"))).toBe(true);
   });
 

@@ -40,6 +40,7 @@ describe("isTemplateOwned", () => {
     expect(isTemplateOwned("packages/scope/src/index.ts", DEFAULT_MANIFEST)).toBe(true);
     expect(isTemplateOwned("plopfile.ts", DEFAULT_MANIFEST)).toBe(true);
     expect(isTemplateOwned("vitest.config.ts", DEFAULT_MANIFEST)).toBe(true);
+    expect(isTemplateOwned("TERMS.md", DEFAULT_MANIFEST)).toBe(true);
     expect(isTemplateOwned("packages/env/vitest.setup.ts", DEFAULT_MANIFEST)).toBe(true);
     expect(isTemplateOwned("scripts/generators/component/index.ts", DEFAULT_MANIFEST)).toBe(true);
     expect(isTemplateOwned("scripts/generators/component/templates/package.json.hbs", DEFAULT_MANIFEST)).toBe(true);
