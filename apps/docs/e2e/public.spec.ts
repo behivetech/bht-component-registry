@@ -1,4 +1,28 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+/**
+ * Replace the whole program in the first live editor on the page.
+ *
+ * react-live's editor is a contenteditable <pre> (Chromium gets
+ * `plaintext-only`), not a form control, and it only reacts to keystrokes:
+ * `fill` and `insertText` change the DOM without it noticing. A select-all
+ * keystroke can lose the selection when the page re-renders around the
+ * editor (the preview frame reports its height a few times after booting),
+ * so the selection is made programmatically and the program typed over it;
+ * the caller retries the whole thing until the preview shows it.
+ */
+async function replaceEditorCode(page: Page, code: string) {
+  const editor = page.locator("[contenteditable]").first();
+  await editor.click();
+  await editor.evaluate((element) => {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    const selection = window.getSelection();
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+  });
+  await page.keyboard.type(code);
+}
 
 /**
  * The whole site, as a visitor sees it from a static host. Everything here is
@@ -80,19 +104,13 @@ test.describe("component page", () => {
 
   test("editing a live example re-renders it", async ({ page }) => {
     await page.goto("/example/atoms/price-tag/playground");
-    // Let the preview frame boot and render the starter first: until then the
-    // page is still re-rendering around the editor and can drop the selection.
     const preview = page.frameLocator("iframe").first();
     await expect(preview.getByText(/\$\d/).first()).toBeVisible();
 
-    // react-live's editor is a contenteditable <pre> (Chromium gets
-    // `plaintext-only`), not a form control, and it only listens to real
-    // input — so select everything and type over it.
-    const editor = page.locator("[contenteditable]").first();
-    await editor.click();
-    await page.keyboard.press("ControlOrMeta+A");
-    await page.keyboard.type('const Example = () => <PriceTag amount={42} locale="en-US" />;\n\nrender(<Example />);');
-    await expect(page.frameLocator("iframe").first().getByText("$42.00")).toBeVisible();
+    await expect(async () => {
+      await replaceEditorCode(page, 'const Example = () => <PriceTag amount={42} locale="en-US" />;\n\nrender(<Example />);');
+      await expect(preview.getByText("$42.00")).toBeVisible({ timeout: 3000 });
+    }).toPass({ timeout: 20000 });
   });
 });
 
@@ -102,16 +120,15 @@ test.describe("preview isolation", () => {
     const preview = page.frameLocator("iframe").first();
     await expect(preview.getByText(/\$\d/).first()).toBeVisible();
 
-    const editor = page.locator("[contenteditable]").first();
-    await editor.click();
-    await page.keyboard.press("ControlOrMeta+A");
-    await page.keyboard.type(
-      'const Example = () => <div style={{ position: "fixed", inset: 0, background: "rgb(200, 0, 0)" }}>COVER</div>;\n\nrender(<Example />);',
-    );
-
     const frame = page.locator("iframe").first();
-    const cover = page.frameLocator("iframe").first().getByText("COVER");
-    await expect(cover).toBeVisible();
+    const cover = preview.getByText("COVER");
+    await expect(async () => {
+      await replaceEditorCode(
+        page,
+        'const Example = () => <div style={{ position: "fixed", inset: 0, background: "rgb(200, 0, 0)" }}>COVER</div>;\n\nrender(<Example />);',
+      );
+      await expect(cover).toBeVisible({ timeout: 3000 });
+    }).toPass({ timeout: 20000 });
 
     // `fixed` is relative to the frame's viewport: the overlay's box lies
     // within the frame's box, and the page around it is untouched.
