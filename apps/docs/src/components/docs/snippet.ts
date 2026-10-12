@@ -25,9 +25,12 @@ export function snippetToLiveCode(source: string): { code: string; noInline: boo
   // A snippet using hooks at the top level can't run as a bare expression;
   // wrap it in a component so the hooks have somewhere to live.
   if (/^\s*(?:const|let)\s.*=\s*use[A-Z]/m.test(withoutImports)) {
-    const lastJsxStart = withoutImports.lastIndexOf("\n<");
-    const setup = lastJsxStart === -1 ? "" : withoutImports.slice(0, lastJsxStart);
-    const jsx = lastJsxStart === -1 ? withoutImports : withoutImports.slice(lastJsxStart + 1);
+    // The first line that opens a tag starts the JSX; everything before it is
+    // setup. (The last such line would be the closing tag of a multi-line
+    // element, which would leave the opening tags in the setup region.)
+    const jsxStart = withoutImports.indexOf("\n<");
+    const setup = jsxStart === -1 ? "" : withoutImports.slice(0, jsxStart);
+    const jsx = jsxStart === -1 ? withoutImports : withoutImports.slice(jsxStart + 1);
     return {
       code: `function Example() {\n${setup}\n  return (\n<>\n${jsx.replace(/;\s*$/, "")}\n</>\n  );\n}\n\nrender(<Example />);`,
       noInline: true,

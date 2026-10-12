@@ -26,8 +26,25 @@ describe("snippetToLiveCode", () => {
     const source = `const methods = useForm({ defaultValues: { email: "" } });\n\n<Form methods={methods}>\n  <TextField />\n</Form>;`;
     const result = snippetToLiveCode(source);
     expect(result.noInline).toBe(true);
-    expect(result.code).toContain("function Example() {\nconst methods = useForm(");
-    expect(result.code).toContain("<Form methods={methods}>");
-    expect(result.code.trim().endsWith("render(<Example />);")).toBe(true);
+    // The whole multi-line element must land inside the fragment: splitting at
+    // the last tag line instead of the first left `<Form ...>` in the setup
+    // region and only `</Form>` in the return, which is not valid code.
+    expect(result.code).toBe(
+      [
+        "function Example() {",
+        'const methods = useForm({ defaultValues: { email: "" } });',
+        "",
+        "  return (",
+        "<>",
+        "<Form methods={methods}>",
+        "  <TextField />",
+        "</Form>",
+        "</>",
+        "  );",
+        "}",
+        "",
+        "render(<Example />);",
+      ].join("\n"),
+    );
   });
 });
