@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { catalog } from "@/lib/catalog";
+import { getDocPages } from "@/lib/docs";
 import styles from "./site-header.module.scss";
 
 const isExternal = (href: string) => /^https?:\/\//.test(href);
@@ -29,6 +30,8 @@ export function SiteHeader() {
           <Link href="/#scopes">Scopes</Link>
           {/* The tokens page exists only when a scope declares a tokens.scss. */}
           {tokens && <Link href="/tokens">Design tokens</Link>}
+          {/* The Docs section exists only when docs/ has at least one page. */}
+          {getDocPages().length > 0 && <Link href="/docs">Docs</Link>}
         </nav>
       </div>
       {site.links.length > 0 && (

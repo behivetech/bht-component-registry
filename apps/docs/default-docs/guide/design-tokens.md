@@ -1,3 +1,9 @@
+---
+title: Design tokens
+description: The optional design-tokens page and how a theme reaches every component.
+order: 7
+---
+
 # Design tokens
 
 A scope can point at a `tokens.scss` from its `scope.json`, and the docs site then adds a Design tokens page listing the colour roles, type scale and shape tokens it finds there, with light and dark values side by side. The page and its nav item exist only when some scope declares a tokens file, so a registry without a theme has no empty page.

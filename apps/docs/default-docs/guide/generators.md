@@ -1,3 +1,9 @@
+---
+title: Generators
+description: Where generators live, how to run them, and how to write your own in a minute.
+order: 3
+---
+
 # Generators
 
 `pnpm gen` scaffolds things into this repo: a component package, a docs page, or a generator of your own. It is [plop](https://plopjs.com/) — Handlebars templates driven by prompts — so this page covers only what is specific to this registry. For the API itself (prompt types, actions, helpers) plop's own documentation is the reference, and the skeleton `pnpm gen generator` writes links to the right page beside each thing it uses.

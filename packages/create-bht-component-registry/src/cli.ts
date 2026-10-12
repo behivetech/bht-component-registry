@@ -23,6 +23,7 @@ const HELP = `
   update options
     --to <x.y.z>                 template version to update to (default: this CLI's version)
     --dry-run                    list what would change and change nothing
+    --restore-guide              bring back guide pages (docs/guide) you deleted
     -y, --yes                    apply without asking
 
   both
@@ -53,6 +54,7 @@ async function main(argv: string[]): Promise<number> {
         from: { type: "string" },
         "no-install": { type: "boolean" },
         "dry-run": { type: "boolean" },
+        "restore-guide": { type: "boolean" },
         yes: { type: "boolean", short: "y" },
         help: { type: "boolean", short: "h" },
         version: { type: "boolean", short: "v" },
@@ -80,7 +82,13 @@ async function main(argv: string[]): Promise<number> {
 
   const [command, ...rest] = positionals;
   if (command === "update") {
-    return update({ to: string("to"), from: string("from"), dryRun: flag("dry-run"), yes: flag("yes") });
+    return update({
+      to: string("to"),
+      from: string("from"),
+      dryRun: flag("dry-run"),
+      yes: flag("yes"),
+      restoreGuide: flag("restore-guide"),
+    });
   }
 
   const dir = command === "create" ? rest[0] : command;

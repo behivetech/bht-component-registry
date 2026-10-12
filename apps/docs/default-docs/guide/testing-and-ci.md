@@ -1,3 +1,9 @@
+---
+title: Testing and CI
+description: Unit tests, Playwright against the static build, and the shipped CI workflow.
+order: 8
+---
+
 # Testing and CI
 
 `pnpm verify` runs the build, lint, type check and unit tests for every package; `pnpm test:e2e` runs Playwright against the static build served the way a host would serve it. Neither needs an account, a database or an environment variable, so they run the same on your laptop and in CI. CI ships as a single file, `.github/workflows/ci.yml`, that you can delete.

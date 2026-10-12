@@ -1,3 +1,9 @@
+---
+title: Components
+description: The anatomy of a component folder, scaffolding, README and composition conventions, status and tags.
+order: 2
+---
+
 # Components
 
 A component is a folder at `registry/<scope>/<category>/<name>`, which is also the npm package `@<scope>/<category>.<name>`. Everything the docs site shows for it is derived from that folder at build time: the README is the Overview tab, the compositions are the live examples, the TypeScript interface is the props table, the CHANGELOG is the Changelog tab, and `package.json` carries the version, status and tags. There is no record anywhere else to keep in step.

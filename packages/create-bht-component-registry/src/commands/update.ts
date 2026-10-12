@@ -12,6 +12,7 @@ import {
 import { listFiles, readText, removeFile, writeBytes, writeText } from "../lib/fs.js";
 import { errorMessage, log as defaultLog, type Logger } from "../lib/log.js";
 import {
+  isManagedPage,
   isTemplateOnly,
   isTemplateOwned,
   mergeReadme,
@@ -32,6 +33,8 @@ export interface UpdateOptions {
   from?: string;
   dryRun: boolean;
   yes: boolean;
+  /** Bring back guide pages the owner deleted. */
+  restoreGuide?: boolean;
 }
 
 export interface UpdateDeps {
@@ -49,6 +52,27 @@ export interface FileChange {
 
 export type ReadmeStatus = "added" | "merged" | "unchanged" | "no-marker" | "absent";
 
+/**
+ * The template's guide pages (docs/**, frontmatter `managed: true`) are the
+ * owner's to edit, so they are not owned. They follow the rule package
+ * managers use for config files: a page that is byte-identical to the one
+ * its template version shipped is refreshed; one the owner changed is kept
+ * and listed; `managed: false` (or no frontmatter) opts out of the listing
+ * too; a page the owner deleted stays deleted unless asked for back.
+ */
+export interface GuidePlan {
+  /** Unedited since the previous template: replaced by the target's version. */
+  refreshed: FileChange[];
+  /** New in the target (not in the previous template): added. */
+  added: FileChange[];
+  /** Deleted locally, brought back because --restore-guide was given. */
+  restored: FileChange[];
+  /** Edited locally and newer in the target: kept, reported. */
+  customised: string[];
+  /** Deleted locally: left deleted, reported. */
+  removed: string[];
+}
+
 export interface UpdatePlan {
   added: FileChange[];
   replaced: FileChange[];
@@ -56,6 +80,7 @@ export interface UpdatePlan {
   readme: { status: ReadmeStatus; content?: string };
   /** rewriteScope files present in the target that had the owner's scope re-applied. */
   rewritten: string[];
+  guide: GuidePlan;
 }
 
 function defaultDeps(): UpdateDeps {
@@ -85,17 +110,59 @@ async function planReadme(root: string, templateDir: string, marker: string): Pr
 }
 
 /**
+ * The guide-page rule, applied to every managed page the target ships. The
+ * previous template (the version the repo was last updated to) is what says
+ * whether a local page is pristine; without it (the download failed, or the
+ * repo predates managed pages) a page that differs from the target is
+ * treated as customised, which is the safe reading.
+ */
+export async function planGuide(
+  root: string,
+  templateDir: string,
+  previousDir: string | null,
+  restoreGuide: boolean,
+): Promise<GuidePlan> {
+  const plan: GuidePlan = { refreshed: [], added: [], restored: [], customised: [], removed: [] };
+  const targetFiles = (await listFiles(templateDir)).filter((file) => file.startsWith("docs/") && file.endsWith(".md"));
+  for (const file of targetFiles) {
+    const target = await readText(join(templateDir, file));
+    if (!isManagedPage(target)) continue;
+    const previousPath = previousDir ? join(previousDir, file) : null;
+    const inPrevious = previousPath !== null && existsSync(previousPath);
+    const localPath = join(root, file);
+
+    if (!existsSync(localPath)) {
+      if (!inPrevious) plan.added.push({ path: file, content: target });
+      else if (restoreGuide) plan.restored.push({ path: file, content: target });
+      else plan.removed.push(file);
+      continue;
+    }
+    const local = await readText(localPath);
+    // The owner opted out (`managed: false`, or dropped the frontmatter).
+    if (!isManagedPage(local)) continue;
+    if (local === target) continue;
+    const pristine = inPrevious && local === (await readText(previousPath!));
+    if (pristine) plan.refreshed.push({ path: file, content: target });
+    else plan.customised.push(file);
+  }
+  return plan;
+}
+
+/**
  * Pure planning: what the target owns that differs from the local tree. Files
  * listed under `rewriteScope` are compared AFTER the owner's scope is re-applied,
  * so an e2e spec that only differs by scope name is correctly reported as unchanged.
  * Template-only paths are never copied, and any present locally (left behind by
- * an older template that still shipped them) are removed.
+ * an older template that still shipped them) are removed. Guide pages are
+ * planned separately — see planGuide.
  */
 export async function planUpdate(
   root: string,
   templateDir: string,
   manifest: TemplateManifest,
   rename: ScopeRename,
+  previousDir: string | null = null,
+  restoreGuide = false,
 ): Promise<UpdatePlan> {
   const owned = (file: string) => file !== "README.md" && isTemplateOwned(file, manifest);
   const targetFiles = (await listFiles(templateDir)).filter(owned);
@@ -124,11 +191,12 @@ export async function planUpdate(
   }
   const removed = [...localFiles.filter((file) => !targetSet.has(file)), ...strayTemplateOnly].sort();
   const readme = await planReadme(root, templateDir, manifest.readmeMarker);
-  return { added, replaced, removed, readme, rewritten };
+  const guide = await planGuide(root, templateDir, previousDir, restoreGuide);
+  return { added, replaced, removed, readme, rewritten, guide };
 }
 
 export async function applyPlan(root: string, plan: UpdatePlan): Promise<void> {
-  for (const change of [...plan.added, ...plan.replaced]) {
+  for (const change of [...plan.added, ...plan.replaced, ...plan.guide.refreshed, ...plan.guide.added, ...plan.guide.restored]) {
     await writeBytes(join(root, change.path), change.content);
   }
   for (const file of plan.removed) await removeFile(root, file);
@@ -143,18 +211,39 @@ function printList(title: string, files: string[], log: Logger): void {
 }
 
 export function planIsEmpty(plan: UpdatePlan): boolean {
+  const { guide } = plan;
   return (
     plan.added.length === 0 &&
     plan.replaced.length === 0 &&
     plan.removed.length === 0 &&
-    plan.readme.content === undefined
+    plan.readme.content === undefined &&
+    guide.refreshed.length === 0 &&
+    guide.added.length === 0 &&
+    guide.restored.length === 0
   );
+}
+
+function printGuide(guide: GuidePlan, log: Logger): void {
+  printList("Guide pages refreshed (unedited since your template version)", guide.refreshed.map((c) => c.path), log);
+  printList("Guide pages added", guide.added.map((c) => c.path), log);
+  printList("Guide pages restored", guide.restored.map((c) => c.path), log);
+  if (guide.customised.length > 0) {
+    printList("Guide pages you edited — kept; a newer template version exists", guide.customised, log);
+    log.info("  Compare with the template's copy when convenient, or set `managed: false` in the page's frontmatter to stop hearing about it.");
+    log.blank();
+  }
+  if (guide.removed.length > 0) {
+    printList("Guide pages you removed — left out", guide.removed, log);
+    log.info("  Run update with --restore-guide to bring them back.");
+    log.blank();
+  }
 }
 
 function printPlan(plan: UpdatePlan, manifest: TemplateManifest, scope: string, log: Logger): void {
   printList("Added", plan.added.map((change) => change.path), log);
   printList("Replaced", plan.replaced.map((change) => change.path), log);
   printList("Removed", plan.removed, log);
+  printGuide(plan.guide, log);
   switch (plan.readme.status) {
     case "added":
       log.info("README.md: added from the template.");
@@ -218,7 +307,20 @@ export async function update(options: UpdateOptions, overrides: Partial<UpdateDe
 
       const manifest = await readManifest(template.dir);
       const rename = scopeRename(config.scope);
-      const plan = await planUpdate(root, template.dir, manifest, rename);
+
+      // The template this repo is currently on, to tell an unedited guide
+      // page from an edited one. Optional: without it every differing page
+      // counts as edited, which never overwrites anyone's work.
+      let previous: Awaited<ReturnType<TemplateFetcher>> | null = null;
+      try {
+        previous = await deps.fetchTemplate({ version: config.templateVersion }, log);
+      } catch (error) {
+        log.warn(
+          `Could not fetch template ${config.templateVersion} to compare guide pages (${errorMessage(error)}); pages that differ from the target are treated as edited and left alone.`,
+        );
+      }
+      const plan = await planUpdate(root, template.dir, manifest, rename, previous?.dir ?? null, options.restoreGuide === true);
+      await previous?.cleanup();
 
       const prefix = options.dryRun ? "[dry run] " : "";
       log.blank();

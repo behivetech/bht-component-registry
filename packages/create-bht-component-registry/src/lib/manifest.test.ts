@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  isManagedPage,
   DEFAULT_MANIFEST,
   DEFAULT_README_MARKER,
   globToRegExp,
@@ -63,6 +64,9 @@ describe("isTemplateOwned", () => {
   it("never owns the owner's components, config, changesets or README", () => {
     expect(isTemplateOwned("registry/acme/atoms/thing/package.json", DEFAULT_MANIFEST)).toBe(false);
     expect(isTemplateOwned("generators/hook/index.ts", DEFAULT_MANIFEST)).toBe(false);
+    // Guide pages are the owner's to edit; `update` handles them by frontmatter, not ownership.
+    expect(isTemplateOwned("docs/guide/publishing.md", DEFAULT_MANIFEST)).toBe(false);
+    expect(isTemplateOwned("docs/contributing.md", DEFAULT_MANIFEST)).toBe(false);
     expect(isTemplateOwned("registry.config.json", DEFAULT_MANIFEST)).toBe(false);
     expect(isTemplateOwned(".changeset/fuzzy-cats.md", DEFAULT_MANIFEST)).toBe(false);
     expect(isTemplateOwned("README.md", DEFAULT_MANIFEST)).toBe(false);
@@ -130,5 +134,14 @@ describe("README marker merge", () => {
   it("keeps the owner's marker when the target dropped it", () => {
     const merged = mergeReadme(local, "# Brand new\n\nText.\n", marker);
     expect(merged).toBe(`# Brand new\n\nText.\n\n${marker}\n\n## Our notes\n\nDeploy on Fridays.\n`);
+  });
+});
+
+describe("isManagedPage", () => {
+  it("is true only for frontmatter that says managed: true", () => {
+    expect(isManagedPage("---\ntitle: Publishing\nmanaged: true\n---\n\n# Publishing\n")).toBe(true);
+    expect(isManagedPage("---\ntitle: Publishing\nmanaged: false\n---\n\n# Publishing\n")).toBe(false);
+    expect(isManagedPage("---\ntitle: Publishing\n---\n\n# Publishing\n")).toBe(false);
+    expect(isManagedPage("# Publishing\n\nmanaged: true is just prose here.\n")).toBe(false);
   });
 });

@@ -1,3 +1,9 @@
+---
+title: Scopes
+description: The one-scope rule, registry.config.json, scope.json, and several scopes in one repo.
+order: 5
+---
+
 # Scopes
 
 A scope is the npm scope your components are published under, and the first folder level under `registry/`. Every repo has one primary scope, named in `registry.config.json`; the generator defaults to it and every package it writes is `@<scope>/<category>.<name>`. Each scope folder carries a small `scope.json` with its display name, tagline, visibility and an optional design-tokens path. More scopes can live in the same repo, but one is primary.

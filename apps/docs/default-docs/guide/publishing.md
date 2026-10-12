@@ -1,3 +1,9 @@
+---
+title: Publishing
+description: The Changesets flow, npmjs and GitHub Packages, and the Changelog tab.
+order: 6
+---
+
 # Publishing
 
 Every component is its own npm package with its own semver. Changesets records what changed, bumps versions and writes each package's `CHANGELOG.md`; `pnpm release` builds the packages and publishes them to the registry named in `registry.config.json#npmRegistry`. npmjs is the default, GitHub Packages and private registries are a one-line change, and the published tarball carries enough (source, README, compositions, `docs.json`) that its docs can be rendered from the registry alone.

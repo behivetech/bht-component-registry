@@ -108,6 +108,29 @@ export interface CatalogSite {
   links: { label: string; href: string }[];
 }
 
+/** One page of the site's Docs section: a Markdown file under docs/. */
+export interface DocPage {
+  /** URL path under /docs, e.g. "guide/publishing" or "contributing". */
+  slug: string;
+  /** Repo-relative file, e.g. "docs/guide/publishing.md". */
+  path: string;
+  /** The folder under docs/, or "general" for a top-level page. */
+  section: string;
+  sectionLabel: string;
+  title: string;
+  description: string | null;
+  /** Position within its section; frontmatter `order`, 100 when absent. */
+  order: number;
+  /** Frontmatter `managed: true`: a template guide page `update` keeps current until it is edited. */
+  managed: boolean;
+  /** Markdown with the H1 removed. */
+  body: string;
+}
+
+export interface DocsIndex {
+  pages: DocPage[];
+}
+
 export interface Catalog {
   generatedAt: string;
   /** The primary scope from registry.config.json. */

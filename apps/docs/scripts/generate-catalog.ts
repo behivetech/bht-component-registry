@@ -17,6 +17,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
+import matter from "gray-matter";
 import ts from "typescript";
 import { componentSourceFiles, createDocgen, toDocs } from "@bht-component-registry/env/docgen";
 import type {
@@ -27,12 +28,15 @@ import type {
   CatalogSite,
   CatalogSourceFile,
   CatalogStatus,
+  DocPage,
+  DocsIndex,
 } from "../src/lib/catalog/types";
 import { extractTokens, humanizeTitle, parseChangelog, readmeSummary, readmeTitle, splitPascal, stripTitle, toTitle } from "../src/lib/catalog/parse";
 
 const APP_DIR = path.resolve(import.meta.dirname, "..");
 const REPO_ROOT = path.resolve(APP_DIR, "../..");
 const REGISTRY_DIR = path.join(REPO_ROOT, "registry");
+const DOCS_DIR = path.join(REPO_ROOT, "docs");
 const OUT_DIR = path.join(APP_DIR, "src/generated");
 const require = createRequire(path.join(APP_DIR, "package.json"));
 
@@ -64,7 +68,7 @@ interface RegistryConfig {
 function readConfig(): RegistryConfig {
   const file = path.join(REPO_ROOT, "registry.config.json");
   if (!fs.existsSync(file)) {
-    throw new Error("registry.config.json is missing at the repo root. See docs/scopes.md.");
+    throw new Error("registry.config.json is missing at the repo root. See docs/guide/scopes.md.");
   }
   const config = readJson(file) as Partial<RegistryConfig>;
   for (const key of ["scope", "npmRegistry", "site"] as const) {
@@ -226,6 +230,65 @@ function sourceFiles(dir: string): CatalogSourceFile[] {
 }
 
 /** registry/<slug>/scope.json: name, tagline, visibility and an optional tokens.scss path. */
+// ---------------------------------------------------------------------------
+// docs/**/*.md — the site's Docs section
+// ---------------------------------------------------------------------------
+
+/** The section a top-level page belongs to; folders name their own. */
+const GENERAL_SECTION = "general";
+
+function markdownFiles(dir: string, prefix = ""): string[] {
+  if (!fs.existsSync(dir)) return [];
+  return fs
+    .readdirSync(dir, { withFileTypes: true })
+    .flatMap((entry) => {
+      if (entry.name.startsWith(".")) return [];
+      const rel = prefix ? `${prefix}/${entry.name}` : entry.name;
+      if (entry.isDirectory()) return markdownFiles(path.join(dir, entry.name), rel);
+      return entry.name.endsWith(".md") ? [rel] : [];
+    })
+    .sort();
+}
+
+/**
+ * Every Markdown file under docs/ is a page. The file's folder is its
+ * section (top-level files sit in "general"); frontmatter gives it a title,
+ * description and order, and `managed: true` marks a template guide page
+ * that `update` keeps current until the owner edits it. A page with no
+ * frontmatter still works: the H1 is the title, the file name the slug.
+ */
+function collectDocs(): DocPage[] {
+  const pages = markdownFiles(DOCS_DIR).map((rel): DocPage => {
+    const parsed = matter(fs.readFileSync(path.join(DOCS_DIR, rel), "utf8"));
+    const data = parsed.data as Record<string, unknown>;
+    // gray-matter leaves the blank line that followed the frontmatter; the
+    // title helpers expect the H1 on the first line.
+    const content = parsed.content.replace(/^\s+/, "");
+    const slug = rel.replace(/\.md$/, "");
+    const segments = slug.split("/");
+    const section = segments.length > 1 ? segments[0]! : GENERAL_SECTION;
+    const fileTitle = toTitle(segments[segments.length - 1]!);
+    return {
+      slug,
+      path: `docs/${rel}`,
+      section,
+      sectionLabel: toTitle(section),
+      title: typeof data.title === "string" && data.title.trim() ? data.title.trim() : (readmeTitle(content) ?? fileTitle),
+      description: typeof data.description === "string" && data.description.trim() ? data.description.trim() : null,
+      order: Number.isFinite(Number(data.order)) && data.order !== undefined ? Number(data.order) : 100,
+      managed: data.managed === true,
+      body: stripTitle(content),
+    };
+  });
+  // General first (the owner's own pages), then sections by name; within a
+  // section by order, then title.
+  const sectionRank = (section: string) => (section === GENERAL_SECTION ? "" : section);
+  return pages.sort(
+    (a, b) =>
+      sectionRank(a.section).localeCompare(sectionRank(b.section)) || a.order - b.order || a.title.localeCompare(b.title),
+  );
+}
+
 function readScope(slug: string, componentCount: number): CatalogScope {
   const scopeDir = path.join(REGISTRY_DIR, slug);
   const manifestFile = path.join(scopeDir, "scope.json");
@@ -251,7 +314,7 @@ async function main() {
   const entries: { scope: string; category: string; name: string; dir: string; pkg: Record<string, unknown> }[] = [];
 
   if (!fs.existsSync(REGISTRY_DIR)) {
-    throw new Error("No registry/ folder. Create one with `pnpm gen` — see docs/components.md.");
+    throw new Error("No registry/ folder. Create one with `pnpm gen` — see docs/guide/components.md.");
   }
 
   for (const scope of fs.readdirSync(REGISTRY_DIR).sort()) {
@@ -367,6 +430,9 @@ async function main() {
 
   fs.mkdirSync(OUT_DIR, { recursive: true });
   fs.writeFileSync(path.join(OUT_DIR, "catalog.json"), `${JSON.stringify(catalog, null, 2)}\n`);
+
+  const docs: DocsIndex = { pages: collectDocs() };
+  fs.writeFileSync(path.join(OUT_DIR, "docs.json"), `${JSON.stringify(docs, null, 2)}\n`);
 
   // A real module with static imports, not a runtime `import()` by name: the
   // bundler has to see every import to include the package and its CSS.
