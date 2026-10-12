@@ -15,6 +15,7 @@ const base: CatalogComponent = {
   status: "STABLE",
   tags: [],
   design: [],
+  thumbnail: true,
   docs: [],
   functions: [],
   examples: [{ name: "BasicPriceTag", title: "Basic Price Tag", description: "", code: "render(<PriceTag amount={1} />);" }],
@@ -36,6 +37,11 @@ describe("toCardModel", () => {
   it("never thumbnails a component that renders through a portal", () => {
     const modal = { ...base, name: "modal", exportNames: ["Modal"] };
     expect(toCardModel(modal).thumbnailCode).toBeNull();
+  });
+
+  it("lets a package opt out of its tile with registry.preview.thumbnail: false", () => {
+    const popup = { ...base, name: "popup", exportNames: ["Popup"], thumbnail: false };
+    expect(toCardModel(popup).thumbnailCode).toBeNull();
   });
 
   it("carries the package's own status and tags", () => {

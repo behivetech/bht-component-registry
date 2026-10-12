@@ -21,7 +21,12 @@ export interface ComponentCardModel {
  * their UI over the whole page, not inside a tile. Thumbnailing one of those
  * would open it on top of the catalog (and, with `aria-modal`, hide the rest
  * of the page from assistive tech). They get a placeholder tile instead and
- * are shown on their own pages, where an open overlay is the point.
+ * are shown on their own pages, where an open overlay is the point — inside
+ * its own preview frame, so it covers the example and nothing else.
+ *
+ * A package says so itself with `registry.preview.thumbnail: false`; this
+ * list is the fallback for packages that haven't, keyed on the export names
+ * such components conventionally use.
  */
 export const OVERLAY_EXPORTS = new Set([
   "Modal",
@@ -34,8 +39,8 @@ export const OVERLAY_EXPORTS = new Set([
   "Popover",
 ]);
 
-export const isOverlayComponent = (component: Pick<CatalogComponent, "exportNames">) =>
-  component.exportNames.some((name) => OVERLAY_EXPORTS.has(name));
+export const isOverlayComponent = (component: Pick<CatalogComponent, "exportNames" | "thumbnail">) =>
+  !component.thumbnail || component.exportNames.some((name) => OVERLAY_EXPORTS.has(name));
 
 /** The slice of a catalog entry a card needs — the full entry carries every source file. */
 export function toCardModel(component: CatalogComponent): ComponentCardModel {

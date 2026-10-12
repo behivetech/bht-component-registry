@@ -50,8 +50,9 @@ test.describe("component page", () => {
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Price Tag");
     await expect(page.getByText("pnpm add @example/atoms.price-tag")).toBeVisible();
 
-    // A composition, executed: a real rendered price, not a screenshot.
-    await expect(page.getByText(/\$\d/).first()).toBeVisible();
+    // A composition, executed: a real rendered price, not a screenshot. Live
+    // examples run in their own frame (see sandbox-protocol.ts).
+    await expect(page.frameLocator("iframe").first().getByText(/\$\d/).first()).toBeVisible();
 
     // Props straight from TypeScript via react-docgen. Scoped to the
     // Properties section — the README may have a hand-written table of its own.
@@ -79,13 +80,63 @@ test.describe("component page", () => {
 
   test("editing a live example re-renders it", async ({ page }) => {
     await page.goto("/example/atoms/price-tag/playground");
+    // Let the preview frame boot and render the starter first: until then the
+    // page is still re-rendering around the editor and can drop the selection.
+    const preview = page.frameLocator("iframe").first();
+    await expect(preview.getByText(/\$\d/).first()).toBeVisible();
+
     // react-live's editor is a contenteditable <pre> (Chromium gets
-    // `plaintext-only`), not a form control.
+    // `plaintext-only`), not a form control, and it only listens to real
+    // input — so select everything and type over it.
     const editor = page.locator("[contenteditable]").first();
     await editor.click();
     await page.keyboard.press("ControlOrMeta+A");
     await page.keyboard.type('const Example = () => <PriceTag amount={42} locale="en-US" />;\n\nrender(<Example />);');
-    await expect(page.getByText("$42.00")).toBeVisible();
+    await expect(page.frameLocator("iframe").first().getByText("$42.00")).toBeVisible();
+  });
+});
+
+test.describe("preview isolation", () => {
+  test("a fixed-position overlay covers its preview, not the docs page", async ({ page }) => {
+    await page.goto("/example/atoms/price-tag/playground");
+    const preview = page.frameLocator("iframe").first();
+    await expect(preview.getByText(/\$\d/).first()).toBeVisible();
+
+    const editor = page.locator("[contenteditable]").first();
+    await editor.click();
+    await page.keyboard.press("ControlOrMeta+A");
+    await page.keyboard.type(
+      'const Example = () => <div style={{ position: "fixed", inset: 0, background: "rgb(200, 0, 0)" }}>COVER</div>;\n\nrender(<Example />);',
+    );
+
+    const frame = page.locator("iframe").first();
+    const cover = page.frameLocator("iframe").first().getByText("COVER");
+    await expect(cover).toBeVisible();
+
+    // `fixed` is relative to the frame's viewport: the overlay's box lies
+    // within the frame's box, and the page around it is untouched.
+    const frameBox = (await frame.boundingBox())!;
+    const coverBox = (await cover.boundingBox())!;
+    expect(coverBox.y).toBeGreaterThanOrEqual(frameBox.y - 1);
+    expect(coverBox.y + coverBox.height).toBeLessThanOrEqual(frameBox.y + frameBox.height + 1);
+
+    // The tab bar above the preview is still the page's to click.
+    await page.getByRole("link", { name: "Code" }).click();
+    await expect(page).toHaveURL(/\/code$/);
+  });
+
+  test("open in new tab renders the same example on its own", async ({ page }) => {
+    await page.goto("/example/atoms/price-tag/playground");
+    const href = await page.getByRole("link", { name: "Open in new tab" }).first().getAttribute("href");
+    expect(href).toMatch(/^\/sandbox#/);
+    await page.goto(href!);
+    await expect(page.getByText(/\$\d/).first()).toBeVisible();
+  });
+
+  test("catalog tiles stay inline", async ({ page }) => {
+    await page.goto("/example");
+    await expect(page.locator("iframe")).toHaveCount(0);
+    await expect(page.getByText(/\$\d/).first()).toBeVisible();
   });
 });
 

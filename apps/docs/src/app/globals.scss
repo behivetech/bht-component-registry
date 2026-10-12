@@ -22,6 +22,15 @@
   --md-sys-color-on-primary-container: color-mix(in srgb, var(--md-sys-color-primary) 75%, black);
 }
 
+// The live-preview frame (/sandbox) is a bare document: the embedding page
+// supplies the border, background and title bar, so the frame's own body
+// must add nothing — no margin, and a transparent background so the page's
+// surface shows through.
+:root[data-sandbox] body {
+  margin: 0;
+  background: transparent;
+}
+
 // Dark scheme: the sheet's dark primary is a lighter tone (#cebdfe), so the
 // same roles are re-derived toward black. These two blocks mirror the sheet's
 // own pair (OS preference unless forced light; or forced dark).

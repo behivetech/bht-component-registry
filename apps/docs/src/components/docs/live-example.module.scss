@@ -22,6 +22,11 @@
   color: var(--md-sys-color-on-surface-variant);
 }
 
+.actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
 .toggle {
   border: 0;
   padding: 0.25rem 0.75rem;
@@ -29,6 +34,7 @@
   font: inherit;
   font-size: 0.8125rem;
   cursor: pointer;
+  text-decoration: none;
   color: var(--md-sys-color-primary);
   background: transparent;
 
@@ -37,9 +43,25 @@
   }
 }
 
+// The preview's document lives in the frame (see sandbox.module.scss for its
+// padding); this box only gives it a height. The frame reports its content
+// height and the component sets it here, so the page scrolls, never the frame.
 .preview {
+  height: var(--preview-height);
+  transition: height 120ms ease-out;
+}
+
+.frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+}
+
+// Catalog thumbnails render inline: no frame, no controls.
+.inline {
   padding: 1.5rem;
-  // Compositions often render a few elements side by side; give them room.
   display: flow-root;
 }
 
