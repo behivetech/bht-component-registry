@@ -85,7 +85,7 @@ pnpm orders a recursive run by `workspace:*` dependencies, so the template's roo
 "check-types": "pnpm -r run check-types",
 "test": "pnpm -r run test",
 "verify": "pnpm build && pnpm lint && pnpm check-types && pnpm test",
-"gen": "tsx scripts/gen.mts",
+"gen": "node --import tsx node_modules/plop/bin/plop.js",
 "release": "pnpm --filter \"{./registry/**}...\" --filter create-bht-component-registry run build && changeset publish"
 ```
 
@@ -125,7 +125,7 @@ Component packages run `vitest run` with no config of their own. Vitest walks up
 
 ## The generator
 
-`pnpm gen` is `tsx scripts/gen.mts`. It reads `registry.config.json` (`scope`, `npmRegistry`) and the root `package.json#repository.url`, and writes into `<root>/registry/<scope>/<category>/<name>`. Nothing else to configure. See [Components](components.md).
+`pnpm gen` is [plop](https://plopjs.com/), run under Node with the `tsx` loader (`node --import tsx …`) so `plopfile.ts` and the generators under `scripts/generators/` stay TypeScript and every argument reaches plop untouched. The `component` generator reads `registry.config.json` (`scope`, `npmRegistry`) and the root `package.json#repository.url`, and writes into `<root>/registry/<scope>/<category>/<name>`. If your repo already has a plopfile, keep ours as the entry point and move your generators into `generators/<name>/index.ts` — they are loaded automatically and `update` never touches that folder. See [Generators](generators.md).
 
 ## Publishing and CI in a shared repo
 

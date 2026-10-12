@@ -1,0 +1,64 @@
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import type { NodePlopAPI } from "plop";
+
+/**
+ * `pnpm gen {{ dashCase name }}` — {{ description }}
+ *
+ * This file was written by `pnpm gen generator`. It is yours: `update` never
+ * touches generators/. Everything here is plain plop — the links beside each
+ * part go to the page that documents it.
+ */
+
+// plop resolves this generator's relative paths against THIS folder, so paths
+// into the repo are built from ROOT and paths to templates from TEMPLATES.
+const HERE = dirname(fileURLToPath(import.meta.url));
+const ROOT = resolve(HERE, "../..");
+const TEMPLATES = join(HERE, "templates");
+
+export default function (plop: NodePlopAPI) {
+  plop.setGenerator("{{ dashCase name }}", {
+    description: "{{ description }}",
+
+    // Prompts: https://plopjs.com/documentation/#prompts
+    // Every prompt is an Inquirer question. House style: say the shape and an
+    // example in the message, show where the result lands, validate with the
+    // rule AND the fix, and default whatever has a sensible default.
+    prompts: [
+      {
+        type: "input",
+        name: "name",
+        message: "Name (kebab-case, e.g. my-thing) → generated/<name>.txt",
+        validate: (input: string) =>
+          /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/.test(input) ? true : "Must be kebab-case (e.g. my-thing).",
+      },
+    ],
+
+    // Actions run in order with the answers. Paths and template files are
+    // Handlebars: \{{dashCase name}}, \{{pascalCase name}}, \{{titleCase name}}
+    // and the other built-in helpers — https://plopjs.com/documentation/#built-in-helpers
+    actions: [
+      // One file from one template — https://plopjs.com/documentation/#add
+      {
+        type: "add",
+        path: join(ROOT, "generated/\{{dashCase name}}.txt"),
+        templateFile: join(TEMPLATES, "example.txt.hbs"),
+      },
+
+      // A whole folder of templates, file names included — https://plopjs.com/documentation/#addmany
+      // {
+      //   type: "addMany",
+      //   destination: join(ROOT, "registry/<scope>/<category>/\{{dashCase name}}"),
+      //   base: TEMPLATES,
+      //   templateFiles: join(TEMPLATES, "**"),
+      // },
+
+      // Anything else: a function that gets the answers and returns a line to
+      // print — https://plopjs.com/documentation/#custom-action-function
+      (answers) => `Done: ${plop.getHelper("titleCase")(String(answers.name))}`,
+    ],
+  });
+
+  // Need a helper of your own in the templates? https://plopjs.com/documentation/#sethelper
+  // plop.setHelper("shout", (text: string) => String(text).toUpperCase());
+}

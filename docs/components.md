@@ -4,7 +4,7 @@ A component is a folder at `registry/<scope>/<category>/<name>`, which is also t
 
 ## Anatomy of a component folder
 
-`pnpm gen --args acme atoms button` writes:
+`pnpm gen component acme atoms button` writes:
 
 ```
 registry/acme/atoms/button/
@@ -42,18 +42,18 @@ Categories offered by the generator are `atoms`, `molecules`, `forms`, `organism
 Interactive:
 
 ```bash
-pnpm gen
+pnpm gen component
 ```
 
-It asks for the scope (defaulting to the one in `registry.config.json`; existing scopes are listed), the category (a list) and the name (kebab-case, for example `date-picker`). Scope and name are validated; an empty or malformed scope is refused, because the package name would not be a valid scoped name.
+It asks for the scope (defaulting to the one in `registry.config.json`; existing scopes are listed), the category (a list) and the name (kebab-case, for example `date-picker`). Each prompt shows where the result lands. Scope and name are validated; an empty or malformed scope is refused, because the package name would not be a valid scoped name, and a name that already exists in that scope is refused too.
 
-Without prompts:
+Without prompts — the answers in order:
 
 ```bash
-pnpm gen --args acme atoms date-picker
+pnpm gen component acme atoms date-picker
 ```
 
-The files come from `scripts/templates/component/*.hbs` (Handlebars: `{{ pascalCase name }}`, `{{ constantCase scope }}` and friends). Edit them to change what a new component starts with; they are template-owned, so keep such edits in a commit you can re-apply after an update.
+`pnpm gen` on its own lists every generator, including any you have added; see [Generators](generators.md). The files come from `scripts/generators/component/templates/*.hbs` (Handlebars: `{{ pascalCase name }}`, `{{ constantCase scope }}` and friends). Edit them to change what a new component starts with; they are template-owned, so keep such edits in a commit you can re-apply after an update — or copy the generator into `generators/` and make it yours.
 
 After either form:
 

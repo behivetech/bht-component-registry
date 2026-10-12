@@ -36,6 +36,9 @@ export const DEFAULT_MANIFEST: TemplateManifest = {
     "apps/docs/**",
     "packages/**",
     "scripts/**",
+    // The generator entry point; the generators it loads from scripts/generators
+    // are owned with scripts/**, the owner's own under generators/ never are.
+    "plopfile.ts",
     // Shipped by pre-release templates (their task runner). Still owned so `update`
     // removes them from repos created from those.
     "turbo/generators/**",
@@ -56,7 +59,7 @@ export const DEFAULT_MANIFEST: TemplateManifest = {
     "LICENSE",
     "docs/**",
   ],
-  never: ["registry/**", "registry.config.json", ".changeset/*.md", "apps/docs/src/generated/**"],
+  never: ["registry/**", "generators/**", "registry.config.json", ".changeset/*.md", "apps/docs/src/generated/**"],
   templateOnly: ["packages/create-bht-component-registry/**", ".github/ISSUE_TEMPLATE/**", ".github/PULL_REQUEST_TEMPLATE.md"],
   readmeMarker: DEFAULT_README_MARKER,
   rewriteScope: ["apps/docs/e2e/public.spec.ts", "apps/docs/package.json"],

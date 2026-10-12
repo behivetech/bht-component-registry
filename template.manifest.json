@@ -4,6 +4,7 @@
     "apps/docs/**",
     "packages/**",
     "scripts/**",
+    "plopfile.ts",
     "turbo/generators/**",
     ".github/workflows/**",
     ".changeset/config.json",
@@ -24,6 +25,7 @@
   ],
   "never": [
     "registry/**",
+    "generators/**",
     "registry.config.json",
     ".changeset/*.md",
     "apps/docs/src/generated/**"
