@@ -25,4 +25,4 @@ Out of scope: vulnerabilities in your own components or in the hosting platform 
 
 ## Supported versions
 
-The latest release of the template and the latest published `create-bht-component-registry` receive fixes. Run `npx create-bht-component-registry update` to bring a registry up to date; see [docs/updating.md](docs/updating.md).
+The latest release of the template and the latest published `create-bht-component-registry` receive fixes. Run `npx create-bht-component-registry update` to bring a registry up to date; see [the updating guide](apps/docs/default-docs/guide/updating.md).

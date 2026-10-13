@@ -53,7 +53,7 @@ You can also delete `registry/example` entirely and scaffold your first componen
 ## Your first component
 
 ```bash
-pnpm gen --args acme atoms button
+pnpm gen component acme atoms button
 pnpm install
 pnpm dev
 ```
@@ -80,7 +80,9 @@ my-registry/
 ├─ registry/<scope>/
 │  ├─ scope.json              name, tagline, visibility, optional tokens path
 │  └─ <category>/<name>/      one npm package per component
-├─ scripts/                  pnpm gen (gen.mts) and its templates
+├─ plopfile.ts                pnpm gen — loads scripts/generators/* and generators/*
+├─ scripts/generators/        the template's generators (component, doc, generator)
+├─ generators/                your own generators; update never touches them
 ├─ .changeset/                Changesets config and pending changesets
 ├─ .github/workflows/         ci.yml (verify + e2e), release.yml (changesets publish)
 ├─ registry.config.json       scope, npmRegistry, templateVersion, site branding
@@ -102,7 +104,7 @@ All run from the repo root.
 | `pnpm serve` | Serves `apps/docs/out` on :3000 the way a static host would |
 | `pnpm verify` | build, then lint + types + unit tests for every package |
 | `pnpm test:e2e` | Playwright against the static build (builds first) |
-| `pnpm gen` | Scaffold a component; `pnpm gen --args <scope> <category> <name>` skips the prompts |
+| `pnpm gen` | Pick a generator; `pnpm gen component <scope> <category> <name>` skips the prompts. See [Generators](generators.md) |
 | `pnpm changeset` | Record a change for the next release |
 | `pnpm version-packages` | Apply pending changesets: bump versions, write CHANGELOGs |
 | `pnpm release` | Build the registry packages and `changeset publish` to `npmRegistry` |

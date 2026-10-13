@@ -57,9 +57,10 @@ npx create-bht-component-registry update --dry-run
 `update` needs a clean git tree, because it replaces whole files and `git diff` is how you review
 the result. It reads `templateVersion` from `registry.config.json`, fetches the newer template,
 and replaces only **template-owned** paths — the ones listed in the target release's
-`template.manifest.json` (the docs app, `packages/**`, the generator, workflows, root config,
-`docs/**`, …). It never touches:
+`template.manifest.json` (the docs app including its default guide pages, `packages/**`, the
+generators, workflows, root config, …). It never touches:
 
+- `docs/**` — your pages, and your copies of guide pages (a same-path copy replaces the default)
 - `registry/**` — your components
 - `registry.config.json` — your settings (only `templateVersion` is bumped)
 - `.changeset/*.md` — your pending changesets

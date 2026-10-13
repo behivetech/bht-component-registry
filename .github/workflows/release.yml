@@ -17,7 +17,7 @@
 # registry.config.json, give this job `packages: write`, and pass
 # `NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}` below instead of the npm token.
 #
-# See docs/publishing.md.
+# See apps/docs/default-docs/guide/publishing.md.
 name: Release
 
 on:
@@ -62,7 +62,7 @@ jobs:
             echo "method=token" >> "$GITHUB_OUTPUT"
           else
             echo "method=none" >> "$GITHUB_OUTPUT"
-            echo "::notice::Releases are off: set the repository variable NPM_TRUSTED_PUBLISHING=true (after adding a trusted publisher on npmjs) or the secret NPM_TOKEN. See docs/publishing.md."
+            echo "::notice::Releases are off: set the repository variable NPM_TRUSTED_PUBLISHING=true (after adding a trusted publisher on npmjs) or the secret NPM_TOKEN. See apps/docs/default-docs/guide/publishing.md."
           fi
 
       # With no NPM_TOKEN the action writes no .npmrc and `changeset publish`

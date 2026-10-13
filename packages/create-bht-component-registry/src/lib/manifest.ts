@@ -36,10 +36,16 @@ export const DEFAULT_MANIFEST: TemplateManifest = {
     "apps/docs/**",
     "packages/**",
     "scripts/**",
+    // The generator entry point; the generators it loads from scripts/generators
+    // are owned with scripts/**, the owner's own under generators/ never are.
+    "plopfile.ts",
     // Shipped by pre-release templates (their task runner). Still owned so `update`
     // removes them from repos created from those.
     "turbo/generators/**",
     ".github/workflows/**",
+    // AI-assistant rules (CLAUDE.md is owned below); the owner's own go in
+    // .github/instructions/*.instructions.md, which the template never ships.
+    ".github/copilot-instructions.md",
     ".changeset/config.json",
     "turbo.json",
     "pnpm-workspace.yaml",
@@ -54,9 +60,10 @@ export const DEFAULT_MANIFEST: TemplateManifest = {
     "CONTRIBUTING.md",
     "SECURITY.md",
     "LICENSE",
-    "docs/**",
   ],
-  never: ["registry/**", "registry.config.json", ".changeset/*.md", "apps/docs/src/generated/**"],
+  // docs/ is the owner's: their pages, and their copies of the template's
+  // guide (which ships under apps/docs/default-docs/ and is owned with the app).
+  never: ["registry/**", "generators/**", "docs/**", "registry.config.json", ".changeset/*.md", "apps/docs/src/generated/**"],
   templateOnly: ["packages/create-bht-component-registry/**", ".github/ISSUE_TEMPLATE/**", ".github/PULL_REQUEST_TEMPLATE.md"],
   readmeMarker: DEFAULT_README_MARKER,
   rewriteScope: ["apps/docs/e2e/public.spec.ts", "apps/docs/package.json"],

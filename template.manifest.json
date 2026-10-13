@@ -4,8 +4,10 @@
     "apps/docs/**",
     "packages/**",
     "scripts/**",
+    "plopfile.ts",
     "turbo/generators/**",
     ".github/workflows/**",
+    ".github/copilot-instructions.md",
     ".changeset/config.json",
     "turbo.json",
     "pnpm-workspace.yaml",
@@ -19,11 +21,12 @@
     "CLAUDE.md",
     "CONTRIBUTING.md",
     "SECURITY.md",
-    "LICENSE",
-    "docs/**"
+    "LICENSE"
   ],
   "never": [
     "registry/**",
+    "generators/**",
+    "docs/**",
     "registry.config.json",
     ".changeset/*.md",
     "apps/docs/src/generated/**"

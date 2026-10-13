@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping with bht-component-registry. This file covers the template repo itself (the docs app, the tooling packages, the generator and the create CLI). If you are working in your own registry created from it, the [guides](docs/getting-started.md) are what you want.
+Thanks for helping with bht-component-registry. This file covers the template repo itself (the docs app, the tooling packages, the generator and the create CLI). If you are working in your own registry created from it, the [guides](apps/docs/default-docs/guide/getting-started.md) are what you want.
 
 ## Setup
 
@@ -22,9 +22,9 @@ pnpm verify
 pnpm test:e2e
 ```
 
-`pnpm verify` runs build, lint, type checks and unit tests for every package. `pnpm test:e2e` builds the static export and runs Playwright against it (first time: `pnpm exec playwright install chromium`). Both run in CI as well; see [docs/testing-and-ci.md](docs/testing-and-ci.md).
+`pnpm verify` runs build, lint, type checks and unit tests for every package. `pnpm test:e2e` builds the static export and runs Playwright against it (first time: `pnpm exec playwright install chromium`). Both run in CI as well; see [the testing guide](apps/docs/default-docs/guide/testing-and-ci.md).
 
-If you change how the site or the tooling behaves, update the matching guide in `docs/` in the same pull request.
+If you change how the site or the tooling behaves, update the matching guide page in `apps/docs/default-docs/guide/` in the same pull request. (`docs/` at the root belongs to the owner of a created registry; the template keeps nothing there.)
 
 ## Commits
 
@@ -38,7 +38,7 @@ Published packages are versioned with Changesets: in this repo that is `packages
 pnpm changeset
 ```
 
-Commit the generated `.changeset/*.md` with your change. Changes to the docs app, `docs/` or CI need no changeset; they ship with the next template release.
+Commit the generated `.changeset/*.md` with your change. Changes to the docs app, the guide or CI need no changeset; they ship with the next template release.
 
 ## Scope of changes
 

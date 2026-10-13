@@ -222,7 +222,7 @@ describe("create", () => {
     expect(pnpmCalls).toEqual([]);
     expect(lines.some((line) => line.includes("https://www.npmjs.com/org/create"))).toBe(true);
     expect(lines.some((line) => line.includes("https://platform.behivetech.com/expanded"))).toBe(true);
-    expect(lines.some((line) => line.includes("docs/getting-started.md"))).toBe(true);
+    expect(lines.some((line) => line.includes("apps/docs/default-docs/guide/getting-started.md"))).toBe(true);
   });
 
   it("leaves installs, build output and generated data out of the copy", async () => {

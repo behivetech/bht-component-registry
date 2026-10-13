@@ -38,9 +38,19 @@ describe("isTemplateOwned", () => {
   it("owns the docs app and the shared packages", () => {
     expect(isTemplateOwned("apps/docs/src/app/page.tsx", DEFAULT_MANIFEST)).toBe(true);
     expect(isTemplateOwned("packages/scope/src/index.ts", DEFAULT_MANIFEST)).toBe(true);
-    expect(isTemplateOwned("scripts/gen.mts", DEFAULT_MANIFEST)).toBe(true);
-    expect(isTemplateOwned("scripts/templates/component/package.json.hbs", DEFAULT_MANIFEST)).toBe(true);
+    expect(isTemplateOwned("plopfile.ts", DEFAULT_MANIFEST)).toBe(true);
+    expect(isTemplateOwned("scripts/generators/component/index.ts", DEFAULT_MANIFEST)).toBe(true);
+    expect(isTemplateOwned("scripts/generators/component/templates/package.json.hbs", DEFAULT_MANIFEST)).toBe(true);
     expect(isTemplateOwned(".changeset/config.json", DEFAULT_MANIFEST)).toBe(true);
+    expect(isTemplateOwned(".github/copilot-instructions.md", DEFAULT_MANIFEST)).toBe(true);
+    expect(isTemplateOwned("CLAUDE.md", DEFAULT_MANIFEST)).toBe(true);
+    expect(isTemplateOwned(".github/instructions/house.instructions.md", DEFAULT_MANIFEST)).toBe(false);
+  });
+
+  it("owns the shipped guide under the app, never the owner's docs/ beside it", () => {
+    expect(isTemplateOwned("apps/docs/default-docs/guide/components.md", DEFAULT_MANIFEST)).toBe(true);
+    expect(isTemplateOwned("docs/guide/components.md", DEFAULT_MANIFEST)).toBe(false);
+    expect(isTemplateOwned("docs/contributing.md", DEFAULT_MANIFEST)).toBe(false);
   });
 
   it("still owns the task-runner files pre-release templates shipped, so update can remove them", () => {
@@ -50,6 +60,7 @@ describe("isTemplateOwned", () => {
 
   it("never owns the owner's components, config, changesets or README", () => {
     expect(isTemplateOwned("registry/acme/atoms/thing/package.json", DEFAULT_MANIFEST)).toBe(false);
+    expect(isTemplateOwned("generators/hook/index.ts", DEFAULT_MANIFEST)).toBe(false);
     expect(isTemplateOwned("registry.config.json", DEFAULT_MANIFEST)).toBe(false);
     expect(isTemplateOwned(".changeset/fuzzy-cats.md", DEFAULT_MANIFEST)).toBe(false);
     expect(isTemplateOwned("README.md", DEFAULT_MANIFEST)).toBe(false);

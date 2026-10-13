@@ -77,10 +77,10 @@ Each `registry/<scope>/scope.json` describes the scope for the site:
 
 ## Multiple scopes in one repo
 
-Any folder under `registry/` with a `scope.json` or packages is a scope. `pnpm gen` offers existing scopes and lets you type a new one, so a second scope is a matter of running it with a different first argument:
+Any folder under `registry/` with a `scope.json` or packages is a scope. `pnpm gen component` offers existing scopes and lets you type a new one, so a second scope is a matter of running it with a different first argument:
 
 ```bash
-pnpm gen --args acme-labs atoms experiment
+pnpm gen component acme-labs atoms experiment
 ```
 
 Each scope gets its own page at `/<scope>`, its own entry on the home page (unless private), and its own packages under `@<scope>/`. Publishing more than one scope to npmjs means owning each org. `registry.config.json#scope` still names the primary one, which is what the generator defaults to and what the create command renamed the example to.

@@ -12,7 +12,7 @@ What are you trying to do, and what gets in the way today?
 
 ## Proposed change
 
-What would you like to see? If it touches a file a user owns (`registry/**`, `registry.config.json`, `README.md` notes) or a template-owned path (`apps/docs/**`, `packages/**`), say which.
+What would you like to see? If it touches a file a user owns (`registry/**`, `docs/**`, `generators/**`, `registry.config.json`, `README.md` notes) or a template-owned path (`apps/docs/**`, `packages/**`), say which.
 
 ## Alternatives you considered
 
