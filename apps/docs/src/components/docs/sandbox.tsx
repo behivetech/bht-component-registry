@@ -47,12 +47,14 @@ export function Sandbox() {
   }, []);
 
   // The page sizes the frame to its content, so there is never an inner
-  // scrollbar: report every change in document height.
+  // scrollbar: report every change in content height. Measured on the body,
+  // not the root element: the root's scrollHeight is never less than the
+  // viewport the page gave the frame, so it could grow but never shrink.
   useEffect(() => {
     if (window.parent === window) return;
     const report = () =>
       window.parent.postMessage(
-        { type: "bht-sandbox:height", height: document.documentElement.scrollHeight },
+        { type: "bht-sandbox:height", height: document.body.scrollHeight },
         window.location.origin,
       );
     const observer = new ResizeObserver(report);
