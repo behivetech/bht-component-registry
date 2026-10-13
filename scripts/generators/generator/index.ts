@@ -49,9 +49,12 @@ export default function (plop: NodePlopAPI) {
         templateFile: join(TEMPLATES, "index.ts.hbs"),
       },
       {
+        // A template that renders to a template: the source is Handlebars
+        // (its {{ }} are escaped as \{{ }}) and lands under the same name
+        // as the first template of the new generator.
         type: "add",
         path: join(ROOT, "generators/{{dashCase name}}/templates/example.txt.hbs"),
-        templateFile: join(TEMPLATES, "example.txt.hbs.hbs"),
+        templateFile: join(TEMPLATES, "example.txt.hbs"),
       },
       (answers) => {
         const name = plop.getHelper("dashCase")(String(answers.name));
