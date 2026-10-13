@@ -52,7 +52,7 @@
     "directory": "registry/{{ scope }}/{{ category }}/{{ dashCase name }}"
   },
   "publishConfig": {
-    "registry": "{{ npmRegistry }}",
-    "access": "public"
+    "registry": "{{ publishRegistry visibility }}",
+    "access": "{{ publishAccess visibility }}"
   }
 }

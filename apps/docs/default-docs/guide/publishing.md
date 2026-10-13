@@ -78,9 +78,26 @@ The scope must match the GitHub owner of the repo, lowercased. Packages are visi
 
 In CI, `GITHUB_TOKEN` with `packages: write` permission is enough; no secret to create. The commented variant in `.github/workflows/release.yml` shows the two lines.
 
+## Public and private packages
+
+A registry can publish some packages publicly and keep others private, side by side. Name the second registry:
+
+```json
+{
+  "npmRegistry": "https://registry.npmjs.org",
+  "privateRegistry": "https://npm.pkg.github.com"
+}
+```
+
+`pnpm gen component` then asks for a **visibility**. A public package gets `publishConfig: { registry: <npmRegistry>, access: "public" }`; a private one `{ registry: <privateRegistry>, access: "restricted" }`. That field in the package's `package.json` is the whole decision: `pnpm release` publishes each package to its own registry in one run, the Changelog tab looks each one up on its own registry, and the site marks private packages with a **Private** badge.
+
+**The choice is permanent.** A name published publicly cannot be reliably unpublished, and a private package made public exposes its history, so once a package has a release (a `<name>@<version>` tag), `pnpm check:publish` — run by `pnpm verify` and by CI — refuses any change to its `publishConfig`. Before the first release you can still fix a mistake by editing `publishConfig` by hand. Need the same component on the other side? Publish a new package.
+
+In CI, the release workflow adds the private registry's token to the runner's `~/.npmrc` from the secret `PRIVATE_REGISTRY_TOKEN`; for GitHub Packages the job's own `GITHUB_TOKEN` is used when that secret is absent (the workflow has `packages: write`). Consumers of a private package need a token too — see [GitHub Packages](#github-packages) above for the `.npmrc` they add.
+
 ## Private registries
 
-Set `npmRegistry` to the URL your registry gives you (Verdaccio, Artifactory, Nexus, Cloudsmith and the like):
+To publish **everything** to one private registry instead, set `npmRegistry` to the URL your registry gives you (Verdaccio, Artifactory, Nexus, Cloudsmith and the like):
 
 ```json
 { "npmRegistry": "https://npm.internal.example.com/" }
@@ -94,8 +111,9 @@ There are two, both optional, neither committed:
 
 | Token | Used by | Purpose |
 |---|---|---|
-| `NPM_TOKEN` (or `GITHUB_TOKEN` for GitHub Packages) | `.github/workflows/release.yml` | Publish. Exposed to `changeset publish` as `NODE_AUTH_TOKEN`. |
-| `REGISTRY_READ_TOKEN` | `pnpm build` (the docs site) | Lets the Changelog tab list the versions actually published on `npmRegistry`. Not needed for public packages on npmjs. Without it, the tab shows the `CHANGELOG.md` only. |
+| `NPM_TOKEN` (or `GITHUB_TOKEN` for GitHub Packages) | `.github/workflows/release.yml` | Publish public packages. Exposed to `changeset publish` as `NODE_AUTH_TOKEN`. Not needed with trusted publishing. |
+| `PRIVATE_REGISTRY_TOKEN` | `.github/workflows/release.yml` | Publish private packages to `privateRegistry`. For GitHub Packages the job's `GITHUB_TOKEN` stands in when this is absent. |
+| `REGISTRY_READ_TOKEN` | `pnpm build` (the docs site) | Lets the Changelog tab list the versions actually published. Not needed for public packages on npmjs. Without it, the tab shows the `CHANGELOG.md` only. |
 
 The docs site itself never needs a token at runtime; it is static.
 

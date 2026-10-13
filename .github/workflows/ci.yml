@@ -21,6 +21,11 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          # `pnpm check:publish` (in verify) reads each package's release tags
+          # to refuse a change of registry after a release; a shallow clone
+          # has no tags and would let one through.
+          fetch-depth: 0
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:

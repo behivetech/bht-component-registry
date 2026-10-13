@@ -20,6 +20,8 @@ const base: CatalogComponent = {
   releases: [],
   exportNames: ["PriceTag"],
   hasStyles: true,
+  publishRegistry: "https://registry.npmjs.org",
+  visibility: "public",
   sourcePath: "registry/example/atoms/price-tag",
   dependencies: [],
 };

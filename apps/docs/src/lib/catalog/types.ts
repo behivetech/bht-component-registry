@@ -87,6 +87,10 @@ export interface CatalogComponent {
   /** Named exports of the built package, for the live sandbox's scope. */
   exportNames: string[];
   hasStyles: boolean;
+  /** `publishConfig.registry`, where this package's releases go and where the Changelog tab looks them up. */
+  publishRegistry: string;
+  /** Private: publishes to `privateRegistry` with restricted access, so installing needs a token. */
+  visibility: "public" | "private";
   /** Repo-relative folder, e.g. "registry/acme/atoms/price-tag". */
   sourcePath: string;
   /** Workspace packages this one depends on, by package name. */
@@ -137,8 +141,10 @@ export interface Catalog {
   generatedAt: string;
   /** The primary scope from registry.config.json. */
   primaryScope: string;
-  /** Where `pnpm release` publishes, from registry.config.json. */
+  /** Where public packages publish, from registry.config.json. */
   npmRegistry: string;
+  /** Where private packages publish, from registry.config.json; null when the registry has none. */
+  privateRegistry: string | null;
   site: CatalogSite;
   categories: { key: string; label: string }[];
   scopes: CatalogScope[];

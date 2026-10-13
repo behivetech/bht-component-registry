@@ -16,8 +16,13 @@
     "npmRegistry": {
       "type": "string",
       "format": "uri",
-      "description": "Where `pnpm release` publishes and where the Changelog tab looks up published versions. Default is npmjs; GitHub Packages is https://npm.pkg.github.com; a private registry is whatever URL it gives you.",
+      "description": "Where PUBLIC packages publish and where the Changelog tab looks up their published versions. Default is npmjs; GitHub Packages is https://npm.pkg.github.com; a private registry is whatever URL it gives you.",
       "default": "https://registry.npmjs.org"
+    },
+    "privateRegistry": {
+      "type": "string",
+      "format": "uri",
+      "description": "Where PRIVATE packages publish (a package the generator was told is private, or whose publishConfig says so): GitHub Packages, Verdaccio, Artifactory, a paid npmjs org, and the like. Leave it out and every package is public. A package never moves between the two after its first release; `pnpm check:publish` enforces that."
     },
     "templateVersion": {
       "type": "string",

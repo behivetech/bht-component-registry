@@ -43,7 +43,8 @@ Committed at the repo root. Nothing in it is secret.
 | Key | Meaning |
 |---|---|
 | `scope` | Required. Your primary npm scope without the `@`. |
-| `npmRegistry` | Where `pnpm release` publishes and where the Changelog tab looks up published versions. Default `https://registry.npmjs.org`; GitHub Packages is `https://npm.pkg.github.com`; a private registry is any URL. See [Publishing](publishing.md). |
+| `npmRegistry` | Where public packages publish and where the Changelog tab looks up their versions. Default `https://registry.npmjs.org`; GitHub Packages is `https://npm.pkg.github.com`; a private registry is any URL. See [Publishing](publishing.md). |
+| `privateRegistry` | Optional. Where private packages publish — GitHub Packages, Verdaccio, a paid npmjs org. With it set, `pnpm gen component` asks whether a package is public or private; the answer is permanent after the first release. See [Publishing](publishing.md#public-and-private-packages). |
 | `templateVersion` | The template version this repo was created from or last updated to. Maintained by `npx create-bht-component-registry update`; do not edit by hand. See [Updating](updating.md). |
 | `site.title` | Required. Site name in the header and `<title>`. |
 | `site.description` | One sentence for the home page hero and `<meta name="description">`. |

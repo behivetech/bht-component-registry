@@ -34,6 +34,8 @@ const CATEGORIES = [
 
 const KEBAB = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
 
+const DEFAULT_PUBLIC_REGISTRY = "https://registry.npmjs.org";
+
 function readJson<T>(file: string, fallback: T): T {
   try {
     return JSON.parse(readFileSync(file, "utf8")) as T;
@@ -53,10 +55,37 @@ function existingScopes(): string[] {
 }
 
 export default function (plop: NodePlopAPI) {
-  const config = readJson<{ scope?: string; npmRegistry?: string }>(join(ROOT, "registry.config.json"), {});
+  const config = readJson<{ scope?: string; npmRegistry?: string; privateRegistry?: string }>(
+    join(ROOT, "registry.config.json"),
+    {},
+  );
   const rootPkg = readJson<{ repository?: { url?: string } | string }>(join(ROOT, "package.json"), {});
   const repositoryUrl = typeof rootPkg.repository === "string" ? rootPkg.repository : (rootPkg.repository?.url ?? "");
   const scopes = existingScopes();
+  const publicRegistry = config.npmRegistry ?? DEFAULT_PUBLIC_REGISTRY;
+  const privateRegistry = config.privateRegistry;
+
+  // Where a package publishes is decided once. A public package goes to
+  // npmRegistry with public access; a private one to privateRegistry with
+  // restricted access. The guard (pnpm check:publish) refuses to let a
+  // released package change its mind, so the prompt says so up front.
+  const VISIBILITY = [
+    {
+      name: `public   — publishes to ${publicRegistry}; anyone can install it`,
+      value: "public",
+      short: "public",
+    },
+    {
+      name: `private  — publishes to ${privateRegistry ?? "privateRegistry"}; needs a token to install`,
+      value: "private",
+      short: "private",
+      // Inquirer shows a disabled choice with this text instead of letting it be picked.
+      disabled: privateRegistry ? false : 'set "privateRegistry" in registry.config.json first',
+    },
+  ];
+  // The template reads publishConfig through these, keyed by the answer.
+  plop.setHelper("publishRegistry", (visibility: string) => (visibility === "private" ? privateRegistry : publicRegistry));
+  plop.setHelper("publishAccess", (visibility: string) => (visibility === "private" ? "restricted" : "public"));
 
   plop.setGenerator("component", {
     description: "A component package: registry/<scope>/<category>/<name> → @<scope>/<category>.<name>",
@@ -90,15 +119,32 @@ export default function (plop: NodePlopAPI) {
           return existsSync(dest) ? `registry/${answers?.scope}/${answers?.category}/${input} already exists.` : true;
         },
       },
+      {
+        type: "list",
+        name: "visibility",
+        message: "Visibility — permanent: a package cannot move between registries after its first release",
+        choices: VISIBILITY,
+        default: "public",
+      },
     ],
     actions: [
+      (answers) => {
+        // A disabled choice cannot be picked interactively, but a bypassed
+        // answer can still say "private"; refuse it here (a thrown error fails
+        // the run) so a private package is never written without somewhere
+        // to publish.
+        if (answers.visibility === "private" && !privateRegistry) {
+          throw new Error('"privateRegistry" is not set in registry.config.json; a private package has nowhere to publish.');
+        }
+        return answers.visibility === "private" ? `private → ${privateRegistry}` : `public → ${publicRegistry}`;
+      },
       {
         type: "addMany",
         destination: join(ROOT, "registry/{{scope}}/{{category}}/{{dashCase name}}"),
         base: TEMPLATES,
         templateFiles: join(TEMPLATES, "**"),
         globOptions: { dot: true },
-        data: { npmRegistry: config.npmRegistry ?? "https://registry.npmjs.org", repositoryUrl },
+        data: { repositoryUrl },
         verbose: true,
       },
       (answers) =>
