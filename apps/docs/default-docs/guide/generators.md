@@ -62,4 +62,13 @@ Follow these in your own generators so they feel like the shipped ones:
 - **Paths**: `registry/<scope>/<category>/<name>` for packages, `docs/<section>/<slug>.md` for pages, kebab-case everywhere; `{{dashCase name}}` in file names. Write only into folders `update` never touches (`registry/`, `docs/`, `generators/`); the template's guide under `apps/docs/default-docs/` is replaced on every update.
 - **Helpers already registered**: plop's built-ins — `dashCase`, `pascalCase`, `camelCase`, `constantCase`, `titleCase` and the rest — plus `docDir` from the `doc` generator.
 
+## Tell your AI assistant
+
+An assistant that does not know about the generators will scaffold by hand — usually by copying a package that already exists — and the copy drifts from the conventions the generators encode. The repo ships the rule for two assistants, in files `update` keeps current:
+
+- `CLAUDE.md` at the root, for Claude Code (its *Rules* section).
+- `.github/copilot-instructions.md`, for GitHub Copilot.
+
+Both say the same thing: a new component package, docs page or generator starts with `pnpm gen …`, then edit what it wrote; never copy an existing one as a starting point; if no generator fits, extend one or add one under `generators/`. If you use another assistant, put that paragraph wherever it reads its project context (an `AGENTS.md`, a rules folder, a system prompt) — the wording in `.github/copilot-instructions.md` is written to be copied. Your own additional rules go in files the template does not own: `.github/instructions/*.instructions.md` for Copilot, and for Claude Code a `CLAUDE.local.md` or `.claude/` rules, since `CLAUDE.md` itself is replaced on update.
+
 Everything else — action types, prompt options, custom helpers, partials — is plop: [plopjs.com/documentation](https://plopjs.com/documentation/).

@@ -42,6 +42,9 @@ describe("isTemplateOwned", () => {
     expect(isTemplateOwned("scripts/generators/component/index.ts", DEFAULT_MANIFEST)).toBe(true);
     expect(isTemplateOwned("scripts/generators/component/templates/package.json.hbs", DEFAULT_MANIFEST)).toBe(true);
     expect(isTemplateOwned(".changeset/config.json", DEFAULT_MANIFEST)).toBe(true);
+    expect(isTemplateOwned(".github/copilot-instructions.md", DEFAULT_MANIFEST)).toBe(true);
+    expect(isTemplateOwned("CLAUDE.md", DEFAULT_MANIFEST)).toBe(true);
+    expect(isTemplateOwned(".github/instructions/house.instructions.md", DEFAULT_MANIFEST)).toBe(false);
   });
 
   it("owns the shipped guide under the app, never the owner's docs/ beside it", () => {

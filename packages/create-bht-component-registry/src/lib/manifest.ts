@@ -43,6 +43,9 @@ export const DEFAULT_MANIFEST: TemplateManifest = {
     // removes them from repos created from those.
     "turbo/generators/**",
     ".github/workflows/**",
+    // AI-assistant rules (CLAUDE.md is owned below); the owner's own go in
+    // .github/instructions/*.instructions.md, which the template never ships.
+    ".github/copilot-instructions.md",
     ".changeset/config.json",
     "turbo.json",
     "pnpm-workspace.yaml",

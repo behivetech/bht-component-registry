@@ -37,7 +37,7 @@ Only paths listed in `template.manifest.json` at the repo root. The rule is data
 - `.github/workflows/**`
 - root config files (`pnpm-workspace.yaml`, `package.json`, `.changeset/config.json`, `registry.config.schema.json`, `.gitignore`, `template.manifest.json`)
 - `Dockerfile`, `nginx.conf`
-- `CLAUDE.md`, `CONTRIBUTING.md`
+- `CLAUDE.md`, `CONTRIBUTING.md`, `.github/copilot-instructions.md` (the AI-assistant rules; your own go in `.github/instructions/*.instructions.md` and `CLAUDE.local.md`, which are never touched)
 
 ## What it never touches
 
