@@ -89,6 +89,38 @@ test.describe("component page", () => {
   });
 });
 
+test.describe("hooks and utilities", () => {
+  test("a hook page shows its signature, parameters and a live composition", async ({ page }) => {
+    await page.goto("/example/hooks/use-toggle");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Use Toggle");
+    await expect(page.getByRole("heading", { name: "Hooks", exact: true })).toBeVisible();
+    await expect(page.getByText("useToggle(initial?: boolean): [boolean, () => void]")).toBeVisible();
+    await expect(page.getByRole("cell", { name: /^initial/ })).toBeVisible();
+    await expect(page.getByText("The starting value.")).toBeVisible();
+    // The composition is a live example, like a component's.
+    await expect(page.locator("figure").first()).toBeVisible();
+  });
+
+  test("a utility page shows its signature and its @example as code", async ({ page }) => {
+    await page.goto("/example/utils/format-price");
+    const functions = page.locator("section").filter({ has: page.getByRole("heading", { name: "Functions", exact: true }) });
+    await expect(functions).toBeVisible();
+    await expect(functions.getByText("formatPrice(value: string): string")).toBeVisible();
+    // The @example block, shown as a titled code block (the scope is also called "Example", hence the scoping).
+    await expect(functions.getByText("Example", { exact: true })).toBeVisible();
+    await expect(functions.getByText("formatPrice('hello')")).toBeVisible();
+    // Nothing runs: an @example is shown, not executed.
+    await expect(page.locator("figure")).toHaveCount(0);
+  });
+
+  test("the scope page groups hooks and utilities and gives their tiles a placeholder", async ({ page }) => {
+    await page.goto("/example");
+    await expect(page.getByRole("heading", { name: /^Hooks/ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /^Utilities/ })).toBeVisible();
+    await expect(page.getByText("No visual preview — see its signatures and examples").first()).toBeVisible();
+  });
+});
+
 test.describe("docs section", () => {
   test("the index lists the owner's pages and the guide by section", async ({ page }) => {
     await page.goto("/docs");

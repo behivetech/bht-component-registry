@@ -1,7 +1,7 @@
 ---
 title: Design tokens
 description: The optional design-tokens page and how a theme reaches every component.
-order: 7
+order: 8
 ---
 
 # Design tokens

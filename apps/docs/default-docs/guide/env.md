@@ -1,7 +1,7 @@
 ---
 title: The env package
 description: What every component builds, lints, type-checks and tests with, and how to change or override it.
-order: 4
+order: 5
 ---
 
 # The env package

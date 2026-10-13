@@ -1,7 +1,7 @@
 ---
 title: The expanded version
 description: What the expanded version adds on top of this registry, and how to get it.
-order: 13
+order: 14
 ---
 
 # The expanded version

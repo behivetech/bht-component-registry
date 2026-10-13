@@ -15,7 +15,7 @@ const HELP = `
   create options
     --scope <name>               npm scope without the @ (required; prompted if missing)
     --registry <url>             registry to publish to (default: https://registry.npmjs.org)
-    --categories <a,b,c>         starter categories (default: atoms,molecules,organisms,templates,forms)
+    --categories <a,b,c>         starter categories (default: atoms,molecules,organisms,templates,forms,hooks,utils)
     --template-version <x.y.z>   template release to download (default: this CLI's version)
     --no-install                 skip \`pnpm install\` and \`pnpm build\`
     -y, --yes                    accept defaults instead of prompting

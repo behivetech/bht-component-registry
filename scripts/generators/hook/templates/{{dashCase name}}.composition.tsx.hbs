@@ -1,0 +1,11 @@
+import { {{ camelCase name }} } from './{{ dashCase name }}.js';
+
+/** Each exported component here is a live, editable example on the docs site. This comment is its description. */
+export const Basic{{ pascalCase name }} = () => {
+  const [on, toggle] = {{ camelCase name }}(false);
+  return (
+    <button type="button" onClick={toggle}>
+      {on ? 'On' : 'Off'}
+    </button>
+  );
+};

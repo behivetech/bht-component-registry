@@ -1,7 +1,7 @@
 ---
 title: FAQ
 description: Why no database, why a static export, and why git and npm rather than a vendor.
-order: 12
+order: 13
 ---
 
 # FAQ

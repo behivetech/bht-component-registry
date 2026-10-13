@@ -20,7 +20,7 @@ import { fetchTemplate, type TemplateFetcher } from "../lib/template.js";
 import { readOwnVersion } from "../lib/version.js";
 
 export const DEFAULT_REGISTRY = "https://registry.npmjs.org";
-export const DEFAULT_CATEGORIES = ["atoms", "molecules", "organisms", "templates", "forms"];
+export const DEFAULT_CATEGORIES = ["atoms", "molecules", "organisms", "templates", "forms", "hooks", "utils"];
 export const DEFAULT_DIR = "my-registry";
 
 const CATEGORY_PATTERN = /^[a-z0-9][a-z0-9-]*$/;

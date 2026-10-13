@@ -1,0 +1,49 @@
+{
+  "name": "@{{ scope }}/{{ category }}.{{ dashCase name }}",
+  "version": "0.0.0",
+  "description": "",
+  "type": "module",
+  "private": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "index.ts",
+    "{{ dashCase name }}.ts",
+    "docs.json"
+  ],
+  "registry": {
+    "status": "draft",
+    "tags": [],
+    "preview": { "thumbnail": false }
+  },
+  "scripts": {
+    "build": "tsup && bht-registry-docgen",
+    "dev": "tsup --watch",
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@bht-component-registry/env": "workspace:*",
+    "eslint": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "repository": {
+    "type": "git",
+    "url": "{{ repositoryUrl }}",
+    "directory": "registry/{{ scope }}/{{ category }}/{{ dashCase name }}"
+  },
+  "publishConfig": {
+    "registry": "{{ publishRegistry visibility }}",
+    "access": "{{ publishAccess visibility }}"
+  }
+}

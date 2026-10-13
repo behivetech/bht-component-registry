@@ -101,6 +101,12 @@ importers:
       '@example/atoms.rating-stars':
         specifier: workspace:*
         version: link:../../registry/example/atoms/rating-stars
+      '@example/hooks.use-toggle':
+        specifier: workspace:*
+        version: link:../../registry/example/hooks/use-toggle
+      '@example/utils.format-price':
+        specifier: workspace:*
+        version: link:../../registry/example/utils/format-price
       '@radix-ui/react-slot':
         specifier: ^1.3.3
         version: 1.4.0(@types/react@19.3.0)(react@19.2.8)
@@ -373,6 +379,49 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 19.2.3(@types/react@19.2.17)
+      eslint:
+        specifier: 'catalog:'
+        version: 9.39.5(supports-color@8.1.1)
+      tsup:
+        specifier: 'catalog:'
+        version: 8.5.1(postcss@8.5.29)(supports-color@8.1.1)(tsx@4.23.15)(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@types/node@22.20.5)(jsdom@29.1.1)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(sass-embedded@1.105.1)(sass@1.105.1)(tsx@4.23.15))
+
+  registry/example/hooks/use-toggle:
+    dependencies:
+      react:
+        specifier: ^19.2.7
+        version: 19.2.8
+    devDependencies:
+      '@bht-component-registry/env':
+        specifier: workspace:*
+        version: link:../../../../packages/env
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.17
+      eslint:
+        specifier: 'catalog:'
+        version: 9.39.5(supports-color@8.1.1)
+      tsup:
+        specifier: 'catalog:'
+        version: 8.5.1(postcss@8.5.29)(supports-color@8.1.1)(tsx@4.23.15)(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@types/node@22.20.5)(jsdom@29.1.1)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(sass-embedded@1.105.1)(sass@1.105.1)(tsx@4.23.15))
+
+  registry/example/utils/format-price:
+    devDependencies:
+      '@bht-component-registry/env':
+        specifier: workspace:*
+        version: link:../../../../packages/env
       eslint:
         specifier: 'catalog:'
         version: 9.39.5(supports-color@8.1.1)
