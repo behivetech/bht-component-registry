@@ -109,7 +109,7 @@ A component's `package.json#files` ships:
 - the component source: `*.tsx` and `*.scss`;
 - `docs.json`: the props table as computed by react-docgen-typescript.
 
-The package's `build` script is `tsup && bht-registry-docgen`; the docgen bin (from `@bht-component-registry/env`) runs the same prop extraction the docs site uses and writes `docs.json` into the package. The result is that a published version is self-describing: any tool that can fetch a tarball from the registry (including the hosted version at https://platform.behivetech.com/expanded) can render that version's docs with no store of its own, and old versions never have to be kept in git.
+The package's `build` script is `tsup && bht-registry-docgen`; the docgen bin (from `@bht-component-registry/env`) runs the same prop extraction the docs site uses and writes `docs.json` into the package. The result is that a published version is self-describing: any tool that can fetch a tarball from the registry (the [expanded version](expanded.md) is one) can render that version's docs with no store of its own, and old versions never have to be kept in git.
 
 Check it before your first publish:
 

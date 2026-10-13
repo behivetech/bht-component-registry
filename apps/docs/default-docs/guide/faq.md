@@ -6,7 +6,7 @@ order: 12
 
 # FAQ
 
-Short answers to the questions that come up when teams evaluate this registry: why there is no database, why the site is a static export, why git and npm rather than a hosted component platform, and what the hosted version adds. Where a question has a longer answer, it links to the guide.
+Short answers to the questions that come up when teams evaluate this registry: why there is no database, why the site is a static export, why git and npm rather than a hosted component platform, and what the expanded version adds. Where a question has a longer answer, it links to the guide.
 
 ## Why no database?
 

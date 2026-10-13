@@ -1,6 +1,6 @@
 # Terms
 
-The terms under which the bht-component-registry template, the `create-bht-component-registry` tool, the code they generate and a documentation site built from them are provided. The same text ships as a page of the site's guide (`docs/guide/terms.md`, `/docs/guide/terms`), where the links below resolve to site pages.
+The terms under which the bht-component-registry template, the `create-bht-component-registry` tool, the code they generate and a documentation site built from them are provided. The same text ships as a page of the site's guide (`apps/docs/default-docs/guide/terms.md`, `/docs/guide/terms`), where the links below resolve to site pages.
 
 These terms cover the bht-component-registry template, the `create-bht-component-registry` tool, the code either of them generates, and this documentation site. By using any of them you agree to them. If you do not, do not use them.
 
