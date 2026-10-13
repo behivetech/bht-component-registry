@@ -28,7 +28,7 @@ pnpm install
 pnpm dev
 ```
 
-Then set `scope` in `registry.config.json`, rename `registry/example` to your scope and change the `@example/` package names to match. [Getting started](docs/getting-started.md) walks through it.
+Then set `scope` in `registry.config.json`, rename `registry/example` to your scope and change the `@example/` package names to match. [Getting started](apps/docs/default-docs/guide/getting-started.md) walks through it.
 
 ## What you get
 
@@ -53,16 +53,16 @@ Then set `scope` in `registry.config.json`, rename `registry/example` to your sc
 
 ## Guides
 
-- [Getting started](docs/getting-started.md): create or clone, prerequisites, a tour of the repo.
-- [Components](docs/components.md): the anatomy of a component folder, `pnpm gen`, README and composition conventions, the props table, status and tags, removing a component.
-- [Scopes](docs/scopes.md): the one-scope rule, `registry.config.json`, `scope.json`, creating the npm org, multiple scopes.
-- [Publishing](docs/publishing.md): the Changesets flow, npmjs, GitHub Packages and private registries, what a tarball contains, the release workflow.
-- [Deploy](docs/deploy.md): Vercel, Netlify, Cloudflare Pages, any static host, Docker and nginx.
-- [Updating](docs/updating.md): `npx create-bht-component-registry update`, what it touches and never touches.
-- [Adopting](docs/adopting.md): add the registry to a monorepo you already have: what to copy, the build order, what `create` and `update` do not cover.
-- [Testing and CI](docs/testing-and-ci.md): unit tests, Playwright against the static build, the one CI file.
-- [Design tokens](docs/design-tokens.md): the optional tokens page.
-- [FAQ](docs/faq.md): why no database, why a static export, why git and npm rather than a hosted component platform, what the expanded version adds.
+- [Getting started](apps/docs/default-docs/guide/getting-started.md): create or clone, prerequisites, a tour of the repo.
+- [Components](apps/docs/default-docs/guide/components.md): the anatomy of a component folder, `pnpm gen`, README and composition conventions, the props table, status and tags, removing a component.
+- [Scopes](apps/docs/default-docs/guide/scopes.md): the one-scope rule, `registry.config.json`, `scope.json`, creating the npm org, multiple scopes.
+- [Publishing](apps/docs/default-docs/guide/publishing.md): the Changesets flow, npmjs, GitHub Packages and private registries, what a tarball contains, the release workflow.
+- [Deploy](apps/docs/default-docs/guide/deploy.md): Vercel, Netlify, Cloudflare Pages, any static host, Docker and nginx.
+- [Updating](apps/docs/default-docs/guide/updating.md): `npx create-bht-component-registry update`, what it touches and never touches.
+- [Adopting](apps/docs/default-docs/guide/adopting.md): add the registry to a monorepo you already have: what to copy, the build order, what `create` and `update` do not cover.
+- [Testing and CI](apps/docs/default-docs/guide/testing-and-ci.md): unit tests, Playwright against the static build, the one CI file.
+- [Design tokens](apps/docs/default-docs/guide/design-tokens.md): the optional tokens page.
+- [FAQ](apps/docs/default-docs/guide/faq.md): why no database, why a static export, why git and npm rather than a hosted component platform, what the expanded version adds.
 
 ## Hosted and expanded version
 

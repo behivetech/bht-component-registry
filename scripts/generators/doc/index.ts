@@ -4,11 +4,14 @@ import { fileURLToPath } from "node:url";
 import type { NodePlopAPI } from "plop";
 
 /**
- * `pnpm gen doc` — a page for the site's Docs section.
+ * `pnpm gen doc` — a Markdown page under docs/.
  *
- * Pages are Markdown files under docs/ with a little frontmatter (title,
- * description, section, order). A folder is a section; a file at the top
- * level sits in "General". Presets give a page a sensible starting body:
+ * docs/ is the owner's folder: `update` never touches it. The template's own
+ * guide ships under apps/docs/default-docs/ (owned with the app), and a page
+ * at the same relative path under docs/ takes its place — so a copy there is
+ * how an owner makes a guide page theirs. Pages carry a little frontmatter
+ * (title, description, section, order); a folder is a section, a file at the
+ * top level sits in "General". Presets give a page a sensible starting body:
  * contributing guidelines, coding standards, or nothing at all.
  */
 
@@ -28,14 +31,19 @@ const PRESETS = [
   { name: "standards     — naming, props, styling and testing rules, with a live example", value: "standards", short: "standards" },
 ];
 
-/** Sections that already exist: every folder directly under docs/. */
+/** Where the template's default pages live; a same-path file under docs/ replaces one. */
+const DEFAULT_DOCS = join(ROOT, "apps/docs/default-docs");
+
+/** Sections that already exist: every folder directly under docs/ or the default pages. */
 function existingSections(): string[] {
-  const dir = join(ROOT, "docs");
-  if (!existsSync(dir)) return [];
-  return readdirSync(dir, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory() && !entry.name.startsWith("."))
-    .map((entry) => entry.name)
-    .sort();
+  const names = new Set<string>();
+  for (const dir of [join(ROOT, "docs"), DEFAULT_DOCS]) {
+    if (!existsSync(dir)) continue;
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      if (entry.isDirectory() && !entry.name.startsWith(".")) names.add(entry.name);
+    }
+  }
+  return [...names].sort();
 }
 
 export default function (plop: NodePlopAPI) {
@@ -53,7 +61,7 @@ export default function (plop: NodePlopAPI) {
   });
 
   plop.setGenerator("doc", {
-    description: "A Markdown page for the Docs section (docs/<section>/<slug>.md)",
+    description: "A Markdown page in docs/<section>/<slug>.md — yours; update never touches docs/",
     // One plain input for the section rather than a list with a "new…" branch:
     // plop cannot bypass a conditional prompt, and a page should be scriptable.
     prompts: [
@@ -106,7 +114,8 @@ export default function (plop: NodePlopAPI) {
         path: join(ROOT, "docs/{{docDir section}}{{dashCase pageTitle}}.md"),
         templateFile: join(TEMPLATES, "{{preset}}.md.hbs"),
       },
-      () => "Edit the page, then pnpm dev — it appears in the Docs section on the next build.",
+      (answers) =>
+        `Created docs/${plop.getHelper("docDir")(answers.section)}${plop.getHelper("dashCase")(String(answers.pageTitle))}.md — yours to edit; update never touches docs/.`,
     ],
   });
 }

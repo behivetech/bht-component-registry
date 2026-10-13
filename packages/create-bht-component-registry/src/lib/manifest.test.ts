@@ -44,6 +44,12 @@ describe("isTemplateOwned", () => {
     expect(isTemplateOwned(".changeset/config.json", DEFAULT_MANIFEST)).toBe(true);
   });
 
+  it("owns the shipped guide under the app, never the owner's docs/ beside it", () => {
+    expect(isTemplateOwned("apps/docs/default-docs/guide/components.md", DEFAULT_MANIFEST)).toBe(true);
+    expect(isTemplateOwned("docs/guide/components.md", DEFAULT_MANIFEST)).toBe(false);
+    expect(isTemplateOwned("docs/contributing.md", DEFAULT_MANIFEST)).toBe(false);
+  });
+
   it("still owns the task-runner files pre-release templates shipped, so update can remove them", () => {
     expect(isTemplateOwned("turbo.json", DEFAULT_MANIFEST)).toBe(true);
     expect(isTemplateOwned("turbo/generators/config.ts", DEFAULT_MANIFEST)).toBe(true);

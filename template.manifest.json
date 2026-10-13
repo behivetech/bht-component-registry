@@ -20,12 +20,12 @@
     "CLAUDE.md",
     "CONTRIBUTING.md",
     "SECURITY.md",
-    "LICENSE",
-    "docs/**"
+    "LICENSE"
   ],
   "never": [
     "registry/**",
     "generators/**",
+    "docs/**",
     "registry.config.json",
     ".changeset/*.md",
     "apps/docs/src/generated/**"

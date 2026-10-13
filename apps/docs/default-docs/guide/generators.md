@@ -36,7 +36,7 @@ Named answers you leave out are asked interactively, and an empty named value (`
 | Generator | Writes | Prompts |
 | --- | --- | --- |
 | `component` | `registry/<scope>/<category>/<name>/` — a publishable package | scope, category, name |
-| `doc` | `docs/<section>/<slug>.md` — a page for the site's Docs section, from a preset (`blank`, `contributing`, `standards`) | section, title, description, order, preset |
+| `doc` | `docs/<section>/<slug>.md` — a Markdown page in your own folder (`update` never touches `docs/`), from a preset (`blank`, `contributing`, `standards`) | section, title, description, order, preset |
 | `generator` | `generators/<name>/` — a working skeleton to build your own from | name, description |
 
 ## Your own generator in a minute
@@ -59,7 +59,7 @@ Follow these in your own generators so they feel like the shipped ones:
 - **Default what has a default**: the primary scope from `registry.config.json`, `atoms`, the first existing section.
 - **Choices carry a description**: `atoms — basic building blocks (button, badge, text-field)`.
 - **Validate with the rule and the fix**: `Must be kebab-case: "date-picker" would do.` Refuse a destination that already exists.
-- **Paths**: `registry/<scope>/<category>/<name>` for packages, `docs/<section>/<slug>.md` for pages, kebab-case everywhere; `{{dashCase name}}` in file names.
+- **Paths**: `registry/<scope>/<category>/<name>` for packages, `docs/<section>/<slug>.md` for pages, kebab-case everywhere; `{{dashCase name}}` in file names. Write only into folders `update` never touches (`registry/`, `docs/`, `generators/`); the template's guide under `apps/docs/default-docs/` is replaced on every update.
 - **Helpers already registered**: plop's built-ins — `dashCase`, `pascalCase`, `camelCase`, `constantCase`, `titleCase` and the rest — plus `docDir` from the `doc` generator.
 
 Everything else — action types, prompt options, custom helpers, partials — is plop: [plopjs.com/documentation](https://plopjs.com/documentation/).

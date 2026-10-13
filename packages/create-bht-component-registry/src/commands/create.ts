@@ -236,7 +236,7 @@ function printNextSteps(dir: string, scope: string, installed: boolean, log: Log
   log.info("  pnpm dev");
   log.blank();
   log.info(`Create the npm org for @${scope} at https://www.npmjs.com/org/create before your first \`pnpm release\`.`);
-  log.info("Guides: docs/getting-started.md");
+  log.info("Guide: apps/docs/default-docs/guide/getting-started.md (your own pages go in docs/)");
   log.info("Hosted & expanded version: https://platform.behivetech.com/expanded");
   log.blank();
 }

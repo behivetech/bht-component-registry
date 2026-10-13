@@ -8,7 +8,7 @@
 
 - [ ] `pnpm verify` passes locally
 - [ ] `pnpm test:e2e` passes locally (or the change cannot affect the site)
-- [ ] The matching guide in `docs/` is updated if behaviour changed
+- [ ] The matching guide page in `apps/docs/default-docs/guide/` is updated if behaviour changed
 - [ ] A changeset is added if a published package changed (`pnpm changeset`)
 - [ ] `template.manifest.json` is updated if a new top-level file should be managed by `update`
 - [ ] No new required environment variable, server-side code or private registry dependency

@@ -53,7 +53,7 @@ Made with Bruce over a long planning session; the full plan is in
   registry packages → docs) and `pnpm -r run` orders it by `workspace:*` deps. Root scripts are
   plain `pnpm -r` / `pnpm --filter`; `pnpm gen` is `scripts/gen.mts` (tsx + prompts +
   handlebars over the same `.hbs` templates). Guides treat plain pnpm as the baseline and
-  name a task runner only in the optional section of `docs/adopting.md`.
+  name a task runner only in the optional section of `apps/docs/default-docs/guide/adopting.md`.
 - **No comparable product or company is named anywhere** (Bruce, 2026-10-07): no "X-style",
   no "like X", no competitor comparisons. Say "similar tools that do packaging and docs"
   if a comparison is unavoidable. Tools the repo runs on and deploy targets are fine.
@@ -76,7 +76,7 @@ packages/eslint-config/, typescript-config/
 packages/create-bht-component-registry/   npx create + update (53 tests; see its README)
 registry/example/          two example components (price-tag: stable; rating-stars: beta) + scope.json
 scripts/                   gen.mts = pnpm gen (tsx + prompts + handlebars) and templates/component/*.hbs
-docs/                      the guides (getting-started, components, scopes, publishing, deploy, updating, adopting, testing-and-ci, design-tokens, faq)
+apps/docs/default-docs/guide/  the guides (template-owned; docs/ at the root is the owner's and a same-path file there overrides a default page) (getting-started, components, scopes, publishing, deploy, updating, adopting, testing-and-ci, design-tokens, faq)
 registry.config.json       scope, npmRegistry, templateVersion, site; schema alongside
 template.manifest.json     owned / never / templateOnly paths for `update`; schema alongside
 Dockerfile, nginx.conf     static export behind nginx with a real 404
@@ -130,7 +130,7 @@ Verified locally on 2026-10-07:
 1. **Decide: own the root Vitest config?** `vitest.config.ts` / `vitest.setup.ts` are called
    template-owned (CLAUDE.md, Gotchas below) but are not in `template.manifest.json#owned`, so
    `update` never refreshes them. Either add them to `owned` (and `DEFAULT_MANIFEST` in the
-   CLI, plus `docs/updating.md`) or fix the wording.
+   CLI, plus `apps/docs/default-docs/guide/updating.md`) or fix the wording.
 2. **npm: trusted publishing works.** 0.2.0 was published by hand (2026-10-07); 0.2.1 was
    published by `release.yml` through OIDC on 2026-10-08 (trusted publisher on npmjs: owner
    `behivetech`, repo `bht-component-registry`, workflow `release.yml`, "Allow npm publish";

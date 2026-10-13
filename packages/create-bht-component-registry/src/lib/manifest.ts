@@ -57,9 +57,10 @@ export const DEFAULT_MANIFEST: TemplateManifest = {
     "CONTRIBUTING.md",
     "SECURITY.md",
     "LICENSE",
-    "docs/**",
   ],
-  never: ["registry/**", "generators/**", "registry.config.json", ".changeset/*.md", "apps/docs/src/generated/**"],
+  // docs/ is the owner's: their pages, and their copies of the template's
+  // guide (which ships under apps/docs/default-docs/ and is owned with the app).
+  never: ["registry/**", "generators/**", "docs/**", "registry.config.json", ".changeset/*.md", "apps/docs/src/generated/**"],
   templateOnly: ["packages/create-bht-component-registry/**", ".github/ISSUE_TEMPLATE/**", ".github/PULL_REQUEST_TEMPLATE.md"],
   readmeMarker: DEFAULT_README_MARKER,
   rewriteScope: ["apps/docs/e2e/public.spec.ts", "apps/docs/package.json"],

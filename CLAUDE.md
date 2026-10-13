@@ -5,7 +5,7 @@ A component registry that stays in git: one npm package per component at
 a static Next.js export in `apps/docs/out` that deploys anywhere. No auth, no database, no required
 env vars. Public template by Behive Tech (https://platform.behivetech.com); MIT.
 
-Read `README.md` for the map and `docs/*.md` for the guides. This file is template-owned and
+Read `README.md` for the map and `apps/docs/default-docs/guide/*.md` for the guides. This file is template-owned and
 replaced by `npx create-bht-component-registry update`.
 
 ## Layout
@@ -43,10 +43,10 @@ replaced by `npx create-bht-component-registry update`.
   `scope.json#tokens`. Nothing is hardcoded to a scope name.
 - The component template (`package.json.hbs`) takes `publishConfig.registry` from `registry.config.json`,
   builds with `tsup && bht-registry-docgen`, and ships `dist`, `README.md`, `*.composition.tsx`, `*.tsx`, `*.scss`, `docs.json`.
-- Keep `docs/` in step with behaviour: a change to commands, config keys, conventions or the CLI edits the matching guide in the same commit.
+- Keep the guide (`apps/docs/default-docs/guide/`) in step with behaviour: a change to commands, config keys, conventions or the CLI edits the matching page in the same commit. `docs/` at the root is the owner's folder: `update` never touches it, and a file there at the same relative path replaces the default page.
 - `update` must never touch `registry/**`, `registry.config.json` (except `templateVersion`), `.changeset/*.md`,
   or `README.md` below `<!-- your notes below this line are kept by update -->`.
 - `check-types` and `test` need upstream `dist/`: `pnpm verify` builds first; on a fresh clone run `pnpm build` before
-  either alone. Guides treat plain pnpm as the baseline; a task runner is named only in the optional section of `docs/adopting.md`. Never name competing or comparable products anywhere (no "X-style", no "like X").
+  either alone. Guides treat plain pnpm as the baseline; a task runner is named only in the optional section of `apps/docs/default-docs/guide/adopting.md`. Never name competing or comparable products anywhere (no "X-style", no "like X").
 - Don't `pnpm install` while `next dev` runs; restart the dev server after. Never `cd` in Bash; use `--filter`, `-C`, `--dir`.
 - Commits: conventional subject lines (`feat(docs): …`, `fix(gen): …`, `docs: …`); end with the Co-Authored-By line the harness provides.

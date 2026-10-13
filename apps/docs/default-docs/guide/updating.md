@@ -31,7 +31,7 @@ git commit -am "chore: update bht-component-registry template to x.y.z"
 
 Only paths listed in `template.manifest.json` at the repo root. The rule is data, not a hardcoded list, so you can read exactly what will be replaced before running it. As shipped:
 
-- `apps/docs/**`
+- `apps/docs/**` (the site, including the template's guide pages under `apps/docs/default-docs/`)
 - `packages/**`
 - `scripts/**` (the `pnpm gen` generator and its templates)
 - `.github/workflows/**`
@@ -42,6 +42,8 @@ Only paths listed in `template.manifest.json` at the repo root. The rule is data
 ## What it never touches
 
 - `registry/**`: your scopes and components.
+- `docs/**`: your pages. To make a guide page your own, copy it from `apps/docs/default-docs/` to the same relative path under `docs/` (`docs/guide/publishing.md` replaces the default `publishing.md`) and edit the copy; the default keeps updating underneath, your copy is what counts.
+- `generators/**`: your own generators.
 - `registry.config.json`: your scope, registry URL and branding. Only `templateVersion` is bumped.
 - `.changeset/*.md`: pending changesets.
 - `README.md` below the line `<!-- your notes below this line are kept by update -->`. Everything above it is template text and is replaced; everything below it is yours. If your README has no marker line, `update` leaves the whole file alone and warns.

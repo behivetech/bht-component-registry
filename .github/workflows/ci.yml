@@ -2,7 +2,7 @@
 #
 # Nothing here needs a secret: the site is a static export and the tests run
 # against that export. If you don't want CI, delete this file — nothing else
-# references it. See docs/testing-and-ci.md.
+# references it. See apps/docs/default-docs/guide/testing-and-ci.md.
 name: CI
 
 on:
