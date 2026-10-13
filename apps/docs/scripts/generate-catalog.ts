@@ -30,6 +30,7 @@ import {
 import type {
   Catalog,
   CatalogComponent,
+  CatalogDesignLink,
   CatalogExample,
   CatalogScope,
   CatalogSite,
@@ -74,7 +75,15 @@ interface RegistryConfig {
   npmRegistry: string;
   privateRegistry?: string;
   templateVersion: string;
-  site: { title: string; description?: string; logo?: string; primaryColor?: string; links?: { label: string; href: string }[] };
+  site: {
+    title: string;
+    description?: string;
+    logo?: string;
+    primaryColor?: string;
+    links?: { label: string; href: string }[];
+    embedDesigns?: boolean;
+    design?: string | { label?: string; url: string };
+  };
 }
 
 function readConfig(): RegistryConfig {
@@ -90,6 +99,48 @@ function readConfig(): RegistryConfig {
   return config as RegistryConfig;
 }
 
+// ---------------------------------------------------------------------------
+// Design links — a declared URL per component (or for the registry), Figma
+// recognised for embedding. Declared in package.json, never pasted into docs.
+// ---------------------------------------------------------------------------
+
+const FIGMA_URL = /^https:\/\/(?:www\.)?figma\.com\/(design|file|board|proto)\/([A-Za-z0-9]+)(?:\/[^?#]*)?(?:\?([^#]*))?/;
+
+/**
+ * Shapes a `{ label, url }` (or a bare URL) into a catalog link. A Figma URL
+ * — design, file, board or proto, with or without a `node-id` — also gets its
+ * Embed Kit URL, built from the file key and node so the embed opens on the
+ * same frame the link points at. `embed-host` names the registry, as Figma
+ * asks of embedding apps.
+ */
+function designLink(raw: unknown, host: string, fallbackLabel: string): CatalogDesignLink | null {
+  const entry = typeof raw === "string" ? { url: raw } : (raw as { label?: unknown; url?: unknown } | null);
+  const url = typeof entry?.url === "string" ? entry.url.trim() : "";
+  if (!/^https?:\/\//.test(url)) return null;
+  const label = typeof entry?.label === "string" && entry.label.trim() ? entry.label.trim() : fallbackLabel;
+  const figma = FIGMA_URL.exec(url);
+  if (!figma) return { label, url, kind: "link", embedUrl: null };
+  const [, kind, key, query = ""] = figma;
+  const params = new URLSearchParams(query);
+  const embed = new URLSearchParams({ "embed-host": host });
+  const nodeId = params.get("node-id");
+  if (nodeId) embed.set("node-id", nodeId);
+  const embedKind = kind === "file" ? "design" : kind;
+  return { label, url, kind: "figma", embedUrl: `https://embed.figma.com/${embedKind}/${key}?${embed.toString()}` };
+}
+
+function designLinks(raw: unknown, host: string, packageName: string, warnings: string[]): CatalogDesignLink[] {
+  if (raw === undefined) return [];
+  const list = Array.isArray(raw) ? raw : [raw];
+  const links: CatalogDesignLink[] = [];
+  for (const item of list) {
+    const link = designLink(item, host, "Design");
+    if (link) links.push(link);
+    else warnings.push(`${packageName}: registry.design entry ${JSON.stringify(item)} is not a { label, url } with an http(s) url — skipped`);
+  }
+  return links;
+}
+
 function siteFromConfig(config: RegistryConfig): CatalogSite {
   return {
     title: config.site.title,
@@ -97,6 +148,8 @@ function siteFromConfig(config: RegistryConfig): CatalogSite {
     logo: config.site.logo ?? null,
     primaryColor: config.site.primaryColor ?? null,
     links: config.site.links ?? [],
+    embedDesigns: config.site.embedDesigns === true,
+    design: config.site.design === undefined ? null : designLink(config.site.design, config.scope, "Design system"),
   };
 }
 
@@ -406,6 +459,7 @@ async function main() {
 
     const deps = { ...(pkg.dependencies as Record<string, string> | undefined), ...(pkg.peerDependencies as Record<string, string> | undefined) };
     const { status, tags } = registryMeta(pkg, packageName, warnings);
+    const design = designLinks((pkg.registry as { design?: unknown } | undefined)?.design, config.scope, packageName, warnings);
 
     components.push({
       scope,
@@ -418,6 +472,7 @@ async function main() {
       readme: stripTitle(readme),
       status,
       tags,
+      design,
       docs,
       functions,
       examples,

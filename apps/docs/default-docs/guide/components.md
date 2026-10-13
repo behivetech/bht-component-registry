@@ -148,6 +148,8 @@ Each component's `package.json` may carry:
 
 - `status` is one of `stable`, `beta`, `draft`, `deprecated`. It defaults to `stable` when omitted and shows as a badge in the component header and on the catalog card.
 - `tags` is a list of short strings, shown as a tag list in the same places. They are display-only; search on the scope page matches titles.
+- `design` is a list of `{ "label", "url" }` links to the component's design — a Figma frame, a spec, anything. It gives the component a Design tab. See [Design links](design-links.md).
+- `preview.thumbnail: false` keeps the component off its catalog tile (for anything that opens as an overlay).
 
 Changing status or tags is a commit, reviewed like any other change. The [expanded version](expanded.md) adds a dashboard and roles for this.
 

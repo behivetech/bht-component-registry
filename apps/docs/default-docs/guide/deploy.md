@@ -1,7 +1,7 @@
 ---
 title: Deploy
 description: Vercel, Netlify, Cloudflare Pages, any static host, or the Docker image.
-order: 10
+order: 11
 ---
 
 # Deploy

@@ -56,6 +56,12 @@
     "tags": [
       "commerce",
       "pricing"
+    ],
+    "design": [
+      {
+        "label": "Figma (example link)",
+        "url": "https://www.figma.com/design/ExampleFileKey000/Example-Registry?node-id=1-2"
+      }
     ]
   }
 }

@@ -89,6 +89,24 @@ test.describe("component page", () => {
   });
 });
 
+test.describe("design links", () => {
+  test("a component with a design link gets a Design tab with a card; embeds stay off by default", async ({ page }) => {
+    await page.goto("/example/atoms/price-tag");
+    await page.getByRole("navigation", { name: "Component sections" }).getByRole("link", { name: "Design" }).click();
+    await expect(page).toHaveURL(/\/design$/);
+    await expect(page.getByText("Figma (example link)")).toBeVisible();
+    const open = page.getByRole("link", { name: /Open in Figma/ });
+    await expect(open).toHaveAttribute("href", "https://www.figma.com/design/ExampleFileKey000/Example-Registry?node-id=1-2");
+    await expect(page.locator("iframe")).toHaveCount(0);
+    await expect(page.getByText("site.embedDesigns")).toBeVisible();
+  });
+
+  test("a component without design links has no Design tab", async ({ page }) => {
+    await page.goto("/example/atoms/rating-stars");
+    await expect(page.getByRole("navigation", { name: "Component sections" }).getByRole("link", { name: "Design" })).toHaveCount(0);
+  });
+});
+
 test.describe("hooks and utilities", () => {
   test("a hook page shows its signature, parameters and a live composition", async ({ page }) => {
     await page.goto("/example/hooks/use-toggle");
