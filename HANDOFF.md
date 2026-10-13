@@ -127,10 +127,9 @@ Verified locally on 2026-10-07:
 
 ## Open items / next steps
 
-1. **Decide: own the root Vitest config?** `vitest.config.ts` / `vitest.setup.ts` are called
-   template-owned (CLAUDE.md, Gotchas below) but are not in `template.manifest.json#owned`, so
-   `update` never refreshes them. Either add them to `owned` (and `DEFAULT_MANIFEST` in the
-   CLI, plus `apps/docs/default-docs/guide/updating.md`) or fix the wording.
+1. ~~Decide: own the root Vitest config?~~ Done: the config and setup live in `packages/env`
+   (owned with `packages/**`); the root `vitest.config.ts` is a one-line re-export and is in
+   `owned` in both the manifest and `DEFAULT_MANIFEST`.
 2. **npm: trusted publishing works.** 0.2.0 was published by hand (2026-10-07); 0.2.1 was
    published by `release.yml` through OIDC on 2026-10-08 (trusted publisher on npmjs: owner
    `behivetech`, repo `bht-component-registry`, workflow `release.yml`, "Allow npm publish";
@@ -189,8 +188,9 @@ Verified locally on 2026-10-07:
   everything (about 30 s).
 - **BSD tools on macOS**: `grep -Z` means decompress, use `--null`; zsh does not word-split
   unquoted variables.
-- **Component unit tests need the root `vitest.config.ts`/`vitest.setup.ts`** (globals,
-  jsdom, Radix stubs); they are template-owned.
+- **Component unit tests need the root `vitest.config.ts`** (a re-export of
+  `packages/env/vitest.config.mjs`: globals, jsdom, the Radix stubs in `packages/env/vitest.setup.ts`);
+  all template-owned.
 - `apps/docs/AGENTS.md` and `apps/docs/CLAUDE.md` are Next's managed agent-rules block;
   `next dev` re-adds them, so leave them be. There is no root `AGENTS.md` any more (it
   belonged to the removed task runner).

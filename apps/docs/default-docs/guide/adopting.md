@@ -11,12 +11,12 @@ Get a fresh template with `npx create-bht-component-registry tmp --scope <yours>
 | `registry/` | your scope folder with `scope.json` and one package per component | yes |
 | `registry.config.json`, `registry.config.schema.json` | scope, registry URL, site branding | yes |
 | `apps/docs/` | the docs site (Next.js static export) | yes |
-| `packages/env` | shared tsup config and the `bht-registry-docgen` bin every component builds with | yes |
+| `packages/env` | everything a component builds, lints, type-checks and tests with (tsup, tsconfig, ESLint, Vitest config + setup, SCSS-module typings) and the `bht-registry-docgen` bin — see [The env package](env.md) | yes |
 | `packages/class-names` | the `getClassName` helper the component template uses | yes |
 | `packages/scope` | scope naming rules used by the generator | yes |
 | `packages/eslint-config`, `packages/typescript-config` | the configs the packages above extend | yes |
-| `scripts/` | `pnpm gen` and its templates | yes |
-| `vitest.config.ts`, `vitest.setup.ts` | the root Vitest config component tests rely on (see below) | yes |
+| `plopfile.ts`, `scripts/generators/` | `pnpm gen` and the shipped generators — see [Generators](generators.md) | yes |
+| `vitest.config.ts` | a one-line re-export of the env's Vitest config, found by component tests walking up from their folder (see below) | yes |
 | `.changeset/config.json` | Changesets config, if you do not have one | optional |
 | `Dockerfile`, `nginx.conf`, `.github/workflows/*.yml` | the container image and CI/release workflows | optional |
 
@@ -64,7 +64,7 @@ If you do not use pnpm catalogs, replace each `catalog:` in the copied `package.
 
 Component packages and `packages/env` resolve a few tools from the repo root rather than declaring them each time. Copy these from the template's root `package.json` into yours:
 
-`sass`, `postcss`, `postcss-modules`, `esbuild-sass-plugin`, `jsdom`, `@testing-library/jest-dom`, `@testing-library/react`, `@testing-library/user-event`, `vitest`, `tsup`, `typescript`, `prettier`, and for `pnpm gen`: `tsx`, `handlebars`, `prompts`, `@types/prompts`. Add `@changesets/cli` if you publish with Changesets.
+`sass`, `postcss`, `postcss-modules`, `esbuild-sass-plugin`, `jsdom`, `@testing-library/jest-dom`, `@testing-library/react`, `@testing-library/user-event`, `vitest`, `tsup`, `typescript`, `prettier`, and for `pnpm gen`: `tsx`, `plop`, `handlebars`. Add `@changesets/cli` if you publish with Changesets.
 
 ## Build order
 
@@ -121,7 +121,7 @@ Then the root scripts are `turbo run build`, `turbo run dev --filter=docs`, and 
 
 ## The root Vitest config
 
-Component packages run `vitest run` with no config of their own. Vitest walks up from the package folder to the nearest `vitest.config.*`, which is how they pick up `globals: true`, `environment: "jsdom"` and the setup file with the jest-dom matchers and jsdom stubs. Put `vitest.config.ts` and `vitest.setup.ts` at your repo root. If you already have a root Vitest config, merge those three settings into it, or scope them to `registry/**` with Vitest's `projects` option.
+Component packages run `vitest run` with no config of their own. Vitest walks up from the package folder to the nearest `vitest.config.*`, which is how they pick up `globals: true`, `environment: "jsdom"` and the setup file with the jest-dom matchers and jsdom stubs. All of that lives in `packages/env` (`vitest.config.mjs`, `vitest.setup.ts`); the root `vitest.config.ts` only re-exports it, so copy that one line to your root. If you already have a root Vitest config, spread `componentTest` from `@bht-component-registry/env/vitest.config.mjs` into its `test` block, or scope it to `registry/**` with Vitest's `projects` option.
 
 ## The generator
 

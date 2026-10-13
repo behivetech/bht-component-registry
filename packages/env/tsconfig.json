@@ -1,4 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "@bht-component-registry/typescript-config/react-library.json"
+  "extends": "@bht-component-registry/typescript-config/react-library.json",
+  // Ambient typings every component needs (`*.module.scss` imports). A base
+  // config's `files` carry over to configs that extend it unless they set
+  // their own, and packages set only `include`, so this reaches each of them
+  // without a copy of the declaration in every folder.
+  "files": ["./global.d.ts"]
 }

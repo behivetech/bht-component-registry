@@ -39,6 +39,9 @@ export const DEFAULT_MANIFEST: TemplateManifest = {
     // The generator entry point; the generators it loads from scripts/generators
     // are owned with scripts/**, the owner's own under generators/ never are.
     "plopfile.ts",
+    // A one-line re-export of packages/env's Vitest config; the setup and
+    // stubs it points at are owned with packages/**.
+    "vitest.config.ts",
     // Shipped by pre-release templates (their task runner). Still owned so `update`
     // removes them from repos created from those.
     "turbo/generators/**",

@@ -1,10 +1,3 @@
-import path from "node:path";
-import { defineConfig } from "vitest/config";
-
-export default defineConfig({
-  test: {
-    globals: true,
-    environment: "jsdom",
-    setupFiles: [path.resolve(import.meta.dirname, "vitest.setup.ts")],
-  },
-});
+// Component packages find this by walking up from their folder; the config
+// itself lives with the rest of the shared build setup in packages/env.
+export { default } from "./packages/env/vitest.config.mjs";
