@@ -25,7 +25,7 @@ It is a field in the component's `package.json`, beside status and tags — decl
 }
 ```
 
-`pnpm gen component` asks for one Figma URL as its last prompt (leave it blank for none); add more by editing the file. Any `http(s)` URL is accepted.
+`pnpm gen component` asks for one Figma URL as its last prompt (answer `none` for none — it is the default); add more by editing the file. Any `http(s)` URL is accepted.
 
 Copy a Figma URL **with the frame selected**: the `node-id` in the URL is what makes the link — and the embed — open on that frame rather than the whole file.
 

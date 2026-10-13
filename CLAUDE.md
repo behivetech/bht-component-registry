@@ -17,7 +17,7 @@ replaced by `npx create-bht-component-registry update`.
 - `packages/class-names`, `eslint-config`, `typescript-config`, `scope` — workspace-only (`@bht-component-registry/*`).
 - `packages/create-bht-component-registry` — the npx `create` and `update` CLI; `template.manifest.json` lists what `update` may replace.
 - `registry/<scope>/` — `scope.json` plus one package per component. `registry/example` is the shipped example; deleting it must not break the build.
-- `plopfile.ts` + `scripts/generators/<name>/{index.ts,templates/}` — `pnpm gen` (plop via tsx): `component`, `doc`, `generator`. The owner's own generators go in `generators/<name>/` (never template-owned); both folders are auto-loaded.
+- `plopfile.ts` + `scripts/generators/<name>/{index.ts,templates/}` — `pnpm gen` is plop, launched as its docs say for TypeScript (`NODE_OPTIONS="--import tsx" plop --plopfile=plopfile.ts`): `component`, `hook`, `util`, `doc`, `generator`; shared prompts/helpers in `scripts/generators/shared.ts`. The owner's own generators go in `generators/<name>/` (never template-owned); both folders are auto-loaded. Stay within plop's documented API (plopjs.com) — no hand-rolled rendering.
 - `registry.config.json` — scope, `npmRegistry`, `templateVersion`, `site` branding. Committed, non-secret, validated by `registry.config.schema.json`.
 
 ## Commands (root package scripts; a plain pnpm workspace, no task runner)
