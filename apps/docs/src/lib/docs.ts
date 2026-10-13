@@ -2,9 +2,11 @@ import docsJson from "@/generated/docs.json";
 import type { DocPage, DocsIndex } from "./catalog/types";
 
 /**
- * Read access to the Docs section, built from docs/**\/*.md at the same time
- * as the catalog. Pages arrive already sorted: the owner's top-level pages
- * ("General") first, then each folder as a section, ordered by frontmatter.
+ * Read access to the Docs section, built at the same time as the catalog from
+ * apps/docs/default-docs/**\/*.md (the template's) and docs/**\/*.md (the
+ * owner's, replacing a default at the same path). Pages arrive already
+ * sorted: top-level pages ("General") first, then each folder as a section,
+ * ordered by frontmatter.
  */
 export const docs = docsJson as DocsIndex;
 

@@ -52,29 +52,12 @@ async function makeInstalled(dir: string): Promise<void> {
   await write(dir, "packages/create-bht-component-registry/src/cli.ts", "// old CLI copy\n");
   await write(dir, ".github/PULL_REQUEST_TEMPLATE.md", "# template repo PR checklist\n");
   await write(dir, ".github/workflows/ci.yml", "name: CI 0.1.0\n");
-  // Guide pages, every state the rule distinguishes:
-  //   unedited.md   — as 0.1.0 shipped it            → refreshed
-  //   edited.md     — the owner changed it           → kept, reported
-  //   opted-out.md  — managed: false                 → ignored
-  //   (deleted.md)  — the owner removed it           → left out unless --restore-guide
-  //   (new.md)      — only exists in 0.2.0           → added
-  await write(dir, "docs/guide/unedited.md", GUIDE_UNEDITED_V1);
-  await write(dir, "docs/guide/edited.md", "---\nmanaged: true\n---\n\n# Edited\n\nOur own words.\n");
-  await write(dir, "docs/guide/opted-out.md", "---\nmanaged: false\n---\n\n# Opted out\n\nOurs now.\n");
+  // The template's guide as 0.1.0 shipped it, and the owner's docs/: their own
+  // page, plus a copy of one guide page that overrides the default on the site.
+  await write(dir, "apps/docs/default-docs/guide/publishing.md", "# Publishing\n\nTemplate 0.1.0 text.\n");
+  await write(dir, "apps/docs/default-docs/guide/old.md", "# Old\n\nDropped in 0.2.0.\n");
+  await write(dir, "docs/guide/publishing.md", "# Publishing\n\nOur own words.\n");
   await write(dir, "docs/contributing.md", "# Contributing\n\nOurs.\n");
-}
-
-const GUIDE_UNEDITED_V1 = "---\nmanaged: true\n---\n\n# Unedited\n\nTemplate 0.1.0 text.\n";
-const GUIDE_UNEDITED_V2 = "---\nmanaged: true\n---\n\n# Unedited\n\nTemplate 0.2.0 text.\n";
-
-/** Template release 0.1.0 — what the installed repo was created from; only the guide matters here. */
-async function makePrevious(dir: string): Promise<void> {
-  await write(dir, "registry.config.json", config("example", "0.1.0"));
-  await write(dir, "template.manifest.json", manifest);
-  await write(dir, "docs/guide/unedited.md", GUIDE_UNEDITED_V1);
-  await write(dir, "docs/guide/edited.md", "---\nmanaged: true\n---\n\n# Edited\n\nTemplate 0.1.0 text.\n");
-  await write(dir, "docs/guide/opted-out.md", "---\nmanaged: true\n---\n\n# Opted out\n\nTemplate 0.1.0 text.\n");
-  await write(dir, "docs/guide/deleted.md", "---\nmanaged: true\n---\n\n# Deleted\n\nTemplate 0.1.0 text.\n");
 }
 
 /** Template release 0.2.0: one owned file changed, one added, one removed, README intro changed. */
@@ -96,13 +79,11 @@ async function makeTarget(dir: string): Promise<void> {
   await write(dir, ".github/ISSUE_TEMPLATE/bug.yml", "name: Bug\n");
   await write(dir, ".github/PULL_REQUEST_TEMPLATE.md", "# PR\n");
   await write(dir, ".github/workflows/ci.yml", "name: CI 0.2.0\n");
-  await write(dir, "docs/guide/unedited.md", GUIDE_UNEDITED_V2);
-  await write(dir, "docs/guide/edited.md", "---\nmanaged: true\n---\n\n# Edited\n\nTemplate 0.2.0 text.\n");
-  await write(dir, "docs/guide/opted-out.md", "---\nmanaged: true\n---\n\n# Opted out\n\nTemplate 0.2.0 text.\n");
-  await write(dir, "docs/guide/deleted.md", "---\nmanaged: true\n---\n\n# Deleted\n\nTemplate 0.2.0 text.\n");
-  await write(dir, "docs/guide/new.md", "---\nmanaged: true\n---\n\n# New\n\nNew in 0.2.0.\n");
-  // The template's own seed page: not managed, so never touched by update.
+  await write(dir, "apps/docs/default-docs/guide/publishing.md", "# Publishing\n\nTemplate 0.2.0 text.\n");
+  await write(dir, "apps/docs/default-docs/guide/new.md", "# New\n\nNew in 0.2.0.\n");
+  // The template repo's own docs/ (seed pages for `create`): never update's business.
   await write(dir, "docs/contributing.md", "# Contributing\n\nTemplate seed.\n");
+  await write(dir, "docs/guide/publishing.md", "# Publishing\n\nThe template's docs/ copy.\n");
 }
 
 const neverPrompt: Prompter = {
@@ -118,11 +99,10 @@ describe("update", () => {
   let tmp: string;
   let repo: string;
   let target: string;
-  let previous: string;
 
-  /** `--from` serves the target; the previous template (by version) comes from the fixture. */
-  const fetchByVersion: TemplateFetcher = async (request) => ({
-    dir: request.from ?? previous,
+  /** `--from` serves the target checkout. */
+  const fetchFrom: TemplateFetcher = async (request) => ({
+    dir: request.from ?? target,
     source: "stub",
     cleanup: async () => undefined,
   });
@@ -131,7 +111,7 @@ describe("update", () => {
     const memory = createMemoryLogger();
     return update(
       { from: target, dryRun: false, yes: true, ...options },
-      { cwd: cwd ?? repo, log: memory.log, prompt: neverPrompt, isTreeClean: async () => clean, fetchTemplate: fetchByVersion },
+      { cwd: cwd ?? repo, log: memory.log, prompt: neverPrompt, isTreeClean: async () => clean, fetchTemplate: fetchFrom },
     ).then((code) => ({ code, lines: memory.lines, text: memory.lines.join("\n") }));
   }
 
@@ -143,10 +123,8 @@ describe("update", () => {
     tmp = await mkdtemp(join(tmpdir(), "bht-update-"));
     repo = join(tmp, "repo");
     target = join(tmp, "target");
-    previous = join(tmp, "previous");
     await makeInstalled(repo);
     await makeTarget(target);
-    await makePrevious(previous);
   });
 
   afterEach(async () => {
@@ -183,67 +161,33 @@ describe("update", () => {
     expect(config.scope).toBe("bobsburgers");
     expect(config.templateVersion).toBe("0.2.0");
 
-    expect(text).toContain("Added (1):");
+    expect(text).toContain("Added (2):");
     expect(text).toContain("apps/docs/src/app/new-feature.tsx");
-    expect(text).toContain("Removed (3):");
+    expect(text).toContain("Removed (4):");
     expect(text).toContain("apps/docs/src/app/legacy.tsx");
     expect(text).toContain("Replaced (");
     expect(text).toContain("apps/docs/src/app/page.tsx");
     expect(text).toContain("Review with `git diff`, then run `pnpm install && pnpm verify`.");
   });
 
-  it("refreshes unedited guide pages, adds new ones, and leaves edited, opted-out and deleted ones alone", async () => {
-    const { code, text } = await run();
+  it("refreshes the default guide pages with the app and never touches docs/", async () => {
+    const { code, text, lines } = await run();
     expect(code).toBe(0);
 
-    expect(await read("docs/guide/unedited.md")).toBe(GUIDE_UNEDITED_V2);
-    expect(await read("docs/guide/new.md")).toContain("New in 0.2.0.");
-    expect(await read("docs/guide/edited.md")).toContain("Our own words.");
-    expect(await read("docs/guide/opted-out.md")).toContain("Ours now.");
-    expect(existsSync(join(repo, "docs/guide/deleted.md"))).toBe(false);
-    // Not managed → not the update's business, whatever the template ships.
+    // The defaults are owned with the app: replaced, added, removed like any other owned file.
+    expect(await read("apps/docs/default-docs/guide/publishing.md")).toContain("Template 0.2.0 text.");
+    expect(await read("apps/docs/default-docs/guide/new.md")).toContain("New in 0.2.0.");
+    expect(existsSync(join(repo, "apps/docs/default-docs/guide/old.md"))).toBe(false);
+    expect(text).toContain("apps/docs/default-docs/guide/new.md");
+    expect(text).toContain("apps/docs/default-docs/guide/old.md");
+
+    // docs/ is the owner's, whatever the template's own docs/ holds: the
+    // override stays theirs and the template's seed never lands.
+    expect(await read("docs/guide/publishing.md")).toBe("# Publishing\n\nOur own words.\n");
     expect(await read("docs/contributing.md")).toBe("# Contributing\n\nOurs.\n");
-
-    expect(text).toContain("Guide pages refreshed (unedited since your template version) (1):");
-    expect(text).toContain("docs/guide/unedited.md");
-    expect(text).toContain("Guide pages added (1):");
-    expect(text).toContain("docs/guide/new.md");
-    expect(text).toContain("Guide pages you edited — kept; a newer template version exists (1):");
-    expect(text).toContain("docs/guide/edited.md");
-    expect(text).toContain("Guide pages you removed — left out (1):");
-    expect(text).toContain("docs/guide/deleted.md");
-    expect(text).not.toContain("docs/guide/opted-out.md");
-    // Guide pages are not owned files: the owned-file lists do not mention them.
-    expect(text).toContain("Added (1):");
-    expect(text).toContain("Replaced (");
-  });
-
-  it("--restore-guide brings back a guide page the owner deleted", async () => {
-    const { code, text } = await run({ restoreGuide: true });
-    expect(code).toBe(0);
-    expect(await read("docs/guide/deleted.md")).toContain("Template 0.2.0 text.");
-    expect(text).toContain("Guide pages restored (1):");
-    expect(text).not.toContain("left out");
-  });
-
-  it("treats every differing guide page as edited when the previous template cannot be fetched", async () => {
-    const memory = createMemoryLogger();
-    const fetchTemplate: TemplateFetcher = async (request) => {
-      if (request.from) return { dir: request.from, source: "stub", cleanup: async () => undefined };
-      throw new Error("offline");
-    };
-    const code = await update(
-      { from: target, dryRun: false, yes: true },
-      { cwd: repo, log: memory.log, prompt: neverPrompt, isTreeClean: async () => true, fetchTemplate },
-    );
-    expect(code).toBe(0);
-    const text = memory.lines.join("\n");
-    expect(text).toContain("Could not fetch template 0.1.0 to compare guide pages");
-    // Without a baseline the unedited page cannot be proven unedited, so it is kept.
-    expect(await read("docs/guide/unedited.md")).toBe(GUIDE_UNEDITED_V1);
-    expect(text).toContain("docs/guide/unedited.md");
-    // A page that was never in any previous template is still new, so it is added.
-    expect(await read("docs/guide/new.md")).toContain("New in 0.2.0.");
+    const listed = lines.map((line) => line.trim());
+    expect(listed).not.toContain("docs/contributing.md");
+    expect(listed).not.toContain("docs/guide/publishing.md");
   });
 
   it("removes stray template-only files and never copies the target's", async () => {
@@ -253,7 +197,7 @@ describe("update", () => {
     expect(existsSync(join(repo, ".github/PULL_REQUEST_TEMPLATE.md"))).toBe(false);
     expect(existsSync(join(repo, ".github/ISSUE_TEMPLATE"))).toBe(false);
     expect(await read(".github/workflows/ci.yml")).toBe("name: CI 0.2.0\n");
-    expect(text).toContain("Removed (3):");
+    expect(text).toContain("Removed (4):");
     expect(text).toContain("packages/create-bht-component-registry/src/cli.ts");
     expect(text).toContain(".github/PULL_REQUEST_TEMPLATE.md");
     expect(text).not.toContain(".github/ISSUE_TEMPLATE/bug.yml");
@@ -332,13 +276,13 @@ describe("update", () => {
     expect(text).toContain("No registry.config.json found");
   });
 
-  it("fetches the target and the previous template through the injected fetcher and cleans up both", async () => {
+  it("fetches only the target through the injected fetcher and cleans it up", async () => {
     const cleaned: string[] = [];
     const requested: string[] = [];
     const fetchTemplate: TemplateFetcher = async (request) => {
       requested.push(request.version);
       return {
-        dir: request.version === "0.1.0" ? previous : target,
+        dir: target,
         source: "stub",
         cleanup: async () => {
           cleaned.push(request.version);
@@ -351,8 +295,8 @@ describe("update", () => {
       { cwd: repo, log: memory.log, prompt: neverPrompt, isTreeClean: async () => true, fetchTemplate },
     );
     expect(code).toBe(0);
-    expect(requested).toEqual(["0.2.0", "0.1.0"]);
-    expect(cleaned.sort()).toEqual(["0.1.0", "0.2.0"]);
+    expect(requested).toEqual(["0.2.0"]);
+    expect(cleaned).toEqual(["0.2.0"]);
     expect(await read("apps/docs/src/app/page.tsx")).toBe("// template 0.2.0\n");
   });
 

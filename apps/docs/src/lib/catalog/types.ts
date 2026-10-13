@@ -108,11 +108,15 @@ export interface CatalogSite {
   links: { label: string; href: string }[];
 }
 
-/** One page of the site's Docs section: a Markdown file under docs/. */
+/**
+ * One page of the site's Docs section: a Markdown file under docs/ (the
+ * owner's) or apps/docs/default-docs/ (the template's), the owner's winning
+ * when both have the same relative path.
+ */
 export interface DocPage {
   /** URL path under /docs, e.g. "guide/publishing" or "contributing". */
   slug: string;
-  /** Repo-relative file, e.g. "docs/guide/publishing.md". */
+  /** Repo-relative file the page came from: "docs/…" or "apps/docs/default-docs/…". */
   path: string;
   /** The folder under docs/, or "general" for a top-level page. */
   section: string;
@@ -121,8 +125,6 @@ export interface DocPage {
   description: string | null;
   /** Position within its section; frontmatter `order`, 100 when absent. */
   order: number;
-  /** Frontmatter `managed: true`: a template guide page `update` keeps current until it is edited. */
-  managed: boolean;
   /** Markdown with the H1 removed. */
   body: string;
 }

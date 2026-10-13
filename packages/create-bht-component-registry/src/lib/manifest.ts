@@ -72,16 +72,6 @@ export const DEFAULT_MANIFEST: TemplateManifest = {
   rewriteScope: ["apps/docs/e2e/public.spec.ts", "apps/docs/package.json", "docs/using-this-registry.md"],
 };
 
-/**
- * A template guide page says so in its frontmatter. Parsed with a regex
- * rather than a YAML library: the CLI is small on purpose and only this one
- * boolean matters to it.
- */
-export function isManagedPage(text: string): boolean {
-  const frontmatter = /^---\r?\n([\s\S]*?)\r?\n---/.exec(text)?.[1];
-  return frontmatter !== undefined && /^managed:\s*true\s*$/m.test(frontmatter);
-}
-
 function stringArray(value: unknown, key: string, source: string): string[] {
   if (!Array.isArray(value) || value.some((item) => typeof item !== "string")) {
     throw new Error(`${source}: "${key}" must be an array of strings.`);

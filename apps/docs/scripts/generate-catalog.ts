@@ -36,7 +36,10 @@ import { extractTokens, humanizeTitle, parseChangelog, readmeSummary, readmeTitl
 const APP_DIR = path.resolve(import.meta.dirname, "..");
 const REPO_ROOT = path.resolve(APP_DIR, "../..");
 const REGISTRY_DIR = path.join(REPO_ROOT, "registry");
+/** The owner's pages; `update` never touches this folder. */
 const DOCS_DIR = path.join(REPO_ROOT, "docs");
+/** The template's pages, owned with the app; a same-path file under docs/ replaces one. */
+const DEFAULT_DOCS_DIR = path.join(APP_DIR, "default-docs");
 const OUT_DIR = path.join(APP_DIR, "src/generated");
 const require = createRequire(path.join(APP_DIR, "package.json"));
 
@@ -68,7 +71,7 @@ interface RegistryConfig {
 function readConfig(): RegistryConfig {
   const file = path.join(REPO_ROOT, "registry.config.json");
   if (!fs.existsSync(file)) {
-    throw new Error("registry.config.json is missing at the repo root. See docs/guide/scopes.md.");
+    throw new Error("registry.config.json is missing at the repo root. See the Scopes guide (apps/docs/default-docs/guide/scopes.md).");
   }
   const config = readJson(file) as Partial<RegistryConfig>;
   for (const key of ["scope", "npmRegistry", "site"] as const) {
@@ -231,7 +234,7 @@ function sourceFiles(dir: string): CatalogSourceFile[] {
 
 /** registry/<slug>/scope.json: name, tagline, visibility and an optional tokens.scss path. */
 // ---------------------------------------------------------------------------
-// docs/**/*.md — the site's Docs section
+// apps/docs/default-docs/**/*.md + docs/**/*.md — the site's Docs section
 // ---------------------------------------------------------------------------
 
 /** The section a top-level page belongs to; folders name their own. */
@@ -251,16 +254,28 @@ function markdownFiles(dir: string, prefix = ""): string[] {
 }
 
 /**
- * Every Markdown file under docs/ is a page. The file's folder is its
- * section (top-level files sit in "general"); frontmatter gives it a title,
- * description and order, and `managed: true` marks a template guide page
- * that `update` keeps current until the owner edits it. A page with no
- * frontmatter still works: the H1 is the title, the file name the slug.
+ * Two folders make the Docs section, read as one tree:
+ *
+ *   apps/docs/default-docs/   the template's pages (owned; replaced by `update`)
+ *   docs/                     the owner's (never touched by `update`)
+ *
+ * The same relative path in both means the owner's copy replaces the default,
+ * which is how a guide page becomes theirs; an owner's page with `hidden: true`
+ * in its frontmatter removes the default from the site. The file's folder is
+ * its section (top-level files sit in "general"); frontmatter gives it a
+ * title, description and order. A page with no frontmatter still works: the
+ * H1 is the title, the file name the slug.
  */
 function collectDocs(): DocPage[] {
-  const pages = markdownFiles(DOCS_DIR).map((rel): DocPage => {
-    const parsed = matter(fs.readFileSync(path.join(DOCS_DIR, rel), "utf8"));
+  const sources = new Map<string, string>();
+  for (const dir of [DEFAULT_DOCS_DIR, DOCS_DIR]) {
+    for (const rel of markdownFiles(dir)) sources.set(rel, path.join(dir, rel));
+  }
+  const pages: DocPage[] = [];
+  for (const [rel, file] of sources) {
+    const parsed = matter(fs.readFileSync(file, "utf8"));
     const data = parsed.data as Record<string, unknown>;
+    if (data.hidden === true) continue;
     // gray-matter leaves the blank line that followed the frontmatter; the
     // title helpers expect the H1 on the first line.
     const content = parsed.content.replace(/^\s+/, "");
@@ -268,18 +283,17 @@ function collectDocs(): DocPage[] {
     const segments = slug.split("/");
     const section = segments.length > 1 ? segments[0]! : GENERAL_SECTION;
     const fileTitle = toTitle(segments[segments.length - 1]!);
-    return {
+    pages.push({
       slug,
-      path: `docs/${rel}`,
+      path: path.relative(REPO_ROOT, file),
       section,
       sectionLabel: toTitle(section),
       title: typeof data.title === "string" && data.title.trim() ? data.title.trim() : (readmeTitle(content) ?? fileTitle),
       description: typeof data.description === "string" && data.description.trim() ? data.description.trim() : null,
       order: Number.isFinite(Number(data.order)) && data.order !== undefined ? Number(data.order) : 100,
-      managed: data.managed === true,
       body: stripTitle(content),
-    };
-  });
+    });
+  }
   // General first (the owner's own pages), then sections by name; within a
   // section by order, then title.
   const sectionRank = (section: string) => (section === GENERAL_SECTION ? "" : section);
@@ -314,7 +328,7 @@ async function main() {
   const entries: { scope: string; category: string; name: string; dir: string; pkg: Record<string, unknown> }[] = [];
 
   if (!fs.existsSync(REGISTRY_DIR)) {
-    throw new Error("No registry/ folder. Create one with `pnpm gen` — see docs/guide/components.md.");
+    throw new Error("No registry/ folder. Create one with `pnpm gen` — see the Components guide (apps/docs/default-docs/guide/components.md).");
   }
 
   for (const scope of fs.readdirSync(REGISTRY_DIR).sort()) {

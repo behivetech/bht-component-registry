@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import {
-  isManagedPage,
   DEFAULT_MANIFEST,
   DEFAULT_README_MARKER,
   globToRegExp,
@@ -134,14 +133,5 @@ describe("README marker merge", () => {
   it("keeps the owner's marker when the target dropped it", () => {
     const merged = mergeReadme(local, "# Brand new\n\nText.\n", marker);
     expect(merged).toBe(`# Brand new\n\nText.\n\n${marker}\n\n## Our notes\n\nDeploy on Fridays.\n`);
-  });
-});
-
-describe("isManagedPage", () => {
-  it("is true only for frontmatter that says managed: true", () => {
-    expect(isManagedPage("---\ntitle: Publishing\nmanaged: true\n---\n\n# Publishing\n")).toBe(true);
-    expect(isManagedPage("---\ntitle: Publishing\nmanaged: false\n---\n\n# Publishing\n")).toBe(false);
-    expect(isManagedPage("---\ntitle: Publishing\n---\n\n# Publishing\n")).toBe(false);
-    expect(isManagedPage("# Publishing\n\nmanaged: true is just prose here.\n")).toBe(false);
   });
 });
