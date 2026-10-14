@@ -23,9 +23,9 @@ export default async function ChangelogPage({ params }: Props) {
   return (
     <div className={styles.stack}>
       <section>
-        <h2>Published to {publishedRegistryHost()}</h2>
+        <h2>Published to {publishedRegistryHost(component.publishRegistry)}</h2>
         <Suspense fallback={<p className={styles.muted}>Checking the registry…</p>}>
-          <PublishedVersions packageName={component.packageName} current={component.version} />
+          <PublishedVersions packageName={component.packageName} registry={component.publishRegistry} current={component.version} />
         </Suspense>
       </section>
 
@@ -50,8 +50,8 @@ export default async function ChangelogPage({ params }: Props) {
   );
 }
 
-async function PublishedVersions({ packageName, current }: { packageName: string; current: string }) {
-  const versions = await loadPublishedVersions(packageName);
+async function PublishedVersions({ packageName, registry, current }: { packageName: string; registry: string; current: string }) {
+  const versions = await loadPublishedVersions(packageName, registry);
   if (versions === null) {
     return (
       <p className={styles.muted}>

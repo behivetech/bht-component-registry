@@ -64,6 +64,7 @@ const readText = (file: string) => (fs.existsSync(file) ? fs.readFileSync(file, 
 interface RegistryConfig {
   scope: string;
   npmRegistry: string;
+  privateRegistry?: string;
   templateVersion: string;
   site: { title: string; description?: string; logo?: string; primaryColor?: string; links?: { label: string; href: string }[] };
 }
@@ -368,6 +369,16 @@ async function main() {
 
     const exportsField = pkg.exports as Record<string, unknown> | undefined;
     const hasStyles = Boolean(exportsField?.["./styles.css"]) && fs.existsSync(path.join(dir, "dist/index.css"));
+    // Where the package publishes decides where the Changelog tab looks it up
+    // and whether the site marks it private. `pnpm check:publish` keeps these
+    // consistent with registry.config.json; here they are read as-is.
+    const publishConfig = (pkg.publishConfig ?? {}) as { registry?: string; access?: string };
+    const publishRegistry = String(publishConfig.registry ?? config.npmRegistry).replace(/\/+$/, "");
+    const visibility: CatalogComponent["visibility"] =
+      publishConfig.access === "restricted" ||
+      (config.privateRegistry !== undefined && publishRegistry === config.privateRegistry.replace(/\/+$/, ""))
+        ? "private"
+        : "public";
 
     // Import the BUILT package for its export names — the same artifact the
     // sandbox will import. A package that hasn't been built yet is reported
@@ -400,6 +411,8 @@ async function main() {
       releases: parseChangelog(readText(path.join(dir, "CHANGELOG.md"))),
       exportNames,
       hasStyles,
+      publishRegistry,
+      visibility,
       sourcePath: path.relative(REPO_ROOT, dir),
       dependencies: Object.keys(deps).filter((d) => d.startsWith("@") && entries.some((e) => e.pkg.name === d)),
     });
@@ -435,6 +448,7 @@ async function main() {
     generatedAt: new Date().toISOString(),
     primaryScope: config.scope,
     npmRegistry: config.npmRegistry,
+    privateRegistry: config.privateRegistry ?? null,
     site: siteFromConfig(config),
     categories: CATEGORIES,
     scopes,

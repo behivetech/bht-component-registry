@@ -11,6 +11,7 @@ export interface ComponentCardModel {
   summary: string;
   tags: string[];
   status: CatalogStatus;
+  visibility: CatalogComponent["visibility"];
   /** Live-example source for the tile, or null when the component can't be shown in a tile. */
   thumbnailCode: string | null;
 }
@@ -48,6 +49,7 @@ export function toCardModel(component: CatalogComponent): ComponentCardModel {
     summary: component.summary,
     tags: component.tags,
     status: component.status,
+    visibility: component.visibility,
     thumbnailCode: isOverlayComponent(component) ? null : (component.examples[0]?.code ?? null),
   };
 }

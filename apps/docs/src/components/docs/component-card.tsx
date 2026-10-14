@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Badge } from "@/ui/badge";
 import { Card } from "@/ui/card";
 import type { ComponentCardModel } from "@/lib/catalog/card-model";
 import { LiveExample } from "./live-example";
@@ -35,6 +36,11 @@ export function ComponentCard({ component }: { component: ComponentCardModel }) 
         <div className={styles.footer}>
           <code className={styles.package}>{component.packageName}</code>
           {component.status !== "STABLE" && <StatusBadge status={component.status} size="sm" />}
+          {component.visibility === "private" && (
+            <Badge variant="default" size="sm">
+              Private
+            </Badge>
+          )}
         </div>
       </div>
     </Card>

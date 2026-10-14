@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { catalog, CATEGORY_LABELS, getComponent, getScope } from "@/lib/catalog";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { Badge } from "@/ui/badge";
 import { ComponentTabs } from "@/components/docs/component-tabs";
 import { StatusBadge } from "@/components/docs/status-badge";
 import styles from "./layout.module.scss";
@@ -53,6 +54,11 @@ export default async function ComponentLayout({ params, children }: Props) {
             <h1 className={styles.title}>{component.title}</h1>
             <span className={styles.version}>v{component.version}</span>
             <StatusBadge status={component.status} />
+            {component.visibility === "private" && (
+              <Badge variant="default" title={`Publishes to ${component.publishRegistry}; installing needs a token`}>
+                Private
+              </Badge>
+            )}
           </div>
           <p className={styles.summary}>{component.summary}</p>
           <div className={styles.metaRow}>

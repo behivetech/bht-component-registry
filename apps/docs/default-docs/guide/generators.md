@@ -28,11 +28,12 @@ pnpm gen component                # straight to one generator's prompts
 pnpm gen component acme atoms badge   # answers in order; skips the prompts
 ```
 
-Positional answers go through the same validation as typed ones. An invalid answer stops the run with the same message the prompt would have shown. Answers can also be named, which is clearer for generators with optional prompts:
+Positional answers go through the same validation as typed ones. An invalid answer stops the run with the same message the prompt would have shown. A `_` in a position means "ask me that one"; after a `--`, answers can be named instead, which is clearer for generators with optional prompts — both are plop's own syntax:
 
 ```bash
-pnpm gen doc --section=guide --pageTitle="Contributing" --preset=contributing
-pnpm gen doc . "Read me first" "" 1 blank      # "." = a top-level page; "" = no description
+pnpm gen component acme _ badge                       # scope and name given; category asked
+pnpm gen doc -- --section=guide --pageTitle="Contributing" --preset=contributing
+pnpm gen doc . "Read me first" "" 1 blank             # "." = a top-level page; "" = no description
 ```
 
 Named answers you leave out are asked interactively, and an empty named value (`--description=`) counts as left out — pass `""` positionally when you mean "none". (Prompt names avoid Node's own flags — `--title` is one — because plop re-launches Node with any it finds.)
@@ -41,7 +42,7 @@ Named answers you leave out are asked interactively, and an empty named value (`
 
 | Generator | Writes | Prompts |
 | --- | --- | --- |
-| `component` | `registry/<scope>/<category>/<name>/` — a publishable package | scope, category, name |
+| `component` | `registry/<scope>/<category>/<name>/` — a publishable package | scope, category, name, visibility (public, or private when `registry.config.json#privateRegistry` is set — permanent after the first release) |
 | `doc` | `docs/<section>/<slug>.md` — a Markdown page in your own folder (`update` never touches `docs/`), from a preset (`blank`, `contributing`, `standards`) | section, title, description, order, preset |
 | `generator` | `generators/<name>/` — a working skeleton to build your own from | name, description |
 

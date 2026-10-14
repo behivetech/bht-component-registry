@@ -13,9 +13,14 @@
 # Fallback: a granular access token (write, "Bypass 2FA", 90 days at most)
 # stored as the secret NPM_TOKEN. The variable wins when both exist.
 #
-# GitHub Packages instead: set "npmRegistry" to https://npm.pkg.github.com in
-# registry.config.json, give this job `packages: write`, and pass
+# GitHub Packages for everything instead: set "npmRegistry" to
+# https://npm.pkg.github.com in registry.config.json and pass
 # `NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}` below instead of the npm token.
+#
+# Public AND private packages: keep npmRegistry for the public ones and set
+# "privateRegistry" (GitHub Packages, Verdaccio, …) for the private ones; the
+# "Private registry auth" step below adds that registry's token. See
+# apps/docs/default-docs/guide/publishing.md, "Public and private packages".
 #
 # See apps/docs/default-docs/guide/publishing.md.
 name: Release
@@ -30,6 +35,8 @@ permissions:
   contents: write
   pull-requests: write
   id-token: write
+  # Private packages on GitHub Packages publish with the job's own token.
+  packages: write
 
 jobs:
   release:
@@ -64,6 +71,30 @@ jobs:
             echo "method=none" >> "$GITHUB_OUTPUT"
             echo "::notice::Releases are off: set the repository variable NPM_TRUSTED_PUBLISHING=true (after adding a trusted publisher on npmjs) or the secret NPM_TOKEN. See apps/docs/default-docs/guide/publishing.md."
           fi
+
+      # Private packages (publishConfig.registry = registry.config.json#privateRegistry)
+      # authenticate with PRIVATE_REGISTRY_TOKEN, or with the job's GITHUB_TOKEN
+      # when the private registry is GitHub Packages. The line goes in the
+      # runner's ~/.npmrc, keyed by host, so public packages still publish to
+      # npmjs the way the next step decides. Nothing happens when the config
+      # names no private registry.
+      - name: Private registry auth
+        if: steps.publish.outputs.method != 'none'
+        env:
+          PRIVATE_REGISTRY_TOKEN: ${{ secrets.PRIVATE_REGISTRY_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          registry=$(node -e 'const c=require("./registry.config.json");process.stdout.write(c.privateRegistry||"")')
+          if [ -z "$registry" ]; then exit 0; fi
+          host=$(node -e 'process.stdout.write(new URL(process.argv[1]).host)' "$registry")
+          token="$PRIVATE_REGISTRY_TOKEN"
+          if [ -z "$token" ] && [ "$host" = "npm.pkg.github.com" ]; then token="$GITHUB_TOKEN"; fi
+          if [ -z "$token" ]; then
+            echo "::error::registry.config.json names privateRegistry $registry but the secret PRIVATE_REGISTRY_TOKEN is not set; private packages would fail to publish." >&2
+            exit 1
+          fi
+          echo "//$host/:_authToken=$token" >> "$HOME/.npmrc"
+          echo "Private packages publish to $host."
 
       # With no NPM_TOKEN the action writes no .npmrc and `changeset publish`
       # (pnpm publish) authenticates with the job's OIDC token.
