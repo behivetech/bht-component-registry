@@ -1,7 +1,7 @@
 ---
 title: Scopes
 description: The one-scope rule, registry.config.json, scope.json, and several scopes in one repo.
-order: 5
+order: 6
 ---
 
 # Scopes

@@ -104,7 +104,141 @@ export function documentPackage(dir, parser = createDocgen()) {
   return toDocs(parser.parse(files), dir);
 }
 
-export const DOCS_JSON_VERSION = 1;
+// ---------------------------------------------------------------------------
+// Functions: hooks and utilities, read with the TypeScript compiler API
+// ---------------------------------------------------------------------------
+
+/**
+ * Which files may hold documented functions: the package's own modules, not
+ * its examples, tests, barrel or declarations. Components live in `.tsx`
+ * too, so the exclusion of PascalCase exports below is what keeps them out.
+ */
+export const isFunctionSource = (file) =>
+  /\.tsx?$/.test(file) && !/\.(spec|composition|test)\.tsx?$/.test(file) && !/\.d\.ts$/.test(file) && path.basename(file) !== "index.ts";
+
+export function functionSourceFiles(dir) {
+  return fs
+    .readdirSync(dir)
+    .filter(isFunctionSource)
+    .map((file) => path.join(dir, file));
+}
+
+const FUNCTION_COMPILER_OPTIONS = {
+  jsx: ts.JsxEmit.ReactJSX,
+  module: ts.ModuleKind.ESNext,
+  moduleResolution: ts.ModuleResolutionKind.Bundler,
+  target: ts.ScriptTarget.ES2022,
+  esModuleInterop: true,
+  skipLibCheck: true,
+  strict: true,
+  noEmit: true,
+};
+
+/** One program for every file passed, the way `createDocgen` is one parser. */
+export function createFunctionProgram(files) {
+  return ts.createProgram(files, FUNCTION_COMPILER_OPTIONS);
+}
+
+const commentText = (parts) => (typeof parts === "string" ? parts : ts.displayPartsToString(parts)).trim();
+
+/** The JSDoc tags of a declaration, by name: `{ param: [...], returns: [...], example: [...] }`. */
+function jsDocTags(declaration) {
+  const tags = {};
+  for (const tag of ts.getJSDocTags(declaration)) {
+    const name = tag.tagName.text;
+    (tags[name] ??= []).push(tag);
+  }
+  return tags;
+}
+
+/** Tag comment as plain text; `@param foo The thing` gives "The thing". */
+const tagText = (tag) => (tag.comment === undefined ? "" : commentText(ts.getTextOfJSDocComment(tag.comment) ?? ""));
+
+/**
+ * Shapes one exported function (or exported const holding a function) into
+ * a catalog entry: every call signature with its parameters, each parameter's
+ * `@param` text, the return type and `@returns` text, and the `@example`
+ * blocks as code. A name starting with `use` followed by a capital is a hook.
+ */
+function documentSymbol(checker, symbol, declaration) {
+  const name = symbol.getName();
+  const type = checker.getTypeOfSymbolAtLocation(symbol, declaration);
+  const callSignatures = type.getCallSignatures();
+  if (callSignatures.length === 0) return null;
+
+  const tags = jsDocTags(declaration);
+  const paramDocs = new Map(
+    (tags.param ?? []).map((tag) => [tag.name && ts.isIdentifier(tag.name) ? tag.name.text : String(tag.name?.getText() ?? ""), tagText(tag)]),
+  );
+  const returnsDoc = tags.returns?.[0] ? tagText(tags.returns[0]) : "";
+  const examples = (tags.example ?? []).map((tag) => {
+    const text = tagText(tag);
+    // ```ts fences are allowed in an @example; the code is what we keep.
+    const fenced = /^```[a-z]*\n([\s\S]*?)\n```$/.exec(text);
+    return fenced ? fenced[1] : text;
+  });
+
+  const signatures = callSignatures.map((signature) => {
+    const params = signature.getParameters().map((param) => {
+      const paramDeclaration = param.valueDeclaration;
+      const paramType = checker.getTypeOfSymbolAtLocation(param, paramDeclaration ?? declaration);
+      const optional = Boolean(paramDeclaration && ts.isParameter(paramDeclaration) && (paramDeclaration.questionToken || paramDeclaration.initializer));
+      return {
+        name: param.getName(),
+        type: checker.typeToString(paramType, declaration, ts.TypeFormatFlags.NoTruncation),
+        optional,
+        description: paramDocs.get(param.getName()) ?? "",
+      };
+    });
+    const returnType = checker.typeToString(signature.getReturnType(), declaration, ts.TypeFormatFlags.NoTruncation);
+    const text = `${name}(${params.map((p) => `${p.name}${p.optional ? "?" : ""}: ${p.type}`).join(", ")}): ${returnType}`;
+    return { text, params, returns: { type: returnType, description: returnsDoc } };
+  });
+
+  return {
+    name,
+    kind: /^use[A-Z]/.test(name) ? "hook" : "function",
+    description: commentText(symbol.getDocumentationComment(checker)),
+    signatures,
+    examples,
+  };
+}
+
+/**
+ * The documented functions of the files in `dir` that belong to `program`:
+ * every export whose name starts with a lowercase letter — hooks (`useX`)
+ * and utilities — in source order. PascalCase exports are components and are
+ * documented by `toDocs` instead; re-exported names are skipped (they are
+ * documented where they are declared).
+ */
+export function toFunctionDocs(program, dir) {
+  const checker = program.getTypeChecker();
+  const docs = [];
+  for (const sourceFile of program.getSourceFiles()) {
+    if (sourceFile.isDeclarationFile || path.dirname(sourceFile.fileName) !== dir || !isFunctionSource(sourceFile.fileName)) continue;
+    const moduleSymbol = checker.getSymbolAtLocation(sourceFile);
+    if (!moduleSymbol) continue;
+    for (const exported of checker.getExportsOfModule(moduleSymbol)) {
+      const name = exported.getName();
+      if (!/^[a-z]/.test(name)) continue;
+      const symbol = exported.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(exported) : exported;
+      const declaration = symbol.valueDeclaration ?? symbol.declarations?.[0];
+      if (!declaration || declaration.getSourceFile() !== sourceFile) continue;
+      const doc = documentSymbol(checker, symbol, declaration);
+      if (doc) docs.push(doc);
+    }
+  }
+  return docs;
+}
+
+/** Function docs for ONE package folder, with its own program. The bin uses this; the site batches instead. */
+export function documentFunctions(dir) {
+  const files = functionSourceFiles(dir);
+  if (files.length === 0) return [];
+  return toFunctionDocs(createFunctionProgram(files), dir);
+}
+
+export const DOCS_JSON_VERSION = 2;
 
 /** The contents of a package's `docs.json`. */
 export function docsJsonFor(dir) {
@@ -113,5 +247,6 @@ export function docsJsonFor(dir) {
     version: DOCS_JSON_VERSION,
     generatedAt: new Date().toISOString(),
     docs: documentPackage(dir),
+    functions: documentFunctions(dir),
   };
 }

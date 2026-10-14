@@ -19,7 +19,14 @@ import path from "node:path";
 import { createRequire } from "node:module";
 import matter from "gray-matter";
 import ts from "typescript";
-import { componentSourceFiles, createDocgen, toDocs } from "@bht-component-registry/env/docgen";
+import {
+  componentSourceFiles,
+  createDocgen,
+  createFunctionProgram,
+  functionSourceFiles,
+  toDocs,
+  toFunctionDocs,
+} from "@bht-component-registry/env/docgen";
 import type {
   Catalog,
   CatalogComponent,
@@ -50,6 +57,7 @@ const CATEGORIES = [
   { key: "organisms", label: "Organisms" },
   { key: "templates", label: "Templates" },
   { key: "forms", label: "Forms" },
+  { key: "hooks", label: "Hooks" },
   { key: "utils", label: "Utilities" },
   { key: "theme", label: "Theme" },
 ];
@@ -349,6 +357,10 @@ async function main() {
 
   // ONE parser (one TypeScript program) for every source file in the registry.
   const parsed = createDocgen().parse(entries.flatMap(({ dir }) => componentSourceFiles(dir)));
+  // Hooks and utilities: one TypeScript program over every package, the way
+  // the props pass is one parser.
+  const functionFiles = entries.flatMap(({ dir }) => functionSourceFiles(dir));
+  const functionProgram = functionFiles.length > 0 ? createFunctionProgram(functionFiles) : null;
 
   const components: CatalogComponent[] = [];
   const failures: string[] = [];
@@ -361,6 +373,7 @@ async function main() {
     }
     const readme = readText(path.join(dir, "README.md"));
     const docs = toDocs(parsed, dir);
+    const functions = functionProgram ? toFunctionDocs(functionProgram, dir) : [];
 
     const examples = fs
       .readdirSync(dir)
@@ -406,6 +419,7 @@ async function main() {
       status,
       tags,
       docs,
+      functions,
       examples,
       files: sourceFiles(dir),
       releases: parseChangelog(readText(path.join(dir, "CHANGELOG.md"))),

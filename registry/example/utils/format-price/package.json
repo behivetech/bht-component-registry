@@ -1,0 +1,51 @@
+{
+  "name": "@example/utils.format-price",
+  "version": "0.0.0",
+  "description": "",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "index.ts",
+    "format-price.ts",
+    "docs.json"
+  ],
+  "registry": {
+    "status": "draft",
+    "tags": [],
+    "preview": {
+      "thumbnail": false
+    }
+  },
+  "scripts": {
+    "build": "tsup && bht-registry-docgen",
+    "dev": "tsup --watch",
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@bht-component-registry/env": "workspace:*",
+    "eslint": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/behivetech/bht-component-registry.git",
+    "directory": "registry/example/utils/format-price"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  }
+}

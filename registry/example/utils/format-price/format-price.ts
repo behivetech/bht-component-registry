@@ -1,0 +1,15 @@
+/**
+ * TODO: Describe the function in one or two sentences. This JSDoc, the
+ * `@param`, `@returns` and `@example` tags, and the TypeScript signature are
+ * what the docs site shows for it — nothing is written by hand elsewhere.
+ *
+ * @param value The input to transform.
+ * @returns The input, transformed.
+ * @example
+ * ```ts
+ * formatPrice('hello'); // → 'Hello'
+ * ```
+ */
+export function formatPrice(value: string): string {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}

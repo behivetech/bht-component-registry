@@ -22,4 +22,6 @@ const started = Date.now();
 const out = docsJsonFor(dir);
 fs.writeFileSync(path.join(dir, "docs.json"), `${JSON.stringify(out, null, 2)}\n`);
 const props = out.docs.reduce((n, d) => n + d.props.length, 0);
-console.log(`docs.json: ${out.docs.length} component(s), ${props} prop(s) — ${Date.now() - started}ms`);
+console.log(
+  `docs.json: ${out.docs.length} component(s), ${props} prop(s), ${out.functions.length} function(s) — ${Date.now() - started}ms`,
+);

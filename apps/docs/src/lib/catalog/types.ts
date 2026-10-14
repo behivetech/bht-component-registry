@@ -41,6 +41,31 @@ export interface CatalogDocComponent {
   extendsNative: boolean;
 }
 
+export interface CatalogDocParam {
+  name: string;
+  type: string;
+  optional: boolean;
+  /** The `@param` text, if any. */
+  description: string;
+}
+
+export interface CatalogDocSignature {
+  /** `useToggle(initial?: boolean): [boolean, () => void]` */
+  text: string;
+  params: CatalogDocParam[];
+  returns: { type: string; description: string };
+}
+
+/** An exported hook (`useX`) or utility function, read from its TypeScript and JSDoc. */
+export interface CatalogDocFunction {
+  name: string;
+  kind: "hook" | "function";
+  description: string;
+  signatures: CatalogDocSignature[];
+  /** The `@example` blocks, as code. */
+  examples: string[];
+}
+
 export interface CatalogExample {
   /** The composition's export name, e.g. "PrimaryButton". */
   name: string;
@@ -81,6 +106,8 @@ export interface CatalogComponent {
   /** From package.json `registry.tags`; lower-cased, de-duplicated, at most 8. */
   tags: string[];
   docs: CatalogDocComponent[];
+  /** Exported hooks and utility functions, with signatures and examples. */
+  functions: CatalogDocFunction[];
   examples: CatalogExample[];
   files: CatalogSourceFile[];
   releases: CatalogRelease[];

@@ -1,7 +1,7 @@
 ---
 title: Terms
 description: The terms under which this template, the code it generates and this site are provided.
-order: 14
+order: 15
 ---
 
 # Terms

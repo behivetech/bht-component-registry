@@ -6,12 +6,14 @@ This repository is a component registry: one npm package per component under
 
 ## Scaffold with the generators, never by hand
 
-Do not hand-write a new component package, docs page or generator, and do not copy an existing
+Do not hand-write a new component, hook or util package, docs page or generator, and do not copy an existing
 one as a starting point. Run the generator and then edit what it wrote:
 
 ```bash
 pnpm gen                                   # the list, with a description of each
 pnpm gen component <scope> <category> <name>
+pnpm gen hook <scope> <name>               # registry/<scope>/hooks/<name>, a React hook package
+pnpm gen util <scope> <name>               # registry/<scope>/utils/<name>, a plain function package
 pnpm gen doc <section> "<Page title>" "<description>" <order> <preset>
 pnpm gen generator <name>                  # a skeleton for a generator of your own
 ```

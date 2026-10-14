@@ -43,6 +43,8 @@ Named answers you leave out are asked interactively, and an empty named value (`
 | Generator | Writes | Prompts |
 | --- | --- | --- |
 | `component` | `registry/<scope>/<category>/<name>/` — a publishable package | scope, category, name, visibility (public, or private when `registry.config.json#privateRegistry` is set — permanent after the first release) |
+| `hook` | `registry/<scope>/hooks/<name>/` — a React hook package, documented from its signature and JSDoc, with a composition as its live example | scope, name (`use-…`), visibility |
+| `util` | `registry/<scope>/utils/<name>/` — a plain TypeScript function package, documented from its signature and JSDoc | scope, name, visibility |
 | `doc` | `docs/<section>/<slug>.md` — a Markdown page in your own folder (`update` never touches `docs/`), from a preset (`blank`, `contributing`, `standards`) | section, title, description, order, preset |
 | `generator` | `generators/<name>/` — a working skeleton to build your own from | name, description |
 

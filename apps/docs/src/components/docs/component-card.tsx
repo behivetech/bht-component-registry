@@ -22,7 +22,11 @@ export function ComponentCard({ component }: { component: ComponentCardModel }) 
         {component.thumbnailCode ? (
           <LiveExample code={component.thumbnailCode} noInline previewOnly className={styles.thumbExample} />
         ) : (
-          <span className={styles.noPreview}>Opens as an overlay — see its compositions</span>
+          <span className={styles.noPreview}>
+            {component.category === "hooks" || component.category === "utils"
+              ? "No visual preview — see its signatures and examples"
+              : "Opens as an overlay — see its compositions"}
+          </span>
         )}
       </div>
       <div className={styles.body}>

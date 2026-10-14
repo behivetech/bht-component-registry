@@ -1,7 +1,7 @@
 ---
 title: Publishing
 description: The Changesets flow, npmjs and GitHub Packages, and the Changelog tab.
-order: 6
+order: 7
 ---
 
 # Publishing

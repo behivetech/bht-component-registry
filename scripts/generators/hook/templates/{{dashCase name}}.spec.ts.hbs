@@ -1,0 +1,15 @@
+import { act, renderHook } from '@testing-library/react';
+import { {{ camelCase name }} } from './{{ dashCase name }}.js';
+
+describe('{{ camelCase name }}', () => {
+  it('starts with the initial value', () => {
+    const { result } = renderHook(() => {{ camelCase name }}(true));
+    expect(result.current[0]).toBe(true);
+  });
+
+  it('toggles', () => {
+    const { result } = renderHook(() => {{ camelCase name }}());
+    act(() => result.current[1]());
+    expect(result.current[0]).toBe(true);
+  });
+});

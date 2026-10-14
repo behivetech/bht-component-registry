@@ -49,7 +49,7 @@ replaced by `npx create-bht-component-registry update`.
 - `check-types` and `test` need upstream `dist/`: `pnpm verify` builds first; on a fresh clone run `pnpm build` before
   either alone. Guides treat plain pnpm as the baseline; a task runner is named only in the optional section of `apps/docs/default-docs/guide/adopting.md`. Never name competing or comparable products anywhere (no "X-style", no "like X").
 - Don't `pnpm install` while `next dev` runs; restart the dev server after. Never `cd` in Bash; use `--filter`, `-C`, `--dir`.
-- Scaffold with the generators, never by hand: a new component package, docs page or generator starts with `pnpm gen …`
+- Scaffold with the generators, never by hand: a new component, hook or util package, docs page or generator starts with `pnpm gen …`
   (`pnpm gen` lists them), then edit what it wrote. Don't copy an existing package as a starting point: the generators are
   where the conventions live (layout, `package.json`, `publishConfig`, build scripts, docs frontmatter) and a hand-made copy
   drifts. If no generator produces what is needed, extend it or add one under `generators/<name>/` with `pnpm gen generator`.
