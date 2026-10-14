@@ -1,3 +1,9 @@
+---
+title: Getting started
+description: Create or clone, prerequisites, your first component, and a tour of the repo.
+order: 1
+---
+
 # Getting started
 
 This guide takes you from nothing to a running docs site with your own scope. You can let `npx create-bht-component-registry` set the repo up, or clone this repo and do the three renames by hand. Either way you end with a pnpm workspace whose `registry/` folder is the registry, a docs site at `apps/docs`, and a `registry.config.json` naming your scope.
@@ -65,12 +71,13 @@ pnpm dev
 ```
 my-registry/
 ├─ apps/docs/                 the docs site (Next.js, static export to apps/docs/out)
+│  ├─ default-docs/           the template's guide pages (a same-path file under docs/ overrides one)
 │  ├─ scripts/generate-catalog.ts   builds the catalog before dev and build
 │  ├─ src/app/(site)/         home, [scope], [scope]/[category]/[name]/<tab>, tokens, not-found
 │  ├─ src/components/docs/    live examples, markdown, props table, catalog cards
 │  ├─ src/lib/catalog/        typed access to the generated catalog, README/CHANGELOG parsing
 │  └─ e2e/                    Playwright specs against the static build
-├─ docs/                      these guides
+├─ docs/                      your pages for the site's Docs section (never touched by update)
 ├─ packages/
 │  ├─ env/                    shared tsup config and the bht-registry-docgen bin
 │  ├─ class-names/            getClassName() used by the component template

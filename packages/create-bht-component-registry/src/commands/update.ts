@@ -49,6 +49,13 @@ export interface FileChange {
 
 export type ReadmeStatus = "added" | "merged" | "unchanged" | "no-marker" | "absent";
 
+/**
+ * Docs need no rule of their own: the template's guide ships under
+ * apps/docs/default-docs/ (owned with the app, so replaced like any other
+ * owned file) and docs/ is in `never`. The site shows an owner's page over
+ * a default at the same path, so "making a page yours" is a copy, and
+ * update never has to decide whether a page was edited.
+ */
 export interface UpdatePlan {
   added: FileChange[];
   replaced: FileChange[];
@@ -143,12 +150,7 @@ function printList(title: string, files: string[], log: Logger): void {
 }
 
 export function planIsEmpty(plan: UpdatePlan): boolean {
-  return (
-    plan.added.length === 0 &&
-    plan.replaced.length === 0 &&
-    plan.removed.length === 0 &&
-    plan.readme.content === undefined
-  );
+  return plan.added.length === 0 && plan.replaced.length === 0 && plan.removed.length === 0 && plan.readme.content === undefined;
 }
 
 function printPlan(plan: UpdatePlan, manifest: TemplateManifest, scope: string, log: Logger): void {

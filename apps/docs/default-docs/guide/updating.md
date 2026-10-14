@@ -1,3 +1,9 @@
+---
+title: Updating
+description: What npx create-bht-component-registry update touches, what it never touches, and how guide pages are kept current.
+order: 10
+---
+
 # Updating
 
 Your registry was created from a template version recorded in `registry.config.json#templateVersion`. `npx create-bht-component-registry update` brings the template-owned parts of your repo (the docs app, the tooling packages, the generator, CI, the Dockerfile) up to the latest release while leaving your components, your config, your pending changesets and your README notes alone. It needs a clean git tree, and it ends by asking you to read the diff.
@@ -42,11 +48,24 @@ Only paths listed in `template.manifest.json` at the repo root. The rule is data
 ## What it never touches
 
 - `registry/**`: your scopes and components.
-- `docs/**`: your pages. To make a guide page your own, copy it from `apps/docs/default-docs/` to the same relative path under `docs/` (`docs/guide/publishing.md` replaces the default `publishing.md`) and edit the copy; the default keeps updating underneath, your copy is what counts.
+- `docs/**`: your pages, and your copies of guide pages — see the next section.
 - `generators/**`: your own generators.
 - `registry.config.json`: your scope, registry URL and branding. Only `templateVersion` is bumped.
 - `.changeset/*.md`: pending changesets.
 - `README.md` below the line `<!-- your notes below this line are kept by update -->`. Everything above it is template text and is replaced; everything below it is yours. If your README has no marker line, `update` leaves the whole file alone and warns.
+
+## Guide pages: defaults and overrides
+
+The pages you are reading ship under `apps/docs/default-docs/guide/` and are replaced on every update like the rest of the app. The site reads that folder and `docs/` together, and a file under `docs/` at the same relative path wins:
+
+| | |
+| --- | --- |
+| `apps/docs/default-docs/guide/publishing.md` | the template's page; updated for you |
+| `docs/guide/publishing.md` | your copy; shown instead, never touched |
+
+So to make a guide page your own, copy it across and edit the copy. The default keeps updating underneath, so a later `git diff` between the two shows you what the template changed. To drop a default page from your site, override it with a page whose frontmatter says `hidden: true`. Pages with no default — your own, at any path under `docs/` — are simply yours.
+
+Registries created from a template older than 0.3.0 kept the guide under `docs/*.md`. After the first update those files are plain pages of yours at the top level of the Docs section, next to the new defaults; delete them, or move the ones you edited to `docs/guide/<name>.md` so they override the matching default.
 
 Repos created from a pre-release template, which shipped a task runner, also lose `turbo.json` and `turbo/generators/**`. After that update, run `pnpm install` so the lockfile drops `turbo`, delete any `.turbo/` cache folders and the root `AGENTS.md` if it only holds Turborepo's managed block, and drop `--ui=stream` from scripts of your own.
 

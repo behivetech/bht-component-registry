@@ -89,6 +89,40 @@ test.describe("component page", () => {
   });
 });
 
+test.describe("docs section", () => {
+  test("the index lists the owner's pages and the guide by section", async ({ page }) => {
+    await page.goto("/docs");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Documentation");
+    await expect(page.getByRole("heading", { name: "General" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Guide" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Contributing" }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: "Getting started" }).first()).toBeVisible();
+    // The header links to the section whenever there is at least one page.
+    await expect(page.getByRole("navigation", { name: "Registry" }).getByRole("link", { name: "Docs" })).toBeVisible();
+  });
+
+  test("a guide page renders with the sidebar and resolves its relative links", async ({ page }) => {
+    await page.goto("/docs/guide/components");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Components");
+    const nav = page.getByRole("navigation", { name: "Docs" });
+    await expect(nav.getByRole("link", { name: "Components" })).toHaveAttribute("aria-current", "page");
+    // `[Generators](generators.md)` in the Markdown becomes a site route.
+    await page.getByRole("main").getByRole("link", { name: "Generators", exact: true }).first().click();
+    await expect(page).toHaveURL(/\/docs\/guide\/generators$/);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Generators");
+  });
+
+  test("only fences marked live run; the rest stay code", async ({ page }) => {
+    // The Standards seed page has one ```jsx live fence; a live example
+    // renders as a <figure> whichever way the preview is mounted.
+    await page.goto("/docs/standards");
+    await expect(page.locator("figure")).toHaveCount(1);
+    // The Components guide shows README snippets (```jsx, no `live`) as code.
+    await page.goto("/docs/guide/components");
+    await expect(page.locator("figure")).toHaveCount(0);
+  });
+});
+
 test.describe("routing", () => {
   test("an unknown scope is a real 404", async ({ page }) => {
     const response = await page.goto("/no-such-scope");

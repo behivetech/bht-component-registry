@@ -108,6 +108,31 @@ export interface CatalogSite {
   links: { label: string; href: string }[];
 }
 
+/**
+ * One page of the site's Docs section: a Markdown file under docs/ (the
+ * owner's) or apps/docs/default-docs/ (the template's), the owner's winning
+ * when both have the same relative path.
+ */
+export interface DocPage {
+  /** URL path under /docs, e.g. "guide/publishing" or "contributing". */
+  slug: string;
+  /** Repo-relative file the page came from: "docs/…" or "apps/docs/default-docs/…". */
+  path: string;
+  /** The folder under docs/, or "general" for a top-level page. */
+  section: string;
+  sectionLabel: string;
+  title: string;
+  description: string | null;
+  /** Position within its section; frontmatter `order`, 100 when absent. */
+  order: number;
+  /** Markdown with the H1 removed. */
+  body: string;
+}
+
+export interface DocsIndex {
+  pages: DocPage[];
+}
+
 export interface Catalog {
   generatedAt: string;
   /** The primary scope from registry.config.json. */

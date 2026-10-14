@@ -1,3 +1,9 @@
+---
+title: The env package
+description: What every component builds, lints, type-checks and tests with, and how to change or override it.
+order: 4
+---
+
 # The env package
 
 Every component package in this registry builds, lints, type-checks and tests the same way, and none of them say how: each carries three one-line files that point at `packages/env` (`@bht-component-registry/env`). Change the env and every component follows; nothing is written twice.

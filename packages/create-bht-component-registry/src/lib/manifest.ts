@@ -69,7 +69,7 @@ export const DEFAULT_MANIFEST: TemplateManifest = {
   never: ["registry/**", "generators/**", "docs/**", "registry.config.json", ".changeset/*.md", "apps/docs/src/generated/**"],
   templateOnly: ["packages/create-bht-component-registry/**", ".github/ISSUE_TEMPLATE/**", ".github/PULL_REQUEST_TEMPLATE.md"],
   readmeMarker: DEFAULT_README_MARKER,
-  rewriteScope: ["apps/docs/e2e/public.spec.ts", "apps/docs/package.json"],
+  rewriteScope: ["apps/docs/e2e/public.spec.ts", "apps/docs/package.json", "docs/using-this-registry.md"],
 };
 
 function stringArray(value: unknown, key: string, source: string): string[] {

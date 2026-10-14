@@ -63,6 +63,9 @@ describe("isTemplateOwned", () => {
   it("never owns the owner's components, config, changesets or README", () => {
     expect(isTemplateOwned("registry/acme/atoms/thing/package.json", DEFAULT_MANIFEST)).toBe(false);
     expect(isTemplateOwned("generators/hook/index.ts", DEFAULT_MANIFEST)).toBe(false);
+    // Guide pages are the owner's to edit; `update` handles them by frontmatter, not ownership.
+    expect(isTemplateOwned("docs/guide/publishing.md", DEFAULT_MANIFEST)).toBe(false);
+    expect(isTemplateOwned("docs/contributing.md", DEFAULT_MANIFEST)).toBe(false);
     expect(isTemplateOwned("registry.config.json", DEFAULT_MANIFEST)).toBe(false);
     expect(isTemplateOwned(".changeset/fuzzy-cats.md", DEFAULT_MANIFEST)).toBe(false);
     expect(isTemplateOwned("README.md", DEFAULT_MANIFEST)).toBe(false);

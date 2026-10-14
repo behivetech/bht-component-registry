@@ -80,7 +80,12 @@ async function main(argv: string[]): Promise<number> {
 
   const [command, ...rest] = positionals;
   if (command === "update") {
-    return update({ to: string("to"), from: string("from"), dryRun: flag("dry-run"), yes: flag("yes") });
+    return update({
+      to: string("to"),
+      from: string("from"),
+      dryRun: flag("dry-run"),
+      yes: flag("yes"),
+    });
   }
 
   const dir = command === "create" ? rest[0] : command;

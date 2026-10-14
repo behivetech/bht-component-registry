@@ -1,3 +1,9 @@
+---
+title: Adopting the registry into a monorepo you already have
+description: Adding the registry to a monorepo you already have.
+order: 11
+---
+
 # Adopting the registry into a monorepo you already have
 
 `npx create-bht-component-registry` gives you a repo whose only job is the registry. If you already have a pnpm monorepo and want the registry and its docs site to live inside it, this guide lists what to copy, where it has to sit, and how to express the build order with whatever runs your builds today. The trade-off up front: `create` and `update` assume they own the repo root, so adoption is by hand and so are later template updates (last section).

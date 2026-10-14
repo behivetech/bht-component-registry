@@ -52,6 +52,12 @@ async function makeInstalled(dir: string): Promise<void> {
   await write(dir, "packages/create-bht-component-registry/src/cli.ts", "// old CLI copy\n");
   await write(dir, ".github/PULL_REQUEST_TEMPLATE.md", "# template repo PR checklist\n");
   await write(dir, ".github/workflows/ci.yml", "name: CI 0.1.0\n");
+  // The template's guide as 0.1.0 shipped it, and the owner's docs/: their own
+  // page, plus a copy of one guide page that overrides the default on the site.
+  await write(dir, "apps/docs/default-docs/guide/publishing.md", "# Publishing\n\nTemplate 0.1.0 text.\n");
+  await write(dir, "apps/docs/default-docs/guide/old.md", "# Old\n\nDropped in 0.2.0.\n");
+  await write(dir, "docs/guide/publishing.md", "# Publishing\n\nOur own words.\n");
+  await write(dir, "docs/contributing.md", "# Contributing\n\nOurs.\n");
 }
 
 /** Template release 0.2.0: one owned file changed, one added, one removed, README intro changed. */
@@ -73,6 +79,11 @@ async function makeTarget(dir: string): Promise<void> {
   await write(dir, ".github/ISSUE_TEMPLATE/bug.yml", "name: Bug\n");
   await write(dir, ".github/PULL_REQUEST_TEMPLATE.md", "# PR\n");
   await write(dir, ".github/workflows/ci.yml", "name: CI 0.2.0\n");
+  await write(dir, "apps/docs/default-docs/guide/publishing.md", "# Publishing\n\nTemplate 0.2.0 text.\n");
+  await write(dir, "apps/docs/default-docs/guide/new.md", "# New\n\nNew in 0.2.0.\n");
+  // The template repo's own docs/ (seed pages for `create`): never update's business.
+  await write(dir, "docs/contributing.md", "# Contributing\n\nTemplate seed.\n");
+  await write(dir, "docs/guide/publishing.md", "# Publishing\n\nThe template's docs/ copy.\n");
 }
 
 const neverPrompt: Prompter = {
@@ -89,11 +100,18 @@ describe("update", () => {
   let repo: string;
   let target: string;
 
+  /** `--from` serves the target checkout. */
+  const fetchFrom: TemplateFetcher = async (request) => ({
+    dir: request.from ?? target,
+    source: "stub",
+    cleanup: async () => undefined,
+  });
+
   function run(options: Partial<UpdateOptions> = {}, clean = true, cwd?: string) {
     const memory = createMemoryLogger();
     return update(
       { from: target, dryRun: false, yes: true, ...options },
-      { cwd: cwd ?? repo, log: memory.log, prompt: neverPrompt, isTreeClean: async () => clean },
+      { cwd: cwd ?? repo, log: memory.log, prompt: neverPrompt, isTreeClean: async () => clean, fetchTemplate: fetchFrom },
     ).then((code) => ({ code, lines: memory.lines, text: memory.lines.join("\n") }));
   }
 
@@ -143,13 +161,33 @@ describe("update", () => {
     expect(config.scope).toBe("bobsburgers");
     expect(config.templateVersion).toBe("0.2.0");
 
-    expect(text).toContain("Added (1):");
+    expect(text).toContain("Added (2):");
     expect(text).toContain("apps/docs/src/app/new-feature.tsx");
-    expect(text).toContain("Removed (3):");
+    expect(text).toContain("Removed (4):");
     expect(text).toContain("apps/docs/src/app/legacy.tsx");
     expect(text).toContain("Replaced (");
     expect(text).toContain("apps/docs/src/app/page.tsx");
     expect(text).toContain("Review with `git diff`, then run `pnpm install && pnpm verify`.");
+  });
+
+  it("refreshes the default guide pages with the app and never touches docs/", async () => {
+    const { code, text, lines } = await run();
+    expect(code).toBe(0);
+
+    // The defaults are owned with the app: replaced, added, removed like any other owned file.
+    expect(await read("apps/docs/default-docs/guide/publishing.md")).toContain("Template 0.2.0 text.");
+    expect(await read("apps/docs/default-docs/guide/new.md")).toContain("New in 0.2.0.");
+    expect(existsSync(join(repo, "apps/docs/default-docs/guide/old.md"))).toBe(false);
+    expect(text).toContain("apps/docs/default-docs/guide/new.md");
+    expect(text).toContain("apps/docs/default-docs/guide/old.md");
+
+    // docs/ is the owner's, whatever the template's own docs/ holds: the
+    // override stays theirs and the template's seed never lands.
+    expect(await read("docs/guide/publishing.md")).toBe("# Publishing\n\nOur own words.\n");
+    expect(await read("docs/contributing.md")).toBe("# Contributing\n\nOurs.\n");
+    const listed = lines.map((line) => line.trim());
+    expect(listed).not.toContain("docs/contributing.md");
+    expect(listed).not.toContain("docs/guide/publishing.md");
   });
 
   it("removes stray template-only files and never copies the target's", async () => {
@@ -159,7 +197,7 @@ describe("update", () => {
     expect(existsSync(join(repo, ".github/PULL_REQUEST_TEMPLATE.md"))).toBe(false);
     expect(existsSync(join(repo, ".github/ISSUE_TEMPLATE"))).toBe(false);
     expect(await read(".github/workflows/ci.yml")).toBe("name: CI 0.2.0\n");
-    expect(text).toContain("Removed (3):");
+    expect(text).toContain("Removed (4):");
     expect(text).toContain("packages/create-bht-component-registry/src/cli.ts");
     expect(text).toContain(".github/PULL_REQUEST_TEMPLATE.md");
     expect(text).not.toContain(".github/ISSUE_TEMPLATE/bug.yml");
@@ -238,15 +276,16 @@ describe("update", () => {
     expect(text).toContain("No registry.config.json found");
   });
 
-  it("fetches through the injected fetcher when --from is not given and cleans up after", async () => {
-    let cleaned = false;
+  it("fetches only the target through the injected fetcher and cleans it up", async () => {
+    const cleaned: string[] = [];
+    const requested: string[] = [];
     const fetchTemplate: TemplateFetcher = async (request) => {
-      expect(request.version).toBe("0.2.0");
+      requested.push(request.version);
       return {
         dir: target,
         source: "stub",
         cleanup: async () => {
-          cleaned = true;
+          cleaned.push(request.version);
         },
       };
     };
@@ -256,7 +295,8 @@ describe("update", () => {
       { cwd: repo, log: memory.log, prompt: neverPrompt, isTreeClean: async () => true, fetchTemplate },
     );
     expect(code).toBe(0);
-    expect(cleaned).toBe(true);
+    expect(requested).toEqual(["0.2.0"]);
+    expect(cleaned).toEqual(["0.2.0"]);
     expect(await read("apps/docs/src/app/page.tsx")).toBe("// template 0.2.0\n");
   });
 

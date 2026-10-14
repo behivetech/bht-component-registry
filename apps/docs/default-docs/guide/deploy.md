@@ -1,3 +1,9 @@
+---
+title: Deploy
+description: Vercel, Netlify, Cloudflare Pages, any static host, or the Docker image.
+order: 9
+---
+
 # Deploy
 
 `pnpm build` writes the whole site to `apps/docs/out` as HTML, CSS and JavaScript. There is no server, no database and no environment variable to set, so deploying is serving a folder. The only thing a host has to get right is answering unknown paths with `404.html` and a real 404 status. Every option below starts from the same build.
