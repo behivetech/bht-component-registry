@@ -30,7 +30,7 @@ const HELP = `
     -h, --help                   show this help
     -v, --version                print the version
 
-  Hosted & expanded version: https://platform.behivetech.com
+  Behive Tech — the expanded version and consulting: https://platform.behivetech.com
 `;
 
 /**

@@ -127,6 +127,11 @@ Verified locally on 2026-10-07:
 
 ## Open items / next steps
 
+0. **Have a lawyer review `TERMS.md` / `apps/docs/default-docs/guide/terms.md`** before relying on them. The copy
+   is standard disclaimer language (as-is, no warranty, limitation of liability, not advice,
+   third-party terms, consulting under a separate agreement, privacy, governing-law placeholder)
+   written by a non-lawyer. Fill in the governing-law jurisdiction.
+
 1. ~~Decide: own the root Vitest config?~~ Done: the config and setup live in `packages/env`
    (owned with `packages/**`); the root `vitest.config.ts` is a one-line re-export and is in
    `owned` in both the manifest and `DEFAULT_MANIFEST`.

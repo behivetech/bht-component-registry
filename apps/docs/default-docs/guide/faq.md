@@ -6,7 +6,7 @@ order: 12
 
 # FAQ
 
-Short answers to the questions that come up when teams evaluate this registry: why there is no database, why the site is a static export, why git and npm rather than a hosted component platform, and what the hosted version adds. Where a question has a longer answer, it links to the guide.
+Short answers to the questions that come up when teams evaluate this registry: why there is no database, why the site is a static export, why git and npm rather than a hosted component platform, and what the expanded version adds. Where a question has a longer answer, it links to the guide.
 
 ## Why no database?
 
@@ -88,15 +88,15 @@ Yes, by hand. Copy `registry/`, the docs app, the support packages and the gener
 
 Delete `.github/workflows/ci.yml`. It is the only file involved. See [Testing and CI](testing-and-ci.md).
 
-## What does the hosted and expanded version add?
+## What does the expanded version add?
 
-The same registry with a dashboard around it:
+The same registry with a workspace for the team on top, running on your infrastructure:
 
-- sign-in with SSO and organisations as scopes;
-- role-based curation of each component's status and tags, with an audit log;
-- hosted docs that read the packages you have already published, so every published version has docs without you running a site.
+- a dashboard, with status, tags and descriptions edited in place;
+- roles, with an audit log;
+- sign-in with SSO, organisations mapping to scopes.
 
-Your repo stays the source and your npm registry stays the publish target; the hosted version only reads them. If you stop using it, nothing in your repo changes. See https://platform.behivetech.com/expanded, and the full guide at https://platform.behivetech.com/docs.
+Your repo stays the source and your npm registry stays the publish target; standard keeps working unchanged underneath. If you stop using it, nothing in your repo changes. See [The expanded version](expanded.md).
 
 ## Can someone build this for us?
 

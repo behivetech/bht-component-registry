@@ -97,8 +97,10 @@ test.describe("docs section", () => {
     await expect(page.getByRole("heading", { name: "Guide" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Contributing" }).first()).toBeVisible();
     await expect(page.getByRole("link", { name: "Getting started" }).first()).toBeVisible();
-    // The header links to the section whenever there is at least one page.
+    // The header links to the section whenever there is at least one page;
+    // the footer links the Terms page while the owner keeps it.
     await expect(page.getByRole("navigation", { name: "Registry" }).getByRole("link", { name: "Docs" })).toBeVisible();
+    await expect(page.getByRole("contentinfo").getByRole("link", { name: "Terms" })).toHaveAttribute("href", "/docs/guide/terms");
   });
 
   test("a guide page renders with the sidebar and resolves its relative links", async ({ page }) => {

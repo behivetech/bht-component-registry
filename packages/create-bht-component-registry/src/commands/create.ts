@@ -156,7 +156,7 @@ async function resolveCategories(options: CreateOptions, deps: CreateDeps): Prom
 /**
  * The owner's config is the template's config with their choices applied.
  * The template's GitHub link points at the template repo, not at theirs, so
- * it goes; the hosted-version link is still true for them and stays.
+ * it goes; any other link is kept as configured.
  */
 async function writeConfig(target: string, choices: ScopeChoices): Promise<void> {
   const path = join(target, CONFIG_FILE);
@@ -237,7 +237,7 @@ function printNextSteps(dir: string, scope: string, installed: boolean, log: Log
   log.blank();
   log.info(`Create the npm org for @${scope} at https://www.npmjs.com/org/create before your first \`pnpm release\`.`);
   log.info("Guide: apps/docs/default-docs/guide/getting-started.md — also at /docs on the site. Pages under docs/ are yours; a same-path copy there replaces a default page.");
-  log.info("Hosted & expanded version: https://platform.behivetech.com/expanded");
+  log.info("Expanded version (dashboard, roles, audit log, on your infrastructure): apps/docs/default-docs/guide/expanded.md");
   log.blank();
 }
 
