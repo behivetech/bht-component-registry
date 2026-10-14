@@ -43,8 +43,10 @@ export function Markdown({ children, liveFences = "all", resolveLink }: Markdown
             }
             return <CodeBlock code={source} language={language === "sh" ? "bash" : (language as "bash")} />;
           },
-          a: ({ href, children, ...rest }) => (
-            <a href={href && resolveLink ? (resolveLink(href) ?? href) : href} {...rest}>
+          // Only the attributes a Markdown link can carry: spreading the rest
+          // would put react-markdown's `node` (a hast element) on the DOM.
+          a: ({ href, title, children }) => (
+            <a href={href && resolveLink ? (resolveLink(href) ?? href) : href} title={title}>
               {children}
             </a>
           ),

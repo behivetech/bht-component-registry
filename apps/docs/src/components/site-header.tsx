@@ -30,7 +30,7 @@ export function SiteHeader() {
           <Link href="/#scopes">Scopes</Link>
           {/* The tokens page exists only when a scope declares a tokens.scss. */}
           {tokens && <Link href="/tokens">Design tokens</Link>}
-          {/* The Docs section exists only when docs/ has at least one page. */}
+          {/* The Docs section exists when any page does — the template's defaults or the owner's docs/. */}
           {getDocPages().length > 0 && <Link href="/docs">Docs</Link>}
         </nav>
       </div>

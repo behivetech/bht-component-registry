@@ -232,7 +232,6 @@ function sourceFiles(dir: string): CatalogSourceFile[] {
     .map((f) => ({ path: f, language: LANGUAGE[path.extname(f)]!, content: fs.readFileSync(path.join(dir, f), "utf8") }));
 }
 
-/** registry/<slug>/scope.json: name, tagline, visibility and an optional tokens.scss path. */
 // ---------------------------------------------------------------------------
 // apps/docs/default-docs/**/*.md + docs/**/*.md — the site's Docs section
 // ---------------------------------------------------------------------------
@@ -303,6 +302,7 @@ function collectDocs(): DocPage[] {
   );
 }
 
+/** registry/<slug>/scope.json: name, tagline, visibility and an optional tokens.scss path. */
 function readScope(slug: string, componentCount: number): CatalogScope {
   const scopeDir = path.join(REGISTRY_DIR, slug);
   const manifestFile = path.join(scopeDir, "scope.json");
