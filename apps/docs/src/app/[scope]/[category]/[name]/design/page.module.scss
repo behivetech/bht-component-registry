@@ -1,42 +1,44 @@
-.link {
+// One design link on the Design tab: a titled card, with the Figma frame
+// embedded when the site opts in and the URL shown otherwise.
+.DesignLink {
   border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: 0.75rem;
   overflow: hidden;
   background: var(--md-sys-color-surface);
-}
 
-.bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.5rem 0.75rem;
-  border-bottom: 1px solid var(--md-sys-color-outline-variant);
-  background: var(--md-sys-color-surface-container-low);
-  font-size: 0.8125rem;
-}
+  &__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    background: var(--md-sys-color-surface-container-low);
+    font-size: 0.8125rem;
+  }
 
-.label {
-  font-weight: 600;
-  color: var(--md-sys-color-on-surface-variant);
-}
+  &__label {
+    font-weight: 600;
+    color: var(--md-sys-color-on-surface-variant);
+  }
 
-.open {
-  text-decoration: none;
-  color: var(--md-sys-color-primary);
-}
+  &__open {
+    text-decoration: none;
+    color: var(--md-sys-color-primary);
+  }
 
-.url {
-  margin: 0;
-  padding: 1rem 1.5rem;
-  overflow-wrap: anywhere;
-}
+  &__url {
+    margin: 0;
+    padding: 1rem 1.5rem;
+    overflow-wrap: anywhere;
+  }
 
-// Figma's embed sizes itself to its container; a tall box gives a frame room.
-.embed {
-  display: block;
-  width: 100%;
-  height: 32rem;
-  border: 0;
-  background: var(--md-sys-color-surface-container-low);
+  // Figma's embed sizes itself to its container; a tall box gives a frame room.
+  &__embed {
+    display: block;
+    width: 100%;
+    height: 32rem;
+    border: 0;
+    background: var(--md-sys-color-surface-container-low);
+  }
 }

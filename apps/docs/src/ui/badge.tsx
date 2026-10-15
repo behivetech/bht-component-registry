@@ -3,7 +3,8 @@ import { type HTMLAttributes } from "react";
 import { getClassName } from "@bht-component-registry/class-names";
 import styles from "./badge.module.scss";
 
-export type BadgeVariant = "default" | "primary" | "success" | "warning" | "error" | "info";
+export type BadgeVariant =
+  "default" | "primary" | "success" | "warning" | "error" | "info";
 export type BadgeSize = "sm" | "md";
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
@@ -17,7 +18,13 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   children?: React.ReactNode;
 }
 
-export const Badge = ({ variant = "default", size = "md", className, children, ...rest }: BadgeProps) => {
+export const Badge = ({
+  variant = "default",
+  size = "md",
+  className,
+  children,
+  ...rest
+}: BadgeProps) => {
   const [rootClass] = getClassName({
     className,
     rootClass: "BHT__Badge",

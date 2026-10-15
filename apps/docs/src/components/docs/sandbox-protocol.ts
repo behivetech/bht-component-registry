@@ -31,10 +31,15 @@ export type FromSandbox =
  * sandbox page nothing — it doesn't need the catalog to look anything up.
  */
 export function encodeSandboxHash(program: SandboxProgram): string {
-  const bytes = new TextEncoder().encode(JSON.stringify({ code: program.code, noInline: program.noInline }));
+  const bytes = new TextEncoder().encode(
+    JSON.stringify({ code: program.code, noInline: program.noInline }),
+  );
   let binary = "";
   for (const byte of bytes) binary += String.fromCharCode(byte);
-  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  return btoa(binary)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
 }
 
 export function decodeSandboxHash(hash: string): SandboxProgram | null {
@@ -43,7 +48,9 @@ export function decodeSandboxHash(hash: string): SandboxProgram | null {
   try {
     const binary = atob(encoded.replace(/-/g, "+").replace(/_/g, "/"));
     const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
-    const parsed = JSON.parse(new TextDecoder().decode(bytes)) as Partial<SandboxProgram>;
+    const parsed = JSON.parse(
+      new TextDecoder().decode(bytes),
+    ) as Partial<SandboxProgram>;
     if (typeof parsed.code !== "string") return null;
     return { code: parsed.code, noInline: Boolean(parsed.noInline) };
   } catch {

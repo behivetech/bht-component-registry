@@ -6,6 +6,7 @@ import { catalog, getScopes, latestReleases } from "@/lib/catalog";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { CodeBlock } from "@/components/docs/code-block";
+import { getClassName } from "@bht-component-registry/class-names";
 import styles from "./page.module.scss";
 
 const PILLARS = [
@@ -37,16 +38,26 @@ export default function RegistryHomePage() {
   const { site, primaryScope } = catalog;
   const scopes = getScopes();
   const releases = latestReleases(6);
+  const [rootClass, getChildClass] = getClassName({
+    rootClass: "HomePage",
+    styles,
+  });
 
   return (
     <>
       <SiteHeader />
-      <main className={styles.page}>
+      <main className={rootClass}>
         <HeroBanner
           headline={site.title}
-          subtext={site.description ?? "A component registry that stays in git."}
+          subtext={
+            site.description ?? "A component registry that stays in git."
+          }
           ctaButtons={[
-            { label: `Browse @${primaryScope}`, href: `/${primaryScope}`, variant: "primary" },
+            {
+              label: `Browse @${primaryScope}`,
+              href: `/${primaryScope}`,
+              variant: "primary",
+            },
             {
               label: "How to add a component",
               href: "https://github.com/behivetech/bht-component-registry/blob/main/docs/components.md",
@@ -55,14 +66,21 @@ export default function RegistryHomePage() {
           ]}
         />
 
-        <section className={styles.section} id="scopes">
+        <section className={getChildClass("section")} id="scopes">
           <h2>Scopes</h2>
-          <div className={styles.grid}>
+          <div className={getChildClass("grid")}>
             {scopes.map((scope) => (
-              <Card key={scope.slug} title={scope.name} headingLevel={3} padding="md" action={<code>@{scope.slug}</code>}>
+              <Card
+                key={scope.slug}
+                title={scope.name}
+                headingLevel={3}
+                padding="md"
+                action={<code>@{scope.slug}</code>}
+              >
                 <p>{scope.tagline ?? "No description yet."}</p>
-                <p className={styles.count}>
-                  {scope.componentCount} component{scope.componentCount === 1 ? "" : "s"}
+                <p className={getChildClass("count")}>
+                  {scope.componentCount} component
+                  {scope.componentCount === 1 ? "" : "s"}
                 </p>
                 <Button asChild variant="secondary" size="sm">
                   <Link href={`/${scope.slug}`}>Browse {scope.name}</Link>
@@ -72,35 +90,50 @@ export default function RegistryHomePage() {
           </div>
         </section>
 
-        <section className={styles.section}>
+        <section className={getChildClass("section")}>
           <h2>Latest releases</h2>
-          <ul className={styles.releases}>
+          <ul className={getChildClass("releases")}>
             {releases.map(({ component, version, notes }) => (
               <li key={component.packageName}>
-                <Link href={`/${component.scope}/${component.category}/${component.name}/changelog`}>
+                <Link
+                  href={`/${component.scope}/${component.category}/${component.name}/changelog`}
+                >
                   <code>{component.packageName}</code>
                 </Link>{" "}
                 <strong>v{version}</strong>
-                <p>{notes.split("\n").find((line) => line.startsWith("- "))?.slice(2) ?? "Release notes in the changelog."}</p>
+                <p>
+                  {notes
+                    .split("\n")
+                    .find((line) => line.startsWith("- "))
+                    ?.slice(2) ?? "Release notes in the changelog."}
+                </p>
               </li>
             ))}
           </ul>
         </section>
 
-        <section className={styles.section}>
+        <section className={getChildClass("section")}>
           <h2>How it works</h2>
-          <div className={styles.grid}>
+          <div className={getChildClass("grid")}>
             {PILLARS.map((pillar) => (
-              <Card key={pillar.title} title={pillar.title} headingLevel={3} padding="md">
+              <Card
+                key={pillar.title}
+                title={pillar.title}
+                headingLevel={3}
+                padding="md"
+              >
                 <p>{pillar.body}</p>
               </Card>
             ))}
           </div>
         </section>
 
-        <section className={styles.section}>
+        <section className={getChildClass("section")}>
           <h2>Add a component to your scope</h2>
-          <p>Three commands from an empty folder to a documented, versioned package:</p>
+          <p>
+            Three commands from an empty folder to a documented, versioned
+            package:
+          </p>
           <CodeBlock
             language="bash"
             code={`pnpm gen                     # scope → category → name; scaffolds registry/<scope>/…\npnpm changeset               # describe the change; Changesets bumps the version\npnpm release                 # build + publish to your npm registry (npmjs by default)`}

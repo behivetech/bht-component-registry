@@ -1,12 +1,20 @@
 // Internal copy for the docs site's own chrome; not a registry component, not published. Edit freely.
-import { useId, type HTMLAttributes, type MouseEventHandler, type ReactNode } from "react";
+import {
+  useId,
+  type HTMLAttributes,
+  type MouseEventHandler,
+  type ReactNode,
+} from "react";
 import { getClassName } from "@bht-component-registry/class-names";
 import styles from "./card.module.scss";
 
 export type CardPadding = "none" | "sm" | "md" | "lg";
 export type CardHeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
-export interface CardProps extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "onSelect"> {
+export interface CardProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "title" | "onSelect"
+> {
   /** Controls internal padding; defaults to none so consumers opt in. Applies to the body when a header is present. */
   padding?: CardPadding;
   /** Optional icon rendered before the title in the header */
@@ -55,7 +63,8 @@ export const Card = ({
   ...rest
 }: CardProps) => {
   const generatedTitleId = useId();
-  const hasHeader = icon !== undefined || title !== undefined || action !== undefined;
+  const hasHeader =
+    icon !== undefined || title !== undefined || action !== undefined;
   const hasTitle = title !== undefined;
   const interactive = onSelect !== undefined;
   const HeadingTag = `h${headingLevel}` as React.ElementType;
@@ -82,17 +91,25 @@ export const Card = ({
       {hasHeader && (
         <div className={getChildClass("header")}>
           <span className={getChildClass("heading")}>
-            {icon !== undefined && <span className={getChildClass("icon")}>{icon}</span>}
+            {icon !== undefined && (
+              <span className={getChildClass("icon")}>{icon}</span>
+            )}
             {hasTitle && (
               <HeadingTag id={titleId} className={getChildClass("title")}>
                 {title}
               </HeadingTag>
             )}
           </span>
-          {action !== undefined && <span className={getChildClass("action")}>{action}</span>}
+          {action !== undefined && (
+            <span className={getChildClass("action")}>{action}</span>
+          )}
         </div>
       )}
-      <BodyTag type={interactive ? "button" : undefined} onClick={onSelect} className={getChildClass("body-padding")}>
+      <BodyTag
+        type={interactive ? "button" : undefined}
+        onClick={onSelect}
+        className={getChildClass("body-padding")}
+      >
         {children}
       </BodyTag>
     </RootTag>

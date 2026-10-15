@@ -2,8 +2,15 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { getComponent } from "@/lib/catalog";
 import { loadPublishedVersions, publishedRegistryHost } from "@/lib/published";
+import { getClassName } from "@bht-component-registry/class-names";
 import { Markdown } from "@/components/docs/markdown";
-import styles from "../page.module.scss";
+import { TabPage } from "@/components/docs/tab-page";
+import styles from "./page.module.scss";
+
+const [rootClass, getChildClass] = getClassName({
+  rootClass: "ChangelogPage",
+  styles,
+});
 
 interface Props {
   params: Promise<{ scope: string; category: string; name: string }>;
@@ -21,24 +28,35 @@ export default async function ChangelogPage({ params }: Props) {
   if (!component) notFound();
 
   return (
-    <div className={styles.stack}>
+    <TabPage>
       <section>
         <h2>Published to {publishedRegistryHost(component.publishRegistry)}</h2>
-        <Suspense fallback={<p className={styles.muted}>Checking the registry…</p>}>
-          <PublishedVersions packageName={component.packageName} registry={component.publishRegistry} current={component.version} />
+        <Suspense
+          fallback={<TabPage.Note>Checking the registry…</TabPage.Note>}
+        >
+          <PublishedVersions
+            packageName={component.packageName}
+            registry={component.publishRegistry}
+            current={component.version}
+          />
         </Suspense>
       </section>
 
       <section>
         <h2>Changelog</h2>
         {component.releases.length === 0 ? (
-          <p className={styles.muted}>
-            No releases yet — <code>{component.packageName}</code> is at {component.version} in the repo and has not been through <code>pnpm changeset</code>.
-          </p>
+          <TabPage.Note>
+            No releases yet — <code>{component.packageName}</code> is at{" "}
+            {component.version} in the repo and has not been through{" "}
+            <code>pnpm changeset</code>.
+          </TabPage.Note>
         ) : (
-          <div className={styles.releases}>
+          <div className={rootClass}>
             {component.releases.map((release) => (
-              <article key={release.version} className={styles.release}>
+              <article
+                key={release.version}
+                className={getChildClass("release")}
+              >
                 <h3>v{release.version}</h3>
                 <Markdown>{release.notes}</Markdown>
               </article>
@@ -46,29 +64,38 @@ export default async function ChangelogPage({ params }: Props) {
           </div>
         )}
       </section>
-    </div>
+    </TabPage>
   );
 }
 
-async function PublishedVersions({ packageName, registry, current }: { packageName: string; registry: string; current: string }) {
+async function PublishedVersions({
+  packageName,
+  registry,
+  current,
+}: {
+  packageName: string;
+  registry: string;
+  current: string;
+}) {
   const versions = await loadPublishedVersions(packageName, registry);
   if (versions === null) {
     return (
-      <p className={styles.muted}>
-        Set <code>REGISTRY_READ_TOKEN</code> at build time to list published versions from a private registry. The repo is at{" "}
+      <TabPage.Note>
+        Set <code>REGISTRY_READ_TOKEN</code> at build time to list published
+        versions from a private registry. The repo is at{" "}
         <strong>v{current}</strong>.
-      </p>
+      </TabPage.Note>
     );
   }
   if (versions.length === 0) {
     return (
-      <p className={styles.muted}>
+      <TabPage.Note>
         Not published yet. The repo is at <strong>v{current}</strong>.
-      </p>
+      </TabPage.Note>
     );
   }
   return (
-    <ul className={styles.published}>
+    <ul className={getChildClass("published")}>
       {versions.map((v) => (
         <li key={v.version} title={v.publishedAt ?? undefined}>
           v{v.version}

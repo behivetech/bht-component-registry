@@ -7,7 +7,10 @@
  * component gets a `render(...)` call; anything else is treated as one JSX
  * expression, wrapped in a fragment so sibling elements are allowed.
  */
-export function snippetToLiveCode(source: string): { code: string; noInline: boolean } {
+export function snippetToLiveCode(source: string): {
+  code: string;
+  noInline: boolean;
+} {
   const withoutImports = source
     .split("\n")
     .filter((line) => !/^\s*import\s.*from\s+['"][^'"]+['"];?\s*$/.test(line))
@@ -17,9 +20,14 @@ export function snippetToLiveCode(source: string): { code: string; noInline: boo
   // A snippet that defines a component (README "full example" style).
   const declared =
     withoutImports.match(/^(?:export\s+)?function\s+([A-Z]\w*)\s*\(/m)?.[1] ??
-    withoutImports.match(/^(?:export\s+)?const\s+([A-Z]\w*)\s*=\s*(?:\([^)]*\)|[a-zA-Z_]\w*)?\s*=>/m)?.[1];
+    withoutImports.match(
+      /^(?:export\s+)?const\s+([A-Z]\w*)\s*=\s*(?:\([^)]*\)|[a-zA-Z_]\w*)?\s*=>/m,
+    )?.[1];
   if (declared) {
-    return { code: `${withoutImports.replace(/^export\s+/gm, "")}\n\nrender(<${declared} />);`, noInline: true };
+    return {
+      code: `${withoutImports.replace(/^export\s+/gm, "")}\n\nrender(<${declared} />);`,
+      noInline: true,
+    };
   }
 
   // A snippet using hooks at the top level can't run as a bare expression;
@@ -30,12 +38,16 @@ export function snippetToLiveCode(source: string): { code: string; noInline: boo
     // element, which would leave the opening tags in the setup region.)
     const jsxStart = withoutImports.indexOf("\n<");
     const setup = jsxStart === -1 ? "" : withoutImports.slice(0, jsxStart);
-    const jsx = jsxStart === -1 ? withoutImports : withoutImports.slice(jsxStart + 1);
+    const jsx =
+      jsxStart === -1 ? withoutImports : withoutImports.slice(jsxStart + 1);
     return {
       code: `function Example() {\n${setup}\n  return (\n<>\n${jsx.replace(/;\s*$/, "")}\n</>\n  );\n}\n\nrender(<Example />);`,
       noInline: true,
     };
   }
 
-  return { code: `<>\n${withoutImports.replace(/;\s*$/, "")}\n</>`, noInline: false };
+  return {
+    code: `<>\n${withoutImports.replace(/;\s*$/, "")}\n</>`,
+    noInline: false,
+  };
 }

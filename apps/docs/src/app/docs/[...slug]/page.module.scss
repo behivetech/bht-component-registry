@@ -1,0 +1,15 @@
+.DocPage {
+  &__eyebrow {
+    margin: 0;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  &__description {
+    font-size: 1.125rem;
+    color: var(--md-sys-color-on-surface-variant);
+    max-width: 48rem;
+  }
+}

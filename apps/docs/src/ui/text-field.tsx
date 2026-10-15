@@ -3,7 +3,10 @@ import { type InputHTMLAttributes, useId } from "react";
 import { getClassName } from "@bht-component-registry/class-names";
 import styles from "./text-field.module.scss";
 
-export interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
+export interface TextFieldProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "size"
+> {
   /** Additional class names to merge with the component root element */
   className?: string;
 }

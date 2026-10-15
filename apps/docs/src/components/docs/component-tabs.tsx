@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { getClassName } from "@bht-component-registry/class-names";
 import styles from "./component-tabs.module.scss";
 
 const TABS = [
@@ -15,16 +16,32 @@ const TABS = [
 const DESIGN_TAB = { path: "/design", label: "Design" };
 
 /** Tabs are routes, so each one is linkable and prerendered. The Design tab exists only for a component with design links. */
-export function ComponentTabs({ base, design = false }: { base: string; design?: boolean }) {
+export function ComponentTabs({
+  base,
+  design = false,
+}: {
+  base: string;
+  design?: boolean;
+}) {
   const pathname = usePathname();
   const tabs = design ? [...TABS, DESIGN_TAB] : TABS;
+  const [rootClass, getChildClass] = getClassName({
+    rootClass: "ComponentTabs",
+    styles,
+  });
   return (
-    <nav className={styles.tabs} aria-label="Component sections">
+    <nav className={rootClass} aria-label="Component sections">
       {tabs.map((tab) => {
         const href = `${base}${tab.path}`;
         const active = pathname === href;
+        // The active tab is styled from aria-current, so the state has one source.
         return (
-          <Link key={tab.path} href={href} className={`${styles.tab} ${active ? styles.active : ""}`} aria-current={active ? "page" : undefined}>
+          <Link
+            key={tab.path}
+            href={href}
+            className={getChildClass("tab")}
+            aria-current={active ? "page" : undefined}
+          >
             {tab.label}
           </Link>
         );

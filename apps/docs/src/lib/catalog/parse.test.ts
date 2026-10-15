@@ -1,6 +1,15 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
-import { extractTokens, humanizeTitle, parseChangelog, readmeSummary, readmeTitle, splitPascal, stripTitle, toTitle } from "./parse";
+import {
+  extractTokens,
+  humanizeTitle,
+  parseChangelog,
+  readmeSummary,
+  readmeTitle,
+  splitPascal,
+  stripTitle,
+  toTitle,
+} from "./parse";
 
 const README = `# Hero Banner
 
@@ -29,7 +38,11 @@ describe("readme helpers", () => {
   });
 
   it("skips code blocks, headings, lists and tables when summarising", () => {
-    expect(readmeSummary("# T\n\n```jsx\nx\n```\n\n## H\n\n- item\n\n| a |\n\nReal text.")).toBe("Real text.");
+    expect(
+      readmeSummary(
+        "# T\n\n```jsx\nx\n```\n\n## H\n\n- item\n\n| a |\n\nReal text.",
+      ),
+    ).toBe("Real text.");
   });
 
   it("title-cases slugs and splits PascalCase", () => {
@@ -78,7 +91,9 @@ describe("extractTokens", () => {
 
   it("pairs light and dark values per color role", () => {
     const tokens = extractTokens(scss);
-    expect(tokens.colorRoles).toEqual([{ role: "primary", light: "#64558f", dark: "#cebdfe" }]);
+    expect(tokens.colorRoles).toEqual([
+      { role: "primary", light: "#64558f", dark: "#cebdfe" },
+    ]);
   });
 
   it("groups typescale properties by style name", () => {
@@ -88,6 +103,8 @@ describe("extractTokens", () => {
   });
 
   it("lists shape corners", () => {
-    expect(extractTokens(scss).shapes).toEqual([{ name: "full", value: "9999px" }]);
+    expect(extractTokens(scss).shapes).toEqual([
+      { name: "full", value: "9999px" },
+    ]);
   });
 });

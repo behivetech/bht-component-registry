@@ -134,7 +134,12 @@ export interface CatalogComponent {
 
 export interface CatalogTokens {
   colorRoles: { role: string; light: string; dark: string }[];
-  typescale: { name: string; size: string; lineHeight: string; weight: string }[];
+  typescale: {
+    name: string;
+    size: string;
+    lineHeight: string;
+    weight: string;
+  }[];
   shapes: { name: string; value: string }[];
 }
 

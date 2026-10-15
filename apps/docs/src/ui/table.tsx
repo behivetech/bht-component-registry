@@ -32,7 +32,12 @@ export interface TableProps<TRow> {
  * `dataIndex` or a custom `render`), pass `data`, get a `<table>` back. No sorting,
  * pagination, or empty-state handling — those are the consuming page's concern.
  */
-export const Table = <TRow,>({ columns, data, rowKey, className }: TableProps<TRow>) => {
+export const Table = <TRow,>({
+  columns,
+  data,
+  rowKey,
+  className,
+}: TableProps<TRow>) => {
   const [rootClass] = getClassName({
     className,
     rootClass: "BHT__Table",
@@ -54,10 +59,16 @@ export const Table = <TRow,>({ columns, data, rowKey, className }: TableProps<TR
         {data.map((row) => (
           <tr key={rowKey(row)}>
             {columns.map((column) => {
-              const value = column.dataIndex ? row[column.dataIndex] : undefined;
+              const value = column.dataIndex
+                ? row[column.dataIndex]
+                : undefined;
               return (
                 <td key={column.key} className={column.className}>
-                  {column.render ? column.render(value, row) : value !== undefined ? String(value) : null}
+                  {column.render
+                    ? column.render(value, row)
+                    : value !== undefined
+                      ? String(value)
+                      : null}
                 </td>
               );
             })}

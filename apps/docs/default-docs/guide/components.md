@@ -42,6 +42,25 @@ Why each file is there:
 - `index.ts` is what consumers and the docs sandbox import. Only export from here what you want in the Playground scope.
 - `README.md` and `CHANGELOG.md` are shown as-is. The generator writes a CHANGELOG containing only the package-name heading; Changesets adds releases under it.
 
+### Styling: BEM through `getClassName`
+
+Every class name in a component — and in the docs site itself — comes from `getClassName` (`@bht-component-registry/class-names`), so the markup and the stylesheet agree by construction:
+
+```tsx
+const [rootClass, getChildClass] = getClassName({
+  rootClass: "ACME__Button", // <SCOPE>__<PascalName>; the generator fills it in
+  styles,                     // the CSS-module map, so names resolve to the hashed classes
+  className,                  // whatever the consumer passed, merged onto the root
+  modifiers: { loading },     // `ACME__Button--loading` while true
+});
+
+<button className={rootClass}>
+  <span className={getChildClass("label")}>…</span> // ACME__Button__label
+</button>
+```
+
+The stylesheet is the same tree: `.ACME__Button { &__label {} &--loading {} }`. Three rules follow from it: no `styles.foo` or hand-written class strings anywhere; a stylesheet styles its own component only (position a child by passing it `className`, never by selecting its classes); and a state the DOM already carries (`aria-current`, `disabled`) is styled from that attribute rather than a second class.
+
 Categories offered by the generator are `atoms`, `molecules`, `forms`, `organisms`, `templates`. The catalog also recognises `utils` and `theme`, in case you need them. Display order is atoms, molecules, organisms, templates, forms, utils, theme.
 
 ## Scaffolding with `pnpm gen`

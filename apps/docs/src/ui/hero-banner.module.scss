@@ -7,7 +7,7 @@
 // `on-*` role flips with the theme, so the one light literal lives in
 // `--hero-banner-on-image` below rather than being repeated per rule.
 
-.BHT__hero-banner {
+.BHT__HeroBanner {
   --hero-banner-on-image: #ffffff;
 
   position: relative;
@@ -39,7 +39,10 @@
   }
 
   &__headline {
-    font-family: var(--md-sys-typescale-display-medium-font, var(--font-heading));
+    font-family: var(
+      --md-sys-typescale-display-medium-font,
+      var(--font-heading)
+    );
     font-size: var(--md-sys-typescale-display-medium-size, 2.8125rem);
     font-weight: var(--md-sys-typescale-display-medium-weight, 400);
     line-height: var(--md-sys-typescale-display-medium-line-height, 3.25rem);
@@ -90,7 +93,8 @@
       background: currentColor;
       opacity: 0;
       pointer-events: none;
-      transition: opacity var(--md-sys-motion-duration-short-2, 100ms) var(--md-sys-motion-easing-standard, ease);
+      transition: opacity var(--md-sys-motion-duration-short-2, 100ms)
+        var(--md-sys-motion-easing-standard, ease);
     }
 
     &:hover::after {
@@ -119,7 +123,8 @@
     }
 
     &:focus-visible {
-      outline: 3px solid var(--md-sys-color-secondary, var(--color-border-focus));
+      outline: 3px solid
+        var(--md-sys-color-secondary, var(--color-border-focus));
       outline-offset: 2px;
     }
   }
@@ -127,11 +132,12 @@
   &__cta-secondary {
     background: transparent;
     color: var(--hero-banner-on-image);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hero-banner-on-image) 70%, transparent);
+    box-shadow: inset 0 0 0 1px
+      color-mix(in srgb, var(--hero-banner-on-image) 70%, transparent);
   }
 
   &--align-left {
-    .BHT__hero-banner {
+    .BHT__HeroBanner {
       &__content {
         text-align: left;
         margin-left: 0;
@@ -144,7 +150,7 @@
   }
 
   &--align-right {
-    .BHT__hero-banner {
+    .BHT__HeroBanner {
       &__content {
         text-align: right;
         margin-right: 0;

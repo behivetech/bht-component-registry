@@ -1,6 +1,7 @@
 "use client";
 
 import { useDeferredValue, useState } from "react";
+import { getClassName } from "@bht-component-registry/class-names";
 import { TextField } from "@/ui/text-field";
 import { EmptyState } from "@/ui/empty-state";
 import type { ComponentCardModel } from "@/lib/catalog/card-model";
@@ -22,12 +23,20 @@ export interface CatalogGroup {
 export function ScopeCatalog({ groups }: { groups: CatalogGroup[] }) {
   const [query, setQuery] = useState("");
   const deferred = useDeferredValue(query.trim().toLowerCase());
+  const [rootClass, getChildClass] = getClassName({
+    rootClass: "ScopeCatalog",
+    styles,
+  });
 
   const visible = groups
     .map((group) => ({
       ...group,
       components: group.components.filter(
-        (c) => !deferred || [c.name, c.title, c.summary, c.packageName, ...c.tags].some((f) => f.toLowerCase().includes(deferred)),
+        (c) =>
+          !deferred ||
+          [c.name, c.title, c.summary, c.packageName, ...c.tags].some((f) =>
+            f.toLowerCase().includes(deferred),
+          ),
       ),
     }))
     .filter((group) => group.components.length > 0);
@@ -35,28 +44,34 @@ export function ScopeCatalog({ groups }: { groups: CatalogGroup[] }) {
   const total = groups.reduce((n, g) => n + g.components.length, 0);
 
   return (
-    <div className={styles.catalog}>
-      <div className={styles.toolbar}>
+    <div className={rootClass}>
+      <div className={getChildClass("toolbar")}>
         <TextField
           type="search"
           placeholder={`Search ${total} components…`}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           aria-label="Search components"
-          className={styles.search}
+          className={getChildClass("search")}
         />
       </div>
       {visible.length === 0 ? (
         <EmptyState description={`Nothing matches “${query}”.`} />
       ) : (
         visible.map((group) => (
-          <section key={group.key} className={styles.group}>
-            <h2 className={styles.groupTitle}>
-              {group.label} <span className={styles.groupCount}>{group.components.length}</span>
+          <section key={group.key} className={getChildClass("group")}>
+            <h2 className={getChildClass("group-title")}>
+              {group.label}{" "}
+              <span className={getChildClass("group-count")}>
+                {group.components.length}
+              </span>
             </h2>
-            <div className={styles.grid}>
+            <div className={getChildClass("grid")}>
               {group.components.map((component) => (
-                <ComponentCard key={component.packageName} component={component} />
+                <ComponentCard
+                  key={component.packageName}
+                  component={component}
+                />
               ))}
             </div>
           </section>

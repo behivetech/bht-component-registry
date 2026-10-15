@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getClassName } from "@bht-component-registry/class-names";
 import { getDocSections } from "@/lib/docs";
 import { SiteHeader } from "./site-header";
 import { SiteFooter } from "./site-footer";
@@ -9,22 +10,32 @@ import styles from "./docs-shell.module.scss";
  * section, and the page itself. All build-time data, so it is static markup;
  * the current page is marked with `aria-current` for styling and readers.
  */
-export function DocsShell({ current, children }: { current?: string; children: React.ReactNode }) {
+export function DocsShell({
+  current,
+  children,
+}: {
+  current?: string;
+  children: React.ReactNode;
+}) {
   const sections = getDocSections();
+  const [rootClass, getChildClass] = getClassName({
+    rootClass: "DocsShell",
+    styles,
+  });
   return (
     <>
       <SiteHeader />
-      <div className={styles.shell}>
-        <nav className={styles.nav} aria-label="Docs">
+      <div className={rootClass}>
+        <nav className={getChildClass("nav")} aria-label="Docs">
           {sections.map((section) => (
-            <div key={section.key} className={styles.section}>
-              <p className={styles.sectionLabel}>{section.label}</p>
-              <ul className={styles.list}>
+            <div key={section.key} className={getChildClass("section")}>
+              <p className={getChildClass("section-label")}>{section.label}</p>
+              <ul className={getChildClass("list")}>
                 {section.pages.map((page) => (
                   <li key={page.slug}>
                     <Link
                       href={`/docs/${page.slug}`}
-                      className={styles.link}
+                      className={getChildClass("link")}
                       aria-current={page.slug === current ? "page" : undefined}
                       title={page.description ?? undefined}
                     >
@@ -36,7 +47,7 @@ export function DocsShell({ current, children }: { current?: string; children: R
             </div>
           ))}
         </nav>
-        <main className={styles.main}>{children}</main>
+        <main className={getChildClass("main")}>{children}</main>
       </div>
       <SiteFooter />
     </>

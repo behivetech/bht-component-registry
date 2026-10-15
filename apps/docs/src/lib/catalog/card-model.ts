@@ -39,8 +39,11 @@ export const OVERLAY_EXPORTS = new Set([
   "Popover",
 ]);
 
-export const isOverlayComponent = (component: Pick<CatalogComponent, "exportNames" | "thumbnail">) =>
-  !component.thumbnail || component.exportNames.some((name) => OVERLAY_EXPORTS.has(name));
+export const isOverlayComponent = (
+  component: Pick<CatalogComponent, "exportNames" | "thumbnail">,
+) =>
+  !component.thumbnail ||
+  component.exportNames.some((name) => OVERLAY_EXPORTS.has(name));
 
 /** The slice of a catalog entry a card needs — the full entry carries every source file. */
 export function toCardModel(component: CatalogComponent): ComponentCardModel {
@@ -55,6 +58,8 @@ export function toCardModel(component: CatalogComponent): ComponentCardModel {
     tags: component.tags,
     status: component.status,
     visibility: component.visibility,
-    thumbnailCode: isOverlayComponent(component) ? null : (component.examples[0]?.code ?? null),
+    thumbnailCode: isOverlayComponent(component)
+      ? null
+      : (component.examples[0]?.code ?? null),
   };
 }

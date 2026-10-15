@@ -1,88 +1,94 @@
-.example {
+.LiveExample {
   margin: 0;
   border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: 0.75rem;
   overflow: hidden;
   background: var(--md-sys-color-surface);
-}
 
-.bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.5rem 0.75rem;
-  border-bottom: 1px solid var(--md-sys-color-outline-variant);
-  background: var(--md-sys-color-surface-container-low);
-  font-size: 0.8125rem;
-}
-
-.title {
-  font-weight: 600;
-  color: var(--md-sys-color-on-surface-variant);
-}
-
-.actions {
-  display: flex;
-  gap: 0.25rem;
-}
-
-.toggle {
-  border: 0;
-  padding: 0.25rem 0.75rem;
-  border-radius: 999px;
-  font: inherit;
-  font-size: 0.8125rem;
-  cursor: pointer;
-  text-decoration: none;
-  color: var(--md-sys-color-primary);
-  background: transparent;
-
-  &:hover {
-    background: var(--md-sys-color-surface-container-high);
+  &__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    background: var(--md-sys-color-surface-container-low);
+    font-size: 0.8125rem;
   }
-}
 
-// The preview's document lives in the frame (see sandbox.module.scss for its
-// padding); this box only gives it a height. The frame reports its content
-// height and the component sets it here, so the page scrolls, never the frame.
-.preview {
-  height: var(--preview-height);
-  transition: height 120ms ease-out;
-}
+  &__title {
+    font-weight: 600;
+    color: var(--md-sys-color-on-surface-variant);
+  }
 
-.frame {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  background: transparent;
-}
+  &__actions {
+    display: flex;
+    gap: 0.25rem;
+  }
 
-// Catalog thumbnails render inline: no frame, no controls.
-.inline {
-  padding: 1.5rem;
-  display: flow-root;
-}
+  &__toggle {
+    border: 0;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font: inherit;
+    font-size: 0.8125rem;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--md-sys-color-primary);
+    background: transparent;
 
-.error {
-  margin: 0.75rem 0 0;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.8125rem;
-  white-space: pre-wrap;
-  background: var(--md-sys-color-error-container);
-  color: var(--md-sys-color-on-error-container);
-}
+    &:hover {
+      background: var(--md-sys-color-surface-container-high);
+    }
+  }
 
-.editor {
-  border-top: 1px solid var(--md-sys-color-outline-variant);
-  background: #011627;
-}
+  // The preview's document lives in the frame (see sandbox.module.scss for its
+  // padding); this box only gives it a height. The frame reports its content
+  // height and the component sets it here, so the page scrolls, never the frame.
+  &__preview {
+    height: var(--preview-height);
+    transition: height 120ms ease-out;
+  }
 
-.editorInner {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.8125rem;
-  min-height: 3rem;
+  &__frame {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: transparent;
+  }
+
+  // The inline variant (catalog thumbnails) renders here: no frame, no controls.
+  &__body {
+    padding: 1.5rem;
+    display: flow-root;
+  }
+
+  &__error {
+    margin: 0.75rem 0 0;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.8125rem;
+    white-space: pre-wrap;
+    background: var(--md-sys-color-error-container);
+    color: var(--md-sys-color-on-error-container);
+  }
+
+  &__editor {
+    border-top: 1px solid var(--md-sys-color-outline-variant);
+    background: #011627;
+  }
+
+  &__editor-inner {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.8125rem;
+    min-height: 3rem;
+  }
+
+  // `previewOnly`: the example is a thumbnail, inline in the page.
+  &--inline {
+    // Nothing yet beyond the body padding above; the modifier is here so a
+    // thumbnail can be styled apart from a framed example without a new class.
+  }
 }

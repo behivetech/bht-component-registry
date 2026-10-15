@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 import { getDocPage, getDocPages, resolveDocLink } from "@/lib/docs";
 import { DocsShell } from "@/components/docs-shell";
 import { Markdown } from "@/components/docs/markdown";
-import styles from "@/components/docs-shell.module.scss";
+import { getClassName } from "@bht-component-registry/class-names";
+import styles from "./page.module.scss";
 
 interface Props {
   params: Promise<{ slug: string[] }>;
@@ -38,14 +39,25 @@ export default async function DocPage({ params }: Props) {
   const page = getDocPage(slug.join("/"));
   if (!page) notFound();
 
+  const [rootClass, getChildClass] = getClassName({
+    rootClass: "DocPage",
+    styles,
+  });
   return (
     <DocsShell current={page.slug}>
-      <p className={styles.eyebrow}>{page.sectionLabel}</p>
-      <h1>{page.title}</h1>
-      {page.description && <p className={styles.description}>{page.description}</p>}
-      <Markdown liveFences="opt-in" resolveLink={(href) => resolveDocLink(page.slug, href)}>
-        {page.body}
-      </Markdown>
+      <article className={rootClass}>
+        <p className={getChildClass("eyebrow")}>{page.sectionLabel}</p>
+        <h1>{page.title}</h1>
+        {page.description && (
+          <p className={getChildClass("description")}>{page.description}</p>
+        )}
+        <Markdown
+          liveFences="opt-in"
+          resolveLink={(href) => resolveDocLink(page.slug, href)}
+        >
+          {page.body}
+        </Markdown>
+      </article>
     </DocsShell>
   );
 }

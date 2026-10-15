@@ -1,25 +1,51 @@
+import { getClassName } from "@bht-component-registry/class-names";
 import { Table, type TableColumn } from "@/ui/table";
 import type { CatalogDocComponent, CatalogProp } from "@/lib/catalog";
 import styles from "./props-table.module.scss";
+
+const [rootClass, getChildClass] = getClassName({
+  rootClass: "PropsTable",
+  styles,
+});
 
 const columns: TableColumn<CatalogProp>[] = [
   {
     key: "name",
     title: "Prop",
     render: (_, prop) => (
-      <code className={styles.name}>
+      <code className={getChildClass("name")}>
         {prop.name}
-        {prop.required && <span className={styles.required} title="Required">*</span>}
+        {prop.required && (
+          <span className={getChildClass("required")} title="Required">
+            *
+          </span>
+        )}
       </code>
     ),
   },
-  { key: "type", title: "Type", render: (_, prop) => <code className={styles.type}>{prop.type}</code> },
+  {
+    key: "type",
+    title: "Type",
+    render: (_, prop) => (
+      <code className={getChildClass("type")}>{prop.type}</code>
+    ),
+  },
   {
     key: "default",
     title: "Default",
-    render: (_, prop) => (prop.defaultValue !== null ? <code>{prop.defaultValue}</code> : <span className={styles.muted}>—</span>),
+    render: (_, prop) =>
+      prop.defaultValue !== null ? (
+        <code>{prop.defaultValue}</code>
+      ) : (
+        <span className={getChildClass("muted")}>—</span>
+      ),
   },
-  { key: "description", title: "Description", render: (_, prop) => prop.description || <span className={styles.muted}>—</span> },
+  {
+    key: "description",
+    title: "Description",
+    render: (_, prop) =>
+      prop.description || <span className={getChildClass("muted")}>—</span>,
+  },
 ];
 
 /**
@@ -29,17 +55,24 @@ const columns: TableColumn<CatalogProp>[] = [
  */
 export function PropsTable({ doc }: { doc: CatalogDocComponent }) {
   return (
-    <section className={styles.section}>
-      <h3 className={styles.heading}>
+    <section className={rootClass}>
+      <h3 className={getChildClass("heading")}>
         <code>{doc.displayName}</code> props
       </h3>
       {doc.props.length === 0 ? (
-        <p className={styles.muted}>No props of its own.</p>
+        <p className={getChildClass("muted")}>No props of its own.</p>
       ) : (
-        <Table columns={columns} data={doc.props} rowKey={(prop) => prop.name} />
+        <Table
+          columns={columns}
+          data={doc.props}
+          rowKey={(prop) => prop.name}
+        />
       )}
       {doc.extendsNative && (
-        <p className={styles.note}>Also accepts the native attributes of its root element (className, aria-*, event handlers, …).</p>
+        <p className={getChildClass("note")}>
+          Also accepts the native attributes of its root element (className,
+          aria-*, event handlers, …).
+        </p>
       )}
     </section>
   );

@@ -1,4 +1,4 @@
-.markdown {
+.Markdown {
   max-width: 52rem;
   line-height: 1.65;
 
@@ -36,8 +36,10 @@
     border-left: 3px solid var(--md-sys-color-primary);
     color: var(--md-sys-color-on-surface-variant);
   }
-}
 
-.example {
-  margin: 1rem 0 1.5rem;
+  // A live example rendered in place of a fenced block; the class goes to
+  // LiveExample as its className, so the positioning stays this component's.
+  &__example {
+    margin: 1rem 0 1.5rem;
+  }
 }

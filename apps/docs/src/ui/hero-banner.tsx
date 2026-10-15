@@ -47,7 +47,7 @@ export const HeroBanner = ({
 }: HeroBannerProps) => {
   const [rootClass, getChildClass] = getClassName({
     className,
-    rootClass: "BHT__hero-banner",
+    rootClass: "BHT__HeroBanner",
     modifiers: { [`align-${align}`]: true },
     styles,
   });
@@ -56,11 +56,19 @@ export const HeroBanner = ({
   // as a dead link. Falling back to ctaLabel/ctaHref keeps the older
   // single-CTA shape working.
   const ctas: HeroBannerCta[] = (
-    Array.isArray(ctaButtons) && ctaButtons.length > 0 ? ctaButtons : [{ label: ctaLabel, href: ctaHref, variant: "primary" as const }]
-  ).filter((cta): cta is HeroBannerCta => Boolean(cta) && Boolean(cta.label) && Boolean(cta.href));
+    Array.isArray(ctaButtons) && ctaButtons.length > 0
+      ? ctaButtons
+      : [{ label: ctaLabel, href: ctaHref, variant: "primary" as const }]
+  ).filter(
+    (cta): cta is HeroBannerCta =>
+      Boolean(cta) && Boolean(cta.label) && Boolean(cta.href),
+  );
 
   return (
-    <div className={rootClass} style={imageUrl ? { backgroundImage: `url(${imageUrl})` } : undefined}>
+    <div
+      className={rootClass}
+      style={imageUrl ? { backgroundImage: `url(${imageUrl})` } : undefined}
+    >
       <div className={getChildClass("content")}>
         {headline && <h1 className={getChildClass("headline")}>{headline}</h1>}
         {subtext && <p className={getChildClass("subtext")}>{subtext}</p>}

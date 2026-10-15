@@ -1,44 +1,32 @@
-.section {
+.PropsTable {
   margin-top: 1.5rem;
-}
 
-.heading {
-  font-size: 1rem;
-  margin-bottom: 0.75rem;
-}
+  &__heading {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+  }
 
-.name {
-  font-weight: 600;
-}
+  &__name {
+    font-weight: 600;
+  }
 
-.required {
-  margin-left: 0.15em;
-  color: var(--md-sys-color-error);
-}
+  &__required {
+    margin-left: 0.15em;
+    color: var(--md-sys-color-error);
+  }
 
-.type {
-  color: var(--md-sys-color-tertiary);
-  white-space: pre-wrap;
-}
+  &__type {
+    color: var(--md-sys-color-tertiary);
+    white-space: pre-wrap;
+  }
 
-.muted {
-  color: var(--md-sys-color-on-surface-variant);
-}
+  &__muted {
+    color: var(--md-sys-color-on-surface-variant);
+  }
 
-.note {
-  margin-top: 0.75rem;
-  font-size: 0.875rem;
-  color: var(--md-sys-color-on-surface-variant);
-}
-
-// A function's call signature, shown above its parameter table.
-.signature {
-  margin: 0 0 0.75rem;
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.875rem;
-  white-space: pre-wrap;
-  background: var(--md-sys-color-surface-container-low);
-  color: var(--md-sys-color-on-surface);
+  &__note {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--md-sys-color-on-surface-variant);
+  }
 }

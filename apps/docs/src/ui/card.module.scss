@@ -5,9 +5,15 @@
 // pre-MD3 `--color-*` name, which tokens.scss aliases to the matching MD3 role.
 
 .BHT__Card {
-  background: var(--card-background, var(--md-sys-color-surface, var(--color-surface)));
+  background: var(
+    --card-background,
+    var(--md-sys-color-surface, var(--color-surface))
+  );
   color: var(--md-sys-color-on-surface, var(--color-on-surface));
-  border: var(--card-border, 1px solid var(--md-sys-color-outline-variant, var(--color-border)));
+  border: var(
+    --card-border,
+    1px solid var(--md-sys-color-outline-variant, var(--color-border))
+  );
   border-radius: var(--card-radius, var(--md-sys-shape-corner-medium, 12px));
   // Grid/flex items default to their content's min-content width, not their
   // track/basis minimum — without this, a Card holding wide content forces
@@ -19,7 +25,8 @@
 
   &__header {
     padding: var(--spacing-4) var(--spacing-6);
-    border-bottom: 1px solid var(--md-sys-color-outline-variant, var(--color-border));
+    border-bottom: 1px solid
+      var(--md-sys-color-outline-variant, var(--color-border));
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -98,7 +105,8 @@
           background: currentColor;
           opacity: 0;
           pointer-events: none;
-          transition: opacity var(--md-sys-motion-duration-short-2, 100ms) var(--md-sys-motion-easing-standard, ease);
+          transition: opacity var(--md-sys-motion-duration-short-2, 100ms)
+            var(--md-sys-motion-easing-standard, ease);
         }
 
         &:hover::after {
@@ -117,7 +125,8 @@
         // hidden` (needed to clip the state layer to the corners) would cut
         // off a ring drawn outside the body.
         &:focus-visible {
-          outline: 3px solid var(--md-sys-color-secondary, var(--color-border-focus));
+          outline: 3px solid
+            var(--md-sys-color-secondary, var(--color-border-focus));
           outline-offset: -3px;
         }
       }

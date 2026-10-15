@@ -24,6 +24,15 @@ by hand drifts from them and `update` cannot bring it back in line. If no genera
 needed, extend the generator (or write a new one under `generators/<name>/` with `pnpm gen generator`)
 rather than working around it.
 
+## Class names are BEM through `getClassName`
+
+Every styled element gets its class from `getClassName` (`@bht-component-registry/class-names`): the root is
+`rootClass` (`<SCOPE>__<PascalName>` in a registry package, `<PascalName>` in the docs app), children are
+`getChildClass("kebab-name")`, variants are `modifiers`, and the `.module.scss` mirrors that tree with
+`&__child` and `&--modifier`. Never write `styles.foo`, a literal class string, a selector that reaches into
+another component's classes (pass it `className` instead), or a class for a state the DOM already carries
+(`aria-current`, `disabled`) — style the attribute.
+
 Keep the other repo rules from `CLAUDE.md`: no required environment variables, nothing hardcoded to a
 scope name, `docs/` and `registry/` and `generators/` are the owner's and `update` never touches them.
 

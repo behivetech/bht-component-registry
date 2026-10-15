@@ -4,7 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import { LiveEditor, LiveError, LivePreview, LiveProvider } from "react-live";
 import { themes } from "prism-react-renderer";
 import { sandboxScope } from "./sandbox-scope";
-import { SANDBOX_PATH, encodeSandboxHash, type FromSandbox, type ToSandbox } from "./sandbox-protocol";
+import {
+  SANDBOX_PATH,
+  encodeSandboxHash,
+  type FromSandbox,
+  type ToSandbox,
+} from "./sandbox-protocol";
+import { getClassName } from "@bht-component-registry/class-names";
 import styles from "./live-example.module.scss";
 
 export interface LiveExampleProps {
@@ -40,21 +46,41 @@ const SEND_DELAY_MS = 150;
  * would be too heavy, and overlays are kept off the tiles anyway.
  */
 export function LiveExample(props: LiveExampleProps) {
-  return props.previewOnly ? <InlineExample {...props} /> : <FramedExample {...props} />;
+  return props.previewOnly ? (
+    <InlineExample {...props} />
+  ) : (
+    <FramedExample {...props} />
+  );
 }
 
-function InlineExample({ code, noInline = false, title, className }: LiveExampleProps) {
+function InlineExample({
+  code,
+  noInline = false,
+  title,
+  className,
+}: LiveExampleProps) {
+  const [rootClass, getChildClass] = getClassName({
+    rootClass: "LiveExample",
+    styles,
+    className,
+    modifiers: { inline: true },
+  });
   return (
-    <LiveProvider code={code} scope={sandboxScope} noInline={noInline} language="tsx">
-      <figure className={`${styles.example} ${className ?? ""}`}>
+    <LiveProvider
+      code={code}
+      scope={sandboxScope}
+      noInline={noInline}
+      language="tsx"
+    >
+      <figure className={rootClass}>
         {title && (
-          <figcaption className={styles.bar}>
-            <span className={styles.title}>{title}</span>
+          <figcaption className={getChildClass("bar")}>
+            <span className={getChildClass("title")}>{title}</span>
           </figcaption>
         )}
-        <div className={styles.inline}>
+        <div className={getChildClass("body")}>
           <LivePreview />
-          <LiveError className={styles.error} />
+          <LiveError className={getChildClass("error")} />
         </div>
       </figure>
     </LiveProvider>
@@ -99,9 +125,14 @@ function FramedExample({
   // The frame says when it can take a program, and how tall its content is.
   useEffect(() => {
     const onMessage = (event: MessageEvent<FromSandbox>) => {
-      if (event.origin !== window.location.origin || event.source !== frameRef.current?.contentWindow) return;
+      if (
+        event.origin !== window.location.origin ||
+        event.source !== frameRef.current?.contentWindow
+      )
+        return;
       if (event.data?.type === "bht-sandbox:ready") setReady(true);
-      else if (event.data?.type === "bht-sandbox:height") setContentHeight(event.data.height);
+      else if (event.data?.type === "bht-sandbox:height")
+        setContentHeight(event.data.height);
     };
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
@@ -118,11 +149,17 @@ function FramedExample({
         noInline,
         theme: document.documentElement.dataset.theme ?? null,
       };
-      frameRef.current?.contentWindow?.postMessage(message, window.location.origin);
+      frameRef.current?.contentWindow?.postMessage(
+        message,
+        window.location.origin,
+      );
     };
     const timer = window.setTimeout(send, SEND_DELAY_MS);
     const themeObserver = new MutationObserver(send);
-    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
     return () => {
       window.clearTimeout(timer);
       themeObserver.disconnect();
@@ -132,31 +169,71 @@ function FramedExample({
   const floor = expanded ? Math.max(EXPANDED_MIN_HEIGHT, minHeight) : minHeight;
   const height = Math.max(floor, contentHeight);
   const frameTitle = title ? `${title} — live preview` : "Live preview";
+  const [rootClass, getChildClass] = getClassName({
+    rootClass: "LiveExample",
+    styles,
+    className,
+  });
 
   return (
-    <figure ref={figureRef} className={`${styles.example} ${className ?? ""}`}>
-      <figcaption className={styles.bar}>
-        <span className={styles.title}>{title}</span>
-        <span className={styles.actions}>
-          <button type="button" className={styles.toggle} onClick={() => setExpanded((open) => !open)} aria-pressed={expanded}>
+    <figure ref={figureRef} className={rootClass}>
+      <figcaption className={getChildClass("bar")}>
+        <span className={getChildClass("title")}>{title}</span>
+        <span className={getChildClass("actions")}>
+          <button
+            type="button"
+            className={getChildClass("toggle")}
+            onClick={() => setExpanded((open) => !open)}
+            aria-pressed={expanded}
+          >
             {expanded ? "Shrink" : "Expand"}
           </button>
-          <a className={styles.toggle} href={`${SANDBOX_PATH}#${encodeSandboxHash({ code, noInline })}`} target="_blank" rel="noopener">
+          <a
+            className={getChildClass("toggle")}
+            href={`${SANDBOX_PATH}#${encodeSandboxHash({ code, noInline })}`}
+            target="_blank"
+            rel="noopener"
+          >
             Open in new tab
           </a>
-          <button type="button" className={styles.toggle} onClick={() => setShowEditor((open) => !open)} aria-expanded={showEditor}>
+          <button
+            type="button"
+            className={getChildClass("toggle")}
+            onClick={() => setShowEditor((open) => !open)}
+            aria-expanded={showEditor}
+          >
             {showEditor ? "Hide code" : "Edit code"}
           </button>
         </span>
       </figcaption>
       {/* The frame is sized to its content by the height it reports; the
           custom property is the one dynamic value the stylesheet needs. */}
-      <div className={styles.preview} style={{ ["--preview-height" as string]: `${height}px` } as React.CSSProperties}>
-        {visible && <iframe ref={frameRef} src={SANDBOX_PATH} title={frameTitle} className={styles.frame} />}
+      <div
+        className={getChildClass("preview")}
+        style={
+          {
+            ["--preview-height" as string]: `${height}px`,
+          } as React.CSSProperties
+        }
+      >
+        {visible && (
+          <iframe
+            ref={frameRef}
+            src={SANDBOX_PATH}
+            title={frameTitle}
+            className={getChildClass("frame")}
+          />
+        )}
       </div>
       {showEditor && (
-        <div className={styles.editor}>
-          <LiveEditor code={code} onChange={setCode} language="tsx" theme={themes.nightOwl} className={styles.editorInner} />
+        <div className={getChildClass("editor")}>
+          <LiveEditor
+            code={code}
+            onChange={setCode}
+            language="tsx"
+            theme={themes.nightOwl}
+            className={getChildClass("editor-inner")}
+          />
         </div>
       )}
     </figure>

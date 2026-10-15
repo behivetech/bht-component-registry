@@ -5,6 +5,7 @@ import { Markdown } from "@/components/docs/markdown";
 import { LiveExample } from "@/components/docs/live-example";
 import { PropsTable } from "@/components/docs/props-table";
 import { FunctionDocs } from "@/components/docs/function-docs";
+import { getClassName } from "@bht-component-registry/class-names";
 import styles from "./page.module.scss";
 
 interface Props {
@@ -18,22 +19,37 @@ export default async function OverviewPage({ params }: Props) {
   if (!component) notFound();
 
   const base = `/${scope}/${category}/${name}`;
+  const [rootClass, getChildClass] = getClassName({
+    rootClass: "ComponentOverview",
+    styles,
+  });
 
   return (
-    <div className={styles.overview}>
+    <div className={rootClass}>
       <section>
-        {component.readme ? <Markdown>{component.readme}</Markdown> : <p>This component has no README yet.</p>}
+        {component.readme ? (
+          <Markdown>{component.readme}</Markdown>
+        ) : (
+          <p>This component has no README yet.</p>
+        )}
       </section>
 
       {component.examples.length > 0 && (
         <section>
-          <div className={styles.sectionHead}>
+          <div className={getChildClass("section-head")}>
             <h2>Compositions</h2>
-            <Link href={`${base}/compositions`}>Open all {component.examples.length} →</Link>
+            <Link href={`${base}/compositions`}>
+              Open all {component.examples.length} →
+            </Link>
           </div>
-          <div className={styles.gallery}>
+          <div className={getChildClass("gallery")}>
             {component.examples.slice(0, 6).map((example) => (
-              <LiveExample key={example.name} code={example.code} noInline title={example.title} />
+              <LiveExample
+                key={example.name}
+                code={example.code}
+                noInline
+                title={example.title}
+              />
             ))}
           </div>
         </section>
@@ -50,7 +66,11 @@ export default async function OverviewPage({ params }: Props) {
 
       {component.functions.length > 0 && (
         <section>
-          <h2>{component.functions.every((fn) => fn.kind === "hook") ? "Hooks" : "Functions"}</h2>
+          <h2>
+            {component.functions.every((fn) => fn.kind === "hook")
+              ? "Hooks"
+              : "Functions"}
+          </h2>
           {component.functions.map((fn) => (
             <FunctionDocs key={fn.name} fn={fn} />
           ))}
@@ -60,7 +80,10 @@ export default async function OverviewPage({ params }: Props) {
       {component.docs.length === 0 && component.functions.length === 0 && (
         <section>
           <h2>Properties</h2>
-          <p>Nothing documented yet: no exported component with a props interface, and no exported function with a JSDoc comment.</p>
+          <p>
+            Nothing documented yet: no exported component with a props
+            interface, and no exported function with a JSDoc comment.
+          </p>
         </section>
       )}
     </div>
