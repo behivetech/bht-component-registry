@@ -1,7 +1,7 @@
 ---
 title: Testing and CI
 description: Unit tests, Playwright against the static build, and the shipped CI workflow.
-order: 9
+order: 10
 ---
 
 # Testing and CI

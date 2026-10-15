@@ -23,7 +23,8 @@
   ],
   "registry": {
     "status": "draft",
-    "tags": []
+    "tags": []{{#if design}},
+    "design": [{ "label": "Figma", "url": "{{{ design }}}" }]{{/if}}
   },
   "scripts": {
     "build": "tsup && bht-registry-docgen",

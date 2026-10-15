@@ -63,6 +63,17 @@ export default function (plop: NodePlopAPI) {
         },
       },
       visibilityPrompt(config),
+      {
+        type: "input",
+        name: "design",
+        message: "Design link — a Figma frame URL (copy it with the frame selected so node-id is in it), or none",
+        default: "none",
+        validate: (input: string) =>
+          /^(none|)$/i.test(input.trim()) || /^https?:\/\//.test(input.trim()) ? true : "Must be an http(s) URL, or none.",
+        // "none" rather than an empty answer: an empty positional does not
+        // survive every shell and launcher, so the word is the scriptable form.
+        filter: (input: string) => (/^(none|)$/i.test(input.trim()) ? "" : input.trim()),
+      },
     ],
     actions: [
       checkVisibility(config),

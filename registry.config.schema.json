@@ -52,6 +52,23 @@
             "required": ["label", "href"],
             "properties": { "label": { "type": "string" }, "href": { "type": "string" } }
           }
+        },
+        "embedDesigns": {
+          "type": "boolean",
+          "description": "Show a component's Figma links as embedded frames on its Design tab. Off by default: an embed is a third-party iframe and the Figma file must be visible to whoever views the site. Other design links are always shown as cards.",
+          "default": false
+        },
+        "design": {
+          "description": "The design-system file — a Figma URL or any URL — linked from the design-tokens page. A string, or { label, url }.",
+          "oneOf": [
+            { "type": "string", "format": "uri" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["url"],
+              "properties": { "label": { "type": "string" }, "url": { "type": "string", "format": "uri" } }
+            }
+          ]
         }
       }
     }

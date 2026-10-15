@@ -105,6 +105,8 @@ export interface CatalogComponent {
   status: CatalogStatus;
   /** From package.json `registry.tags`; lower-cased, de-duplicated, at most 8. */
   tags: string[];
+  /** From package.json `registry.design`: where this component's design lives. */
+  design: CatalogDesignLink[];
   docs: CatalogDocComponent[];
   /** Exported hooks and utility functions, with signatures and examples. */
   functions: CatalogDocFunction[];
@@ -131,12 +133,26 @@ export interface CatalogTokens {
 }
 
 /** Branding from registry.config.json, copied into the catalog so pages read one file. */
+/** A link from a component (or the registry) to its design: a Figma frame, a Penpot file, a PDF — any URL. */
+export interface CatalogDesignLink {
+  label: string;
+  url: string;
+  /** Figma URLs are recognised and can be embedded; anything else is a link card. */
+  kind: "figma" | "link";
+  /** Figma Embed Kit URL for the file/frame, when `kind` is figma. */
+  embedUrl: string | null;
+}
+
 export interface CatalogSite {
   title: string;
   description: string | null;
   logo: string | null;
   primaryColor: string | null;
   links: { label: string; href: string }[];
+  /** Show Figma links as embedded frames (a third-party iframe; the file must be visible to the viewer). Off by default. */
+  embedDesigns: boolean;
+  /** The design-system file, from registry.config.json#site.design; linked from the tokens page. */
+  design: CatalogDesignLink | null;
 }
 
 /**

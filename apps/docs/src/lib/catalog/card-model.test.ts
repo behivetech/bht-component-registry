@@ -14,6 +14,7 @@ const base: CatalogComponent = {
   readme: "",
   status: "STABLE",
   tags: [],
+  design: [],
   docs: [],
   functions: [],
   examples: [{ name: "BasicPriceTag", title: "Basic Price Tag", description: "", code: "render(<PriceTag amount={1} />);" }],

@@ -73,7 +73,7 @@ export default async function ComponentLayout({ params, children }: Props) {
           </div>
         </header>
 
-        <ComponentTabs base={`/${slug}/${category}/${name}`} />
+        <ComponentTabs base={`/${slug}/${category}/${name}`} design={component.design.length > 0} />
         <div className={styles.content}>{children}</div>
       </main>
       <SiteFooter />

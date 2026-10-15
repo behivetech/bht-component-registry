@@ -12,12 +12,15 @@ const TABS = [
   { path: "/changelog", label: "Changelog" },
 ];
 
-/** Tabs are routes, so each one is linkable and prerendered. */
-export function ComponentTabs({ base }: { base: string }) {
+const DESIGN_TAB = { path: "/design", label: "Design" };
+
+/** Tabs are routes, so each one is linkable and prerendered. The Design tab exists only for a component with design links. */
+export function ComponentTabs({ base, design = false }: { base: string; design?: boolean }) {
   const pathname = usePathname();
+  const tabs = design ? [...TABS, DESIGN_TAB] : TABS;
   return (
     <nav className={styles.tabs} aria-label="Component sections">
-      {TABS.map((tab) => {
+      {tabs.map((tab) => {
         const href = `${base}${tab.path}`;
         const active = pathname === href;
         return (

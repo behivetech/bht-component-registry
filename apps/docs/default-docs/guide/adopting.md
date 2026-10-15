@@ -1,7 +1,7 @@
 ---
 title: Adopting the registry into a monorepo you already have
 description: Adding the registry to a monorepo you already have.
-order: 12
+order: 13
 ---
 
 # Adopting the registry into a monorepo you already have
@@ -70,7 +70,7 @@ If you do not use pnpm catalogs, replace each `catalog:` in the copied `package.
 
 Component packages and `packages/env` resolve a few tools from the repo root rather than declaring them each time. Copy these from the template's root `package.json` into yours:
 
-`sass`, `postcss`, `postcss-modules`, `esbuild-sass-plugin`, `jsdom`, `@testing-library/jest-dom`, `@testing-library/react`, `@testing-library/user-event`, `vitest`, `tsup`, `typescript`, `prettier`, and for `pnpm gen`: `tsx`, `plop`, `handlebars`. Add `@changesets/cli` if you publish with Changesets.
+`sass`, `postcss`, `postcss-modules`, `esbuild-sass-plugin`, `jsdom`, `@testing-library/jest-dom`, `@testing-library/react`, `@testing-library/user-event`, `vitest`, `tsup`, `typescript`, `prettier`, and for `pnpm gen`: `plop`, `tsx`, `cross-env`, `handlebars`. Add `@changesets/cli` if you publish with Changesets.
 
 ## Build order
 
@@ -91,7 +91,7 @@ pnpm orders a recursive run by `workspace:*` dependencies, so the template's roo
 "check-types": "pnpm -r run check-types",
 "test": "pnpm -r run test",
 "verify": "pnpm build && pnpm lint && pnpm check-types && pnpm test",
-"gen": "node --import tsx node_modules/plop/bin/plop.js",
+"gen": "cross-env NODE_OPTIONS=\"--import tsx\" plop --plopfile=plopfile.ts",
 "release": "pnpm --filter \"{./registry/**}...\" --filter create-bht-component-registry run build && changeset publish"
 ```
 
@@ -131,7 +131,7 @@ Component packages run `vitest run` with no config of their own. Vitest walks up
 
 ## The generator
 
-`pnpm gen` is [plop](https://plopjs.com/), run under Node with the `tsx` loader (`node --import tsx …`) so `plopfile.ts` and the generators under `scripts/generators/` stay TypeScript and every argument reaches plop untouched. The `component` generator reads `registry.config.json` (`scope`, `npmRegistry`) and the root `package.json#repository.url`, and writes into `<root>/registry/<scope>/<category>/<name>`. If your repo already has a plopfile, keep ours as the entry point and move your generators into `generators/<name>/index.ts` — they are loaded automatically and `update` never touches that folder. See [Generators](generators.md).
+`pnpm gen` is [plop](https://plopjs.com/), launched the way plop's own documentation describes for a TypeScript plopfile: `NODE_OPTIONS="--import tsx" plop --plopfile=plopfile.ts` (`cross-env` makes the variable work on Windows). On Node 22.18 or newer, which strips types natively, plain `plop` works too. The `component` generator reads `registry.config.json` (`scope`, `npmRegistry`) and the root `package.json#repository.url`, and writes into `<root>/registry/<scope>/<category>/<name>`. If your repo already has a plopfile, keep ours as the entry point and move your generators into `generators/<name>/index.ts` — they are loaded automatically and `update` never touches that folder. See [Generators](generators.md).
 
 ## Publishing and CI in a shared repo
 

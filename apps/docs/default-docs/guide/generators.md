@@ -31,7 +31,8 @@ pnpm gen component acme atoms badge   # answers in order; skips the prompts
 Positional answers go through the same validation as typed ones. An invalid answer stops the run with the same message the prompt would have shown. A `_` in a position means "ask me that one"; after a `--`, answers can be named instead, which is clearer for generators with optional prompts — both are plop's own syntax:
 
 ```bash
-pnpm gen component acme _ badge                       # scope and name given; category asked
+pnpm gen component acme atoms badge public none       # every answer given; nothing asked
+pnpm gen component acme _ badge                       # scope and name given; the rest asked
 pnpm gen doc -- --section=guide --pageTitle="Contributing" --preset=contributing
 pnpm gen doc . "Read me first" "" 1 blank             # "." = a top-level page; "" = no description
 ```
@@ -42,7 +43,7 @@ Named answers you leave out are asked interactively, and an empty named value (`
 
 | Generator | Writes | Prompts |
 | --- | --- | --- |
-| `component` | `registry/<scope>/<category>/<name>/` — a publishable package | scope, category, name, visibility (public, or private when `registry.config.json#privateRegistry` is set — permanent after the first release) |
+| `component` | `registry/<scope>/<category>/<name>/` — a publishable package | scope, category, name, visibility (public, or private when `registry.config.json#privateRegistry` is set — permanent after the first release), design link (a Figma URL, or `none`) |
 | `hook` | `registry/<scope>/hooks/<name>/` — a React hook package, documented from its signature and JSDoc, with a composition as its live example | scope, name (`use-…`), visibility |
 | `util` | `registry/<scope>/utils/<name>/` — a plain TypeScript function package, documented from its signature and JSDoc | scope, name, visibility |
 | `doc` | `docs/<section>/<slug>.md` — a Markdown page in your own folder (`update` never touches `docs/`), from a preset (`blank`, `contributing`, `standards`) | section, title, description, order, preset |

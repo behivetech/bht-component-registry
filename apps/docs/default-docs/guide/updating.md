@@ -1,7 +1,7 @@
 ---
 title: Updating
 description: What npx create-bht-component-registry update touches, what it never touches, and how guide pages are kept current.
-order: 11
+order: 12
 ---
 
 # Updating

@@ -68,6 +68,13 @@ export default function TokensPage() {
         <p className={styles.lead}>
           Components style themselves from <code>--md-sys-*</code> custom properties. Override a handful of roles on any element and everything inside re-themes.
         </p>
+        {catalog.site.design && (
+          <p className={styles.lead}>
+            <a href={catalog.site.design.url} target="_blank" rel="noreferrer">
+              {catalog.site.design.kind === "figma" ? "Variables in Figma" : catalog.site.design.label} ↗
+            </a>
+          </p>
+        )}
 
         <section>
           <h2>Color roles</h2>
