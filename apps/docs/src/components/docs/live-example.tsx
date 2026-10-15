@@ -168,7 +168,7 @@ function FramedExample({
 
   const floor = expanded ? Math.max(EXPANDED_MIN_HEIGHT, minHeight) : minHeight;
   const height = Math.max(floor, contentHeight);
-  const frameTitle = title ? ` — live preview` : "Live preview";
+  const frameTitle = title ? `${title} — live preview` : "Live preview";
   const [rootClass, getChildClass] = getClassName({
     rootClass: "LiveExample",
     styles,

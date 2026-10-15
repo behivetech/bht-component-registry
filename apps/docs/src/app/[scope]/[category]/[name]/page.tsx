@@ -18,7 +18,7 @@ export default async function OverviewPage({ params }: Props) {
   const component = getComponent(scope, category, name);
   if (!component) notFound();
 
-  const base = `///`;
+  const base = `/${scope}/${category}/${name}`;
   const [rootClass, getChildClass] = getClassName({
     rootClass: "ComponentOverview",
     styles,

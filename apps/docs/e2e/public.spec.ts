@@ -33,26 +33,44 @@ async function replaceEditorCode(page: Page, code: string) {
  * you delete it, update the names below to one of your own components.
  */
 
-test("home lists the public scopes and shows the site title from registry.config.json", async ({ page }) => {
+test("home lists the public scopes and shows the site title from registry.config.json", async ({
+  page,
+}) => {
   const response = await page.goto("/");
   expect(response?.status()).toBe(200);
   await expect(page).toHaveTitle(/Example Component Registry/);
-  await expect(page.getByRole("heading", { name: "Example", exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Scopes", exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Example", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Scopes", exact: true }),
+  ).toBeVisible();
 });
 
-test("a scope page groups its components and searches them client-side", async ({ page }) => {
+test("a scope page groups its components and searches them client-side", async ({
+  page,
+}) => {
   await page.goto("/example");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Example");
   await expect(page.getByRole("heading", { name: /^Atoms/ })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Price Tag", exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Price Tag", exact: true }),
+  ).toBeVisible();
 
-  await page.getByRole("searchbox", { name: "Search components" }).fill("rating");
-  await expect(page.getByRole("link", { name: "Rating Stars", exact: true })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Price Tag", exact: true })).toHaveCount(0);
+  await page
+    .getByRole("searchbox", { name: "Search components" })
+    .fill("rating");
+  await expect(
+    page.getByRole("link", { name: "Rating Stars", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Price Tag", exact: true }),
+  ).toHaveCount(0);
 });
 
-test("clicking a catalog card opens that component, not another card's", async ({ page }) => {
+test("clicking a catalog card opens that component, not another card's", async ({
+  page,
+}) => {
   await page.goto("/example");
   // Each title's ::after stretches over its card. If a card stops being their
   // containing block, the last card's overlay covers the page and every click
@@ -61,7 +79,9 @@ test("clicking a catalog card opens that component, not another card's", async (
   await expect(page).toHaveURL(/\/example\/atoms\/price-tag$/);
 });
 
-test("status and tags come from the package's registry field, with no database", async ({ page }) => {
+test("status and tags come from the package's registry field, with no database", async ({
+  page,
+}) => {
   await page.goto("/example/atoms/rating-stars");
   await expect(page.getByText("Beta", { exact: true })).toBeVisible();
   const tags = page.getByRole("list", { name: "Tags" });
@@ -69,37 +89,73 @@ test("status and tags come from the package's registry field, with no database",
 });
 
 test.describe("component page", () => {
-  test("overview renders the README live, the compositions and the docgen props table", async ({ page }) => {
+  test("overview renders the README live, the compositions and the docgen props table", async ({
+    page,
+  }) => {
     await page.goto("/example/atoms/price-tag");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Price Tag");
-    await expect(page.getByText("pnpm add @example/atoms.price-tag")).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      "Price Tag",
+    );
+    await expect(
+      page.getByText("pnpm add @example/atoms.price-tag"),
+    ).toBeVisible();
 
     // A composition, executed: a real rendered price, not a screenshot. Live
     // examples run in their own frame (see sandbox-protocol.ts).
-    await expect(page.frameLocator("iframe").first().getByText(/\$\d/).first()).toBeVisible();
+    await expect(
+      page.frameLocator("iframe").first().getByText(/\$\d/).first(),
+    ).toBeVisible();
+    // The frame is named after its composition, and the gallery links to the full list.
+    await expect(page.locator("iframe").first()).toHaveAttribute(
+      "title",
+      / — live preview$/,
+    );
+    await expect(page.locator("iframe").first()).not.toHaveAttribute(
+      "title",
+      /^ /,
+    );
+    await expect(
+      page.getByRole("link", { name: /^Open all \d+/ }),
+    ).toHaveAttribute("href", "/example/atoms/price-tag/compositions");
 
     // Props straight from TypeScript via react-docgen. Scoped to the
     // Properties section — the README may have a hand-written table of its own.
-    const properties = page.locator("section").filter({ has: page.getByRole("heading", { name: "Properties" }) });
+    const properties = page
+      .locator("section")
+      .filter({ has: page.getByRole("heading", { name: "Properties" }) });
     // A required prop's cell reads "amount*" (the marker is part of its name), so match the start.
-    await expect(properties.getByRole("cell", { name: /^amount/ })).toBeVisible();
-    await expect(properties.getByRole("cell", { name: "currency", exact: true })).toBeVisible();
+    await expect(
+      properties.getByRole("cell", { name: /^amount/ }),
+    ).toBeVisible();
+    await expect(
+      properties.getByRole("cell", { name: "currency", exact: true }),
+    ).toBeVisible();
   });
 
-  test("tabs are routes: compositions, code, playground and changelog", async ({ page }) => {
+  test("tabs are routes: compositions, code, playground and changelog", async ({
+    page,
+  }) => {
     await page.goto("/example/atoms/price-tag/compositions");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Price Tag");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      "Price Tag",
+    );
 
     await page.getByRole("link", { name: "Code" }).click();
     await expect(page).toHaveURL(/\/code$/);
-    await expect(page.getByText("price-tag.module.scss", { exact: true })).toBeVisible();
+    await expect(
+      page.getByText("price-tag.module.scss", { exact: true }),
+    ).toBeVisible();
 
     await page.getByRole("link", { name: "Playground" }).click();
-    await expect(page.getByText("Every registry export is in scope")).toBeVisible();
+    await expect(
+      page.getByText("Every registry export is in scope"),
+    ).toBeVisible();
 
     await page.getByRole("link", { name: "Changelog" }).click();
     await expect(page).toHaveURL(/\/changelog$/);
-    await expect(page.getByRole("heading", { name: "Changelog" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Changelog" }),
+    ).toBeVisible();
   });
 
   test("editing a live example re-renders it", async ({ page }) => {
@@ -108,14 +164,19 @@ test.describe("component page", () => {
     await expect(preview.getByText(/\$\d/).first()).toBeVisible();
 
     await expect(async () => {
-      await replaceEditorCode(page, 'const Example = () => <PriceTag amount={42} locale="en-US" />;\n\nrender(<Example />);');
+      await replaceEditorCode(
+        page,
+        'const Example = () => <PriceTag amount={42} locale="en-US" />;\n\nrender(<Example />);',
+      );
       await expect(preview.getByText("$42.00")).toBeVisible({ timeout: 3000 });
     }).toPass({ timeout: 20000 });
   });
 });
 
 test.describe("preview isolation", () => {
-  test("a fixed-position overlay covers its preview, not the docs page", async ({ page }) => {
+  test("a fixed-position overlay covers its preview, not the docs page", async ({
+    page,
+  }) => {
     await page.goto("/example/atoms/price-tag/playground");
     const preview = page.frameLocator("iframe").first();
     await expect(preview.getByText(/\$\d/).first()).toBeVisible();
@@ -135,16 +196,23 @@ test.describe("preview isolation", () => {
     const frameBox = (await frame.boundingBox())!;
     const coverBox = (await cover.boundingBox())!;
     expect(coverBox.y).toBeGreaterThanOrEqual(frameBox.y - 1);
-    expect(coverBox.y + coverBox.height).toBeLessThanOrEqual(frameBox.y + frameBox.height + 1);
+    expect(coverBox.y + coverBox.height).toBeLessThanOrEqual(
+      frameBox.y + frameBox.height + 1,
+    );
 
     // The tab bar above the preview is still the page's to click.
     await page.getByRole("link", { name: "Code" }).click();
     await expect(page).toHaveURL(/\/code$/);
   });
 
-  test("open in new tab renders the same example on its own", async ({ page }) => {
+  test("open in new tab renders the same example on its own", async ({
+    page,
+  }) => {
     await page.goto("/example/atoms/price-tag/playground");
-    const href = await page.getByRole("link", { name: "Open in new tab" }).first().getAttribute("href");
+    const href = await page
+      .getByRole("link", { name: "Open in new tab" })
+      .first()
+      .getAttribute("href");
     expect(href).toMatch(/^\/sandbox#/);
     await page.goto(href!);
     await expect(page.getByText(/\$\d/).first()).toBeVisible();
@@ -158,40 +226,70 @@ test.describe("preview isolation", () => {
 });
 
 test.describe("design links", () => {
-  test("a component with a design link gets a Design tab with a card; embeds stay off by default", async ({ page }) => {
+  test("a component with a design link gets a Design tab with a card; embeds stay off by default", async ({
+    page,
+  }) => {
     await page.goto("/example/atoms/price-tag");
-    await page.getByRole("navigation", { name: "Component sections" }).getByRole("link", { name: "Design" }).click();
+    await page
+      .getByRole("navigation", { name: "Component sections" })
+      .getByRole("link", { name: "Design" })
+      .click();
     await expect(page).toHaveURL(/\/design$/);
     await expect(page.getByText("Figma (example link)")).toBeVisible();
     const open = page.getByRole("link", { name: /Open in Figma/ });
-    await expect(open).toHaveAttribute("href", "https://www.figma.com/design/ExampleFileKey000/Example-Registry?node-id=1-2");
+    await expect(open).toHaveAttribute(
+      "href",
+      "https://www.figma.com/design/ExampleFileKey000/Example-Registry?node-id=1-2",
+    );
     await expect(page.locator("iframe")).toHaveCount(0);
     await expect(page.getByText("site.embedDesigns")).toBeVisible();
   });
 
-  test("a component without design links has no Design tab", async ({ page }) => {
+  test("a component without design links has no Design tab", async ({
+    page,
+  }) => {
     await page.goto("/example/atoms/rating-stars");
-    await expect(page.getByRole("navigation", { name: "Component sections" }).getByRole("link", { name: "Design" })).toHaveCount(0);
+    await expect(
+      page
+        .getByRole("navigation", { name: "Component sections" })
+        .getByRole("link", { name: "Design" }),
+    ).toHaveCount(0);
   });
 });
 
 test.describe("hooks and utilities", () => {
-  test("a hook page shows its signature, parameters and a live composition", async ({ page }) => {
+  test("a hook page shows its signature, parameters and a live composition", async ({
+    page,
+  }) => {
     await page.goto("/example/hooks/use-toggle");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Use Toggle");
-    await expect(page.getByRole("heading", { name: "Hooks", exact: true })).toBeVisible();
-    await expect(page.getByText("useToggle(initial?: boolean): [boolean, () => void]")).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      "Use Toggle",
+    );
+    await expect(
+      page.getByRole("heading", { name: "Hooks", exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("useToggle(initial?: boolean): [boolean, () => void]"),
+    ).toBeVisible();
     await expect(page.getByRole("cell", { name: /^initial/ })).toBeVisible();
     await expect(page.getByText("The starting value.")).toBeVisible();
     // The composition is a live example, like a component's.
     await expect(page.locator("figure").first()).toBeVisible();
   });
 
-  test("a utility page shows its signature and its @example as code", async ({ page }) => {
+  test("a utility page shows its signature and its @example as code", async ({
+    page,
+  }) => {
     await page.goto("/example/utils/format-price");
-    const functions = page.locator("section").filter({ has: page.getByRole("heading", { name: "Functions", exact: true }) });
+    const functions = page
+      .locator("section")
+      .filter({
+        has: page.getByRole("heading", { name: "Functions", exact: true }),
+      });
     await expect(functions).toBeVisible();
-    await expect(functions.getByText("formatPrice(value: string): string")).toBeVisible();
+    await expect(
+      functions.getByText("formatPrice(value: string): string"),
+    ).toBeVisible();
     // The @example block, shown as a titled code block (the scope is also called "Example", hence the scoping).
     await expect(functions.getByText("Example", { exact: true })).toBeVisible();
     await expect(functions.getByText("formatPrice('hello')")).toBeVisible();
@@ -199,37 +297,72 @@ test.describe("hooks and utilities", () => {
     await expect(page.locator("figure")).toHaveCount(0);
   });
 
-  test("the scope page groups hooks and utilities and gives their tiles a placeholder", async ({ page }) => {
+  test("the scope page groups hooks and utilities and gives their tiles a placeholder", async ({
+    page,
+  }) => {
     await page.goto("/example");
     await expect(page.getByRole("heading", { name: /^Hooks/ })).toBeVisible();
-    await expect(page.getByRole("heading", { name: /^Utilities/ })).toBeVisible();
-    await expect(page.getByText("No visual preview — see its signatures and examples").first()).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /^Utilities/ }),
+    ).toBeVisible();
+    await expect(
+      page
+        .getByText("No visual preview — see its signatures and examples")
+        .first(),
+    ).toBeVisible();
   });
 });
 
 test.describe("docs section", () => {
-  test("the index lists the owner's pages and the guide by section", async ({ page }) => {
+  test("the index lists the owner's pages and the guide by section", async ({
+    page,
+  }) => {
     await page.goto("/docs");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Documentation");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      "Documentation",
+    );
     await expect(page.getByRole("heading", { name: "General" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Guide" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Contributing" }).first()).toBeVisible();
-    await expect(page.getByRole("link", { name: "Getting started" }).first()).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Contributing" }).first(),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Getting started" }).first(),
+    ).toBeVisible();
     // The header links to the section whenever there is at least one page;
     // the footer links the Terms page while the owner keeps it.
-    await expect(page.getByRole("navigation", { name: "Registry" }).getByRole("link", { name: "Docs" })).toBeVisible();
-    await expect(page.getByRole("contentinfo").getByRole("link", { name: "Terms" })).toHaveAttribute("href", "/docs/guide/terms");
+    await expect(
+      page
+        .getByRole("navigation", { name: "Registry" })
+        .getByRole("link", { name: "Docs" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("contentinfo").getByRole("link", { name: "Terms" }),
+    ).toHaveAttribute("href", "/docs/guide/terms");
   });
 
-  test("a guide page renders with the sidebar and resolves its relative links", async ({ page }) => {
+  test("a guide page renders with the sidebar and resolves its relative links", async ({
+    page,
+  }) => {
     await page.goto("/docs/guide/components");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Components");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      "Components",
+    );
     const nav = page.getByRole("navigation", { name: "Docs" });
-    await expect(nav.getByRole("link", { name: "Components" })).toHaveAttribute("aria-current", "page");
+    await expect(nav.getByRole("link", { name: "Components" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
     // `[Generators](generators.md)` in the Markdown becomes a site route.
-    await page.getByRole("main").getByRole("link", { name: "Generators", exact: true }).first().click();
+    await page
+      .getByRole("main")
+      .getByRole("link", { name: "Generators", exact: true })
+      .first()
+      .click();
     await expect(page).toHaveURL(/\/docs\/guide\/generators$/);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Generators");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      "Generators",
+    );
   });
 
   test("only fences marked live run; the rest stay code", async ({ page }) => {
@@ -247,10 +380,14 @@ test.describe("routing", () => {
   test("an unknown scope is a real 404", async ({ page }) => {
     const response = await page.goto("/no-such-scope");
     expect(response?.status()).toBe(404);
-    await expect(page.getByRole("heading", { name: /not found/i })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /not found/i }),
+    ).toBeVisible();
   });
 
-  test("an unknown component in a known scope is a real 404", async ({ page }) => {
+  test("an unknown component in a known scope is a real 404", async ({
+    page,
+  }) => {
     const response = await page.goto("/example/atoms/no-such-thing");
     expect(response?.status()).toBe(404);
   });
