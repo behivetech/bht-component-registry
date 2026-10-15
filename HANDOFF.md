@@ -127,10 +127,7 @@ Verified locally on 2026-10-07:
 
 ## Open items / next steps
 
-0. **Have a lawyer review `TERMS.md` / `apps/docs/default-docs/guide/terms.md`** before relying on them. The copy
-   is standard disclaimer language (as-is, no warranty, limitation of liability, not advice,
-   third-party terms, consulting under a separate agreement, privacy, governing-law placeholder)
-   written by a non-lawyer. Fill in the governing-law jurisdiction.
+0. **Terms are a plain-language notice grounded in the MIT licence**, the way open-source component libraries present theirs: the licence is the whole of the terms, and the page only says what it means here (what is yours, third-party services, trademarks, privacy, consulting under a separate agreement). No legal review was done; none of it is legal advice.
 
 1. ~~Decide: own the root Vitest config?~~ Done: the config and setup live in `packages/env`
    (owned with `packages/**`); the root `vitest.config.ts` is a one-line re-export and is in

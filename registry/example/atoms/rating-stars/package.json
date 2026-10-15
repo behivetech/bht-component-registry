@@ -1,6 +1,7 @@
 {
   "name": "@example/atoms.rating-stars",
   "version": "0.0.0",
+  "license": "MIT",
   "description": "A read-only star rating with fractional fill and an optional review count.",
   "type": "module",
   "private": true,
