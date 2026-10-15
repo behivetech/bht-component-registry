@@ -110,6 +110,8 @@ test.describe("component page", () => {
     const compositions = page
       .locator("section")
       .filter({ has: page.getByRole("heading", { name: "Compositions" }) });
+    // Frames mount as they scroll into view, so bring the gallery up first.
+    await compositions.scrollIntoViewIfNeeded();
     await expect(compositions.locator("iframe").first()).toHaveAttribute(
       "title",
       /^\S.* — live preview$/,
