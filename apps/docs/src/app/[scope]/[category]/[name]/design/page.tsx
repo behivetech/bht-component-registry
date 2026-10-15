@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { catalog, getComponent } from "@/lib/catalog";
+import { getClassName } from "@bht-component-registry/class-names";
+import { TabPage } from "@/components/docs/tab-page";
 import styles from "./page.module.scss";
-import shared from "../page.module.scss";
 
 interface Props {
   params: Promise<{ scope: string; category: string; name: string }>;
@@ -20,39 +21,59 @@ export default async function DesignPage({ params }: Props) {
 
   if (component.design.length === 0) {
     return (
-      <p className={shared.muted}>
-        No design links yet. Add <code>{'"registry": { "design": [{ "label": "Figma", "url": "…" }] }'}</code> to the package.json.
-      </p>
+      <TabPage.Note>
+        No design links yet. Add{" "}
+        <code>
+          {'"registry": { "design": [{ "label": "Figma", "url": "…" }] }'}
+        </code>{" "}
+        to the package.json.
+      </TabPage.Note>
     );
   }
 
   const embed = catalog.site.embedDesigns;
+  const [rootClass, getChildClass] = getClassName({
+    rootClass: "DesignLink",
+    styles,
+  });
 
   return (
-    <div className={shared.stack}>
+    <TabPage>
       {component.design.map((link) => (
-        <section key={link.url} className={styles.link}>
-          <div className={styles.bar}>
-            <span className={styles.label}>{link.label}</span>
-            <a className={styles.open} href={link.url} target="_blank" rel="noreferrer">
+        <section key={link.url} className={rootClass}>
+          <div className={getChildClass("bar")}>
+            <span className={getChildClass("label")}>{link.label}</span>
+            <a
+              className={getChildClass("open")}
+              href={link.url}
+              target="_blank"
+              rel="noreferrer"
+            >
               Open in {link.kind === "figma" ? "Figma" : "a new tab"} ↗
             </a>
           </div>
           {link.kind === "figma" && embed && link.embedUrl ? (
-            <iframe className={styles.embed} src={link.embedUrl} title={`${link.label} — ${component.title}`} allowFullScreen />
+            <iframe
+              className={getChildClass("embed")}
+              src={link.embedUrl}
+              title={`${link.label} — ${component.title}`}
+              allowFullScreen
+            />
           ) : (
-            <p className={styles.url}>
+            <p className={getChildClass("url")}>
               <code>{link.url}</code>
             </p>
           )}
         </section>
       ))}
       {!embed && component.design.some((link) => link.kind === "figma") && (
-        <p className={shared.muted}>
-          Figma links can be shown as embedded frames: set <code>site.embedDesigns</code> to <code>true</code> in{" "}
-          <code>registry.config.json</code>. The file has to be visible to whoever views this site.
-        </p>
+        <TabPage.Note>
+          Figma links can be shown as embedded frames: set{" "}
+          <code>site.embedDesigns</code> to <code>true</code> in{" "}
+          <code>registry.config.json</code>. The file has to be visible to
+          whoever views this site.
+        </TabPage.Note>
       )}
-    </div>
+    </TabPage>
   );
 }

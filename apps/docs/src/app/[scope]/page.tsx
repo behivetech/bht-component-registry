@@ -1,11 +1,17 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { EmptyState } from "@/ui/empty-state";
-import { getComponents, getScope, getScopes, groupByCategory } from "@/lib/catalog";
+import {
+  getComponents,
+  getScope,
+  getScopes,
+  groupByCategory,
+} from "@/lib/catalog";
 import { toCardModel } from "@/lib/catalog/card-model";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ScopeCatalog } from "@/components/docs/scope-catalog";
+import { getClassName } from "@bht-component-registry/class-names";
 import styles from "./page.module.scss";
 
 interface Props {
@@ -46,22 +52,31 @@ export default async function ScopePage({ params }: Props) {
     components: group.components.map((component) => toCardModel(component)),
   }));
 
+  const [rootClass, getChildClass] = getClassName({
+    rootClass: "ScopePage",
+    styles,
+  });
   return (
     <>
       <SiteHeader />
-      <main className={styles.page}>
-        <header className={styles.header}>
-          <p className={styles.eyebrow}>Scope</p>
+      <main className={rootClass}>
+        <header className={getChildClass("header")}>
+          <p className={getChildClass("eyebrow")}>Scope</p>
           <h1>{scope.name}</h1>
-          {scope.tagline && <p className={styles.tagline}>{scope.tagline}</p>}
-          <p className={styles.install}>
-            <code>{`@${slug}/*`}</code> · {scope.componentCount} component{scope.componentCount === 1 ? "" : "s"}
+          {scope.tagline && (
+            <p className={getChildClass("tagline")}>{scope.tagline}</p>
+          )}
+          <p className={getChildClass("install")}>
+            <code>{`@${slug}/*`}</code> · {scope.componentCount} component
+            {scope.componentCount === 1 ? "" : "s"}
           </p>
         </header>
         {groups.length > 0 ? (
           <ScopeCatalog groups={groups} />
         ) : (
-          <EmptyState description={`No packages yet under registry/${slug}/. Scaffold the first one with: pnpm gen`} />
+          <EmptyState
+            description={`No packages yet under registry/${slug}/. Scaffold the first one with: pnpm gen`}
+          />
         )}
       </main>
       <SiteFooter />

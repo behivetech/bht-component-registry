@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getComponent } from "@/lib/catalog";
 import { CodeBlock } from "@/components/docs/code-block";
-import styles from "../page.module.scss";
+import { TabPage } from "@/components/docs/tab-page";
 
 interface Props {
   params: Promise<{ scope: string; category: string; name: string }>;
@@ -14,18 +14,30 @@ export default async function CodePage({ params }: Props) {
   if (!component) notFound();
 
   return (
-    <div className={styles.stack}>
-      <p className={styles.muted}>
+    <TabPage>
+      <TabPage.Note>
         <code>{component.sourcePath}</code>
         {component.dependencies.length > 0 && (
           <>
-            {" "}· depends on {component.dependencies.map((dep) => <code key={dep}>{dep}</code>).reduce<React.ReactNode[]>((acc, el, i) => (i === 0 ? [el] : [...acc, ", ", el]), [])}
+            {" "}
+            · depends on{" "}
+            {component.dependencies
+              .map((dep) => <code key={dep}>{dep}</code>)
+              .reduce<React.ReactNode[]>(
+                (acc, el, i) => (i === 0 ? [el] : [...acc, ", ", el]),
+                [],
+              )}
           </>
         )}
-      </p>
+      </TabPage.Note>
       {component.files.map((file) => (
-        <CodeBlock key={file.path} title={file.path} code={file.content} language={file.language === "markdown" ? "markdown" : file.language} />
+        <CodeBlock
+          key={file.path}
+          title={file.path}
+          code={file.content}
+          language={file.language === "markdown" ? "markdown" : file.language}
+        />
       ))}
-    </div>
+    </TabPage>
   );
 }

@@ -51,12 +51,19 @@ export const Button = ({
   const Comp = (asChild ? Slot : "button") as React.ElementType;
 
   return (
-    <Comp {...rest} className={rootClass} disabled={disabled || loading} aria-busy={loading || undefined}>
+    <Comp
+      {...rest}
+      className={rootClass}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
+    >
       {asChild ? (
         children
       ) : (
         <>
-          {loading && <span className={getChildClass("spinner")} aria-hidden="true" />}
+          {loading && (
+            <span className={getChildClass("spinner")} aria-hidden="true" />
+          )}
           <span className={getChildClass("label")}>{children}</span>
         </>
       )}

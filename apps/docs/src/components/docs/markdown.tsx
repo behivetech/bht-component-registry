@@ -1,5 +1,6 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { getClassName } from "@bht-component-registry/class-names";
 import { CodeBlock } from "./code-block";
 import { LiveExample } from "./live-example";
 import { snippetToLiveCode } from "./snippet";
@@ -22,9 +23,17 @@ export interface MarkdownProps {
  * (every one for a README, the ones marked `live` for a docs page); other
  * code blocks are highlighted.
  */
-export function Markdown({ children, liveFences = "all", resolveLink }: MarkdownProps) {
+export function Markdown({
+  children,
+  liveFences = "all",
+  resolveLink,
+}: MarkdownProps) {
+  const [rootClass, getChildClass] = getClassName({
+    rootClass: "Markdown",
+    styles,
+  });
   return (
-    <div className={styles.markdown}>
+    <div className={rootClass}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
@@ -35,18 +44,34 @@ export function Markdown({ children, liveFences = "all", resolveLink }: Markdown
             const language = /language-(\w+)/.exec(className ?? "")?.[1];
             const source = String(children);
             if (!language) return <code>{source}</code>;
-            const meta = String((node?.data as { meta?: unknown } | undefined)?.meta ?? "");
+            const meta = String(
+              (node?.data as { meta?: unknown } | undefined)?.meta ?? "",
+            );
             const runnable = language === "jsx" || language === "tsx";
             if (runnable && (liveFences === "all" || /\blive\b/.test(meta))) {
               const live = snippetToLiveCode(source);
-              return <LiveExample code={live.code} noInline={live.noInline} className={styles.example} />;
+              return (
+                <LiveExample
+                  code={live.code}
+                  noInline={live.noInline}
+                  className={getChildClass("example")}
+                />
+              );
             }
-            return <CodeBlock code={source} language={language === "sh" ? "bash" : (language as "bash")} />;
+            return (
+              <CodeBlock
+                code={source}
+                language={language === "sh" ? "bash" : (language as "bash")}
+              />
+            );
           },
           // Only the attributes a Markdown link can carry: spreading the rest
           // would put react-markdown's `node` (a hast element) on the DOM.
           a: ({ href, title, children }) => (
-            <a href={href && resolveLink ? (resolveLink(href) ?? href) : href} title={title}>
+            <a
+              href={href && resolveLink ? (resolveLink(href) ?? href) : href}
+              title={title}
+            >
               {children}
             </a>
           ),

@@ -1,0 +1,9 @@
+.TabPage {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  &__note {
+    color: var(--md-sys-color-on-surface-variant);
+  }
+}

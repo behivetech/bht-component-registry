@@ -18,8 +18,16 @@
   // sheet's own primary (#64558f) stands. The container tint is derived from
   // whichever primary is in effect so a brand color re-themes both at once.
   --md-sys-color-primary: var(--site-primary, #64558f);
-  --md-sys-color-primary-container: color-mix(in srgb, var(--md-sys-color-primary) 22%, white);
-  --md-sys-color-on-primary-container: color-mix(in srgb, var(--md-sys-color-primary) 75%, black);
+  --md-sys-color-primary-container: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 22%,
+    white
+  );
+  --md-sys-color-on-primary-container: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 75%,
+    black
+  );
 }
 
 // The live-preview frame (/sandbox) is a bare document: the embedding page
@@ -37,15 +45,31 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --md-sys-color-primary: var(--site-primary, #cebdfe);
-    --md-sys-color-primary-container: color-mix(in srgb, var(--md-sys-color-primary) 35%, black);
-    --md-sys-color-on-primary-container: color-mix(in srgb, var(--md-sys-color-primary) 30%, white);
+    --md-sys-color-primary-container: color-mix(
+      in srgb,
+      var(--md-sys-color-primary) 35%,
+      black
+    );
+    --md-sys-color-on-primary-container: color-mix(
+      in srgb,
+      var(--md-sys-color-primary) 30%,
+      white
+    );
   }
 }
 
 :root[data-theme="dark"] {
   --md-sys-color-primary: var(--site-primary, #cebdfe);
-  --md-sys-color-primary-container: color-mix(in srgb, var(--md-sys-color-primary) 35%, black);
-  --md-sys-color-on-primary-container: color-mix(in srgb, var(--md-sys-color-primary) 30%, white);
+  --md-sys-color-primary-container: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 35%,
+    black
+  );
+  --md-sys-color-on-primary-container: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 30%,
+    white
+  );
 }
 
 a {

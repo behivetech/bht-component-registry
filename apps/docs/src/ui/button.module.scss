@@ -35,9 +35,12 @@
   text-decoration: none;
   user-select: none;
   transition:
-    background var(--md-sys-motion-duration-short-3, 150ms) var(--md-sys-motion-easing-standard, ease),
-    color var(--md-sys-motion-duration-short-3, 150ms) var(--md-sys-motion-easing-standard, ease),
-    border-color var(--md-sys-motion-duration-short-3, 150ms) var(--md-sys-motion-easing-standard, ease);
+    background var(--md-sys-motion-duration-short-3, 150ms)
+      var(--md-sys-motion-easing-standard, ease),
+    color var(--md-sys-motion-duration-short-3, 150ms)
+      var(--md-sys-motion-easing-standard, ease),
+    border-color var(--md-sys-motion-duration-short-3, 150ms)
+      var(--md-sys-motion-easing-standard, ease);
 
   // --- Children ------------------------------------------------------------
 
@@ -69,7 +72,8 @@
     background: currentColor;
     opacity: 0;
     pointer-events: none;
-    transition: opacity var(--md-sys-motion-duration-short-2, 100ms) var(--md-sys-motion-easing-standard, ease);
+    transition: opacity var(--md-sys-motion-duration-short-2, 100ms)
+      var(--md-sys-motion-easing-standard, ease);
   }
 
   &:hover:not(:disabled)::after {

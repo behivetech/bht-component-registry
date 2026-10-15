@@ -1,4 +1,4 @@
-.shell {
+.DocsShell {
   display: grid;
   grid-template-columns: 14rem minmax(0, 1fr);
   gap: 2.5rem;
@@ -10,106 +10,64 @@
     grid-template-columns: minmax(0, 1fr);
     gap: 1.5rem;
   }
-}
 
-.nav {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  align-self: start;
-  position: sticky;
-  top: 1rem;
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    align-self: start;
+    position: sticky;
+    top: 1rem;
 
-  @media (max-width: 48rem) {
-    position: static;
-  }
-}
-
-.section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.sectionLabel {
-  margin: 0 0 0.25rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--md-sys-color-on-surface-variant);
-}
-
-.list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-}
-
-.link {
-  display: block;
-  padding: 0.375rem 0.625rem;
-  border-radius: 0.5rem;
-  font-size: 0.9375rem;
-  text-decoration: none;
-  color: var(--md-sys-color-on-surface);
-
-  &:hover {
-    background: var(--md-sys-color-surface-container);
+    @media (max-width: 48rem) {
+      position: static;
+    }
   }
 
-  &[aria-current="page"] {
+  &__section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  &__section-label {
+    margin: 0 0 0.25rem;
+    font-size: 0.75rem;
     font-weight: 600;
-    color: var(--md-sys-color-primary);
-    background: var(--md-sys-color-surface-container-low);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--md-sys-color-on-surface-variant);
   }
-}
 
-.main {
-  min-width: 0;
-}
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
 
-.eyebrow {
-  margin: 0;
-  font-size: 0.8125rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--md-sys-color-on-surface-variant);
-}
+  &__link {
+    display: block;
+    padding: 0.375rem 0.625rem;
+    border-radius: 0.5rem;
+    font-size: 0.9375rem;
+    text-decoration: none;
+    color: var(--md-sys-color-on-surface);
 
-.description {
-  font-size: 1.125rem;
-  color: var(--md-sys-color-on-surface-variant);
-  max-width: 48rem;
-}
+    &:hover {
+      background: var(--md-sys-color-surface-container);
+    }
 
-.index {
-  display: grid;
-  gap: 2rem;
-}
+    &[aria-current="page"] {
+      font-weight: 600;
+      color: var(--md-sys-color-primary);
+      background: var(--md-sys-color-surface-container-low);
+    }
+  }
 
-.indexList {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 0.5rem;
-}
-
-.indexLink {
-  font-weight: 600;
-  text-decoration: none;
-  color: var(--md-sys-color-primary);
-}
-
-.indexDescription {
-  margin: 0.125rem 0 0;
-  color: var(--md-sys-color-on-surface-variant);
-}
-
-.muted {
-  color: var(--md-sys-color-on-surface-variant);
+  &__main {
+    min-width: 0;
+  }
 }

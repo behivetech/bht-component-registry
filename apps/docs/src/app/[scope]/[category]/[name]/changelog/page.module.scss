@@ -1,0 +1,34 @@
+// The list of releases from the package's CHANGELOG; the page's other
+// paragraphs are TabPage notes.
+.ChangelogPage {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  &__release {
+    padding: 1rem 1.25rem;
+    border-radius: 0.75rem;
+    background: var(--md-sys-color-surface-container-low);
+
+    h3 {
+      margin: 0 0 0.5rem;
+    }
+  }
+
+  &__published {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    li {
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.8125rem;
+      background: var(--md-sys-color-secondary-container);
+      color: var(--md-sys-color-on-secondary-container);
+    }
+  }
+}

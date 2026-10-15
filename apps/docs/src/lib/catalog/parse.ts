@@ -9,7 +9,8 @@ export const toTitle = (slug: string) =>
     .join(" ");
 
 /** "PrimaryButton" → "Primary Button". */
-export const splitPascal = (name: string) => name.replace(/([a-z0-9])([A-Z])/g, "$1 $2");
+export const splitPascal = (name: string) =>
+  name.replace(/([a-z0-9])([A-Z])/g, "$1 $2");
 
 /** The README's H1 text, if it has one. */
 export function readmeTitle(readme: string): string | null {
@@ -22,11 +23,14 @@ export function readmeTitle(readme: string): string | null {
  * or lowercase is left exactly as the author wrote it.
  */
 export function humanizeTitle(title: string): string {
-  return /^[A-Z][a-z0-9]+(?:[A-Z][a-z0-9]+)+$/.test(title) ? splitPascal(title) : title;
+  return /^[A-Z][a-z0-9]+(?:[A-Z][a-z0-9]+)+$/.test(title)
+    ? splitPascal(title)
+    : title;
 }
 
 /** README without its H1 — the page renders the title itself. */
-export const stripTitle = (readme: string) => readme.replace(/^#\s+.*\r?\n/, "").trim();
+export const stripTitle = (readme: string) =>
+  readme.replace(/^#\s+.*\r?\n/, "").trim();
 
 /** First prose paragraph after the README's H1, on one line — the component's summary. */
 export function readmeSummary(readme: string): string {
@@ -34,7 +38,14 @@ export function readmeSummary(readme: string): string {
     .replace(/```[\s\S]*?```/g, "")
     .split(/\n\s*\n/)
     .map((p) => p.trim())
-    .filter((p) => p && !p.startsWith("#") && !p.startsWith("<!--") && !p.startsWith("|") && !p.startsWith("-"));
+    .filter(
+      (p) =>
+        p &&
+        !p.startsWith("#") &&
+        !p.startsWith("<!--") &&
+        !p.startsWith("|") &&
+        !p.startsWith("-"),
+    );
   return paragraphs[0]?.replace(/\s+/g, " ") ?? "";
 }
 
@@ -47,9 +58,14 @@ export function parseChangelog(markdown: string): CatalogRelease[] {
   const sections = markdown.split(/^##\s+/m).slice(1);
   for (const section of sections) {
     const newline = section.indexOf("\n");
-    const version = (newline === -1 ? section : section.slice(0, newline)).trim();
+    const version = (
+      newline === -1 ? section : section.slice(0, newline)
+    ).trim();
     if (!/^\d+\.\d+\.\d+/.test(version)) continue;
-    releases.push({ version, notes: newline === -1 ? "" : section.slice(newline + 1).trim() });
+    releases.push({
+      version,
+      notes: newline === -1 ? "" : section.slice(newline + 1).trim(),
+    });
   }
   return releases;
 }
@@ -78,7 +94,10 @@ export function extractTokens(scss: string) {
   };
   const vars = (text: string) =>
     Object.fromEntries(
-      [...text.matchAll(/(--md-sys-[\w-]+):\s*([^;]+);/g)].map((m) => [m[1]!, m[2]!.trim()]),
+      [...text.matchAll(/(--md-sys-[\w-]+):\s*([^;]+);/g)].map((m) => [
+        m[1]!,
+        m[2]!.trim(),
+      ]),
     ) as Record<string, string>;
 
   const light = vars(block(scss.indexOf(":root {")));
@@ -86,12 +105,21 @@ export function extractTokens(scss: string) {
 
   const colorRoles = Object.keys(light)
     .filter((key) => key.startsWith("--md-sys-color-"))
-    .map((key) => ({ role: key.replace("--md-sys-color-", ""), light: light[key]!, dark: dark[key] ?? "" }));
+    .map((key) => ({
+      role: key.replace("--md-sys-color-", ""),
+      light: light[key]!,
+      dark: dark[key] ?? "",
+    }));
 
   const typescale = [
     ...new Set(
       Object.keys(light)
-        .map((key) => key.match(/^--md-sys-typescale-([a-z]+-(?:large|medium|small))-size$/)?.[1])
+        .map(
+          (key) =>
+            key.match(
+              /^--md-sys-typescale-([a-z]+-(?:large|medium|small))-size$/,
+            )?.[1],
+        )
         .filter((name): name is string => Boolean(name)),
     ),
   ].map((name) => ({
@@ -103,7 +131,10 @@ export function extractTokens(scss: string) {
 
   const shapes = Object.keys(light)
     .filter((key) => key.startsWith("--md-sys-shape-corner-"))
-    .map((key) => ({ name: key.replace("--md-sys-shape-corner-", ""), value: light[key]! }));
+    .map((key) => ({
+      name: key.replace("--md-sys-shape-corner-", ""),
+      value: light[key]!,
+    }));
 
   return { colorRoles, typescale, shapes };
 }

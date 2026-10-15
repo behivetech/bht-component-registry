@@ -1,21 +1,38 @@
+import { getClassName } from "@bht-component-registry/class-names";
 import { Table, type TableColumn } from "@/ui/table";
 import type { CatalogDocFunction, CatalogDocParam } from "@/lib/catalog";
 import { CodeBlock } from "./code-block";
-import styles from "./props-table.module.scss";
+import styles from "./function-docs.module.scss";
+
+const [rootClass, getChildClass] = getClassName({
+  rootClass: "FunctionDocs",
+  styles,
+});
 
 const columns: TableColumn<CatalogDocParam>[] = [
   {
     key: "name",
     title: "Parameter",
     render: (_, param) => (
-      <code className={styles.name}>
+      <code className={getChildClass("name")}>
         {param.name}
-        {param.optional && <span className={styles.muted}>?</span>}
+        {param.optional && <span className={getChildClass("muted")}>?</span>}
       </code>
     ),
   },
-  { key: "type", title: "Type", render: (_, param) => <code className={styles.type}>{param.type}</code> },
-  { key: "description", title: "Description", render: (_, param) => param.description || <span className={styles.muted}>—</span> },
+  {
+    key: "type",
+    title: "Type",
+    render: (_, param) => (
+      <code className={getChildClass("type")}>{param.type}</code>
+    ),
+  },
+  {
+    key: "description",
+    title: "Description",
+    render: (_, param) =>
+      param.description || <span className={getChildClass("muted")}>—</span>,
+  },
 ];
 
 /**
@@ -26,21 +43,32 @@ const columns: TableColumn<CatalogDocParam>[] = [
  */
 export function FunctionDocs({ fn }: { fn: CatalogDocFunction }) {
   return (
-    <section className={styles.section}>
-      <h3 className={styles.heading}>
+    <section className={rootClass}>
+      <h3 className={getChildClass("heading")}>
         <code>{fn.name}</code>
-        <span className={styles.muted}> {fn.kind === "hook" ? "hook" : "function"}</span>
+        <span className={getChildClass("muted")}>
+          {" "}
+          {fn.kind === "hook" ? "hook" : "function"}
+        </span>
       </h3>
       {fn.description && <p>{fn.description}</p>}
       {fn.signatures.map((signature) => (
         <div key={signature.text}>
-          <pre className={styles.signature}>
+          <pre className={getChildClass("signature")}>
             <code>{signature.text}</code>
           </pre>
-          {signature.params.length > 0 && <Table columns={columns} data={signature.params} rowKey={(param) => param.name} />}
-          <p className={styles.note}>
+          {signature.params.length > 0 && (
+            <Table
+              columns={columns}
+              data={signature.params}
+              rowKey={(param) => param.name}
+            />
+          )}
+          <p className={getChildClass("note")}>
             Returns <code>{signature.returns.type}</code>
-            {signature.returns.description && <> — {signature.returns.description}</>}
+            {signature.returns.description && (
+              <> — {signature.returns.description}</>
+            )}
           </p>
         </div>
       ))}

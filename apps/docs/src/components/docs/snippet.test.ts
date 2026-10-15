@@ -4,7 +4,9 @@ import { snippetToLiveCode } from "./snippet";
 
 describe("snippetToLiveCode", () => {
   it("drops imports and wraps a bare expression in a fragment", () => {
-    const result = snippetToLiveCode(`import { Button } from '@behivetech/atoms.button';\n\n<Button>Go</Button>;\n`);
+    const result = snippetToLiveCode(
+      `import { Button } from '@behivetech/atoms.button';\n\n<Button>Go</Button>;\n`,
+    );
     expect(result.noInline).toBe(false);
     expect(result.code).toBe("<>\n<Button>Go</Button>\n</>");
   });

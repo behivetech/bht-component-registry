@@ -17,8 +17,12 @@
     line-height: var(--md-sys-typescale-title-small-line-height, 1.25rem);
     letter-spacing: var(--md-sys-typescale-title-small-tracking, 0.0071em);
     color: var(--md-sys-color-on-surface-variant, var(--color-text-muted));
-    background: var(--md-sys-color-surface-container, var(--color-surface-raised));
-    border-bottom: 1px solid var(--md-sys-color-outline-variant, var(--color-border));
+    background: var(
+      --md-sys-color-surface-container,
+      var(--color-surface-raised)
+    );
+    border-bottom: 1px solid
+      var(--md-sys-color-outline-variant, var(--color-border));
   }
 
   td {
@@ -30,7 +34,8 @@
     line-height: var(--md-sys-typescale-body-medium-line-height, 1.25rem);
     letter-spacing: var(--md-sys-typescale-body-medium-tracking, 0.0179em);
     color: var(--md-sys-color-on-surface, var(--color-text-body));
-    border-bottom: 1px solid var(--md-sys-color-outline-variant, var(--color-border));
+    border-bottom: 1px solid
+      var(--md-sys-color-outline-variant, var(--color-border));
 
     // Row hover state layer. It sits on each cell rather than the `<tr>`
     // because a positioned table row is still unreliable as a containing
@@ -42,7 +47,8 @@
       background: currentColor;
       opacity: 0;
       pointer-events: none;
-      transition: opacity var(--md-sys-motion-duration-short-2, 100ms) var(--md-sys-motion-easing-standard, ease);
+      transition: opacity var(--md-sys-motion-duration-short-2, 100ms)
+        var(--md-sys-motion-easing-standard, ease);
     }
   }
 

@@ -8,7 +8,13 @@ const LOOK: Record<CatalogStatus, { label: string; variant: BadgeVariant }> = {
   DEPRECATED: { label: "Deprecated", variant: "warning" },
 };
 
-export function StatusBadge({ status, size = "md" }: { status: CatalogStatus; size?: "sm" | "md" }) {
+export function StatusBadge({
+  status,
+  size = "md",
+}: {
+  status: CatalogStatus;
+  size?: "sm" | "md";
+}) {
   const look = LOOK[status];
   return (
     <Badge variant={look.variant} size={size}>

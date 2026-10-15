@@ -12,7 +12,8 @@ export const docs = docsJson as DocsIndex;
 
 export const getDocPages = (): DocPage[] => docs.pages;
 
-export const getDocPage = (slug: string): DocPage | undefined => docs.pages.find((page) => page.slug === slug);
+export const getDocPage = (slug: string): DocPage | undefined =>
+  docs.pages.find((page) => page.slug === slug);
 
 export interface DocSection {
   key: string;
@@ -26,7 +27,12 @@ export function getDocSections(): DocSection[] {
   for (const page of docs.pages) {
     const section = sections.find((s) => s.key === page.section);
     if (section) section.pages.push(page);
-    else sections.push({ key: page.section, label: page.sectionLabel, pages: [page] });
+    else
+      sections.push({
+        key: page.section,
+        label: page.sectionLabel,
+        pages: [page],
+      });
   }
   return sections;
 }

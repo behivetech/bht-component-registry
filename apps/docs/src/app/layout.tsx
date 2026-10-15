@@ -20,12 +20,22 @@ export const metadata: Metadata = {
  * primary roles from it; when no primaryColor is configured the variable is
  * absent and the token sheet's default stands.
  */
-export default function SiteLayout({ children }: { children: React.ReactNode }) {
+export default function SiteLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html
       lang="en"
       className={inter.variable}
-      style={site.primaryColor ? ({ ["--site-primary" as string]: site.primaryColor } as React.CSSProperties) : undefined}
+      style={
+        site.primaryColor
+          ? ({
+              ["--site-primary" as string]: site.primaryColor,
+            } as React.CSSProperties)
+          : undefined
+      }
     >
       <body>{children}</body>
     </html>

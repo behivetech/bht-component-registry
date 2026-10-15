@@ -1,12 +1,18 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { catalog, CATEGORY_LABELS, getComponent, getScope } from "@/lib/catalog";
+import {
+  catalog,
+  CATEGORY_LABELS,
+  getComponent,
+  getScope,
+} from "@/lib/catalog";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Badge } from "@/ui/badge";
 import { ComponentTabs } from "@/components/docs/component-tabs";
 import { StatusBadge } from "@/components/docs/status-badge";
+import { getClassName } from "@bht-component-registry/class-names";
 import styles from "./layout.module.scss";
 
 interface Props {
@@ -18,13 +24,22 @@ interface Props {
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return catalog.components.map((c) => ({ scope: c.scope, category: c.category, name: c.name }));
+  return catalog.components.map((c) => ({
+    scope: c.scope,
+    category: c.category,
+    name: c.name,
+  }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { scope, category, name } = await params;
   const component = getComponent(scope, category, name);
-  return component ? { title: `${component.title} · @${scope}`, description: component.summary } : {};
+  return component
+    ? {
+        title: `${component.title} · @${scope}`,
+        description: component.summary,
+      }
+    : {};
 }
 
 /**
@@ -39,32 +54,43 @@ export default async function ComponentLayout({ params, children }: Props) {
   const scope = getScope(slug);
   if (!component || !scope) notFound();
 
+  const [rootClass, getChildClass] = getClassName({
+    rootClass: "ComponentLayout",
+    styles,
+  });
   return (
     <>
       <SiteHeader />
-      <main className={styles.page}>
-        <nav className={styles.breadcrumbs} aria-label="Breadcrumb">
+      <main className={rootClass}>
+        <nav className={getChildClass("breadcrumbs")} aria-label="Breadcrumb">
           <Link href={`/${slug}`}>{scope.name}</Link>
           <span aria-hidden>/</span>
           <span>{CATEGORY_LABELS[category] ?? category}</span>
         </nav>
 
-        <header className={styles.header}>
-          <div className={styles.headline}>
-            <h1 className={styles.title}>{component.title}</h1>
-            <span className={styles.version}>v{component.version}</span>
+        <header className={getChildClass("header")}>
+          <div className={getChildClass("headline")}>
+            <h1 className={getChildClass("title")}>{component.title}</h1>
+            <span className={getChildClass("version")}>
+              v{component.version}
+            </span>
             <StatusBadge status={component.status} />
             {component.visibility === "private" && (
-              <Badge variant="default" title={`Publishes to ${component.publishRegistry}; installing needs a token`}>
+              <Badge
+                variant="default"
+                title={`Publishes to ${component.publishRegistry}; installing needs a token`}
+              >
                 Private
               </Badge>
             )}
           </div>
-          <p className={styles.summary}>{component.summary}</p>
-          <div className={styles.metaRow}>
-            <code className={styles.install}>pnpm add {component.packageName}</code>
+          <p className={getChildClass("summary")}>{component.summary}</p>
+          <div className={getChildClass("meta-row")}>
+            <code className={getChildClass("install")}>
+              pnpm add {component.packageName}
+            </code>
             {component.tags.length > 0 && (
-              <ul className={styles.tags} aria-label="Tags">
+              <ul className={getChildClass("tags")} aria-label="Tags">
                 {component.tags.map((tag) => (
                   <li key={tag}>{tag}</li>
                 ))}
@@ -73,8 +99,11 @@ export default async function ComponentLayout({ params, children }: Props) {
           </div>
         </header>
 
-        <ComponentTabs base={`/${slug}/${category}/${name}`} design={component.design.length > 0} />
-        <div className={styles.content}>{children}</div>
+        <ComponentTabs
+          base={`/${slug}/${category}/${name}`}
+          design={component.design.length > 0}
+        />
+        <div className={getChildClass("content")}>{children}</div>
       </main>
       <SiteFooter />
     </>

@@ -1,4 +1,4 @@
-.footer {
+.SiteFooter {
   max-width: 80rem;
   margin: 0 auto;
   padding: 2rem 1.5rem 2.5rem;
@@ -10,23 +10,23 @@
   border-top: 1px solid var(--md-sys-color-outline-variant);
   font-size: 0.875rem;
   color: var(--md-sys-color-on-surface-variant);
-}
 
-.links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
+  &__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
 
-  a {
-    text-decoration: none;
-    color: var(--md-sys-color-on-surface-variant);
+    a {
+      text-decoration: none;
+      color: var(--md-sys-color-on-surface-variant);
 
-    &:hover {
-      color: var(--md-sys-color-primary);
+      &:hover {
+        color: var(--md-sys-color-primary);
+      }
     }
   }
-}
 
-.credit {
-  margin: 0;
+  &__credit {
+    margin: 0;
+  }
 }

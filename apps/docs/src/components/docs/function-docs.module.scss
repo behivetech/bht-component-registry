@@ -1,0 +1,39 @@
+.FunctionDocs {
+  margin-top: 1.5rem;
+
+  &__heading {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  &__name {
+    font-weight: 600;
+  }
+
+  &__type {
+    color: var(--md-sys-color-tertiary);
+    white-space: pre-wrap;
+  }
+
+  &__muted {
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  &__note {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  // A function's call signature, shown above its parameter table.
+  &__signature {
+    margin: 0 0 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.875rem;
+    white-space: pre-wrap;
+    background: var(--md-sys-color-surface-container-low);
+    color: var(--md-sys-color-on-surface);
+  }
+}

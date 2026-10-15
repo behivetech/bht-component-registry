@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getClassName } from "@bht-component-registry/class-names";
 import { catalog } from "@/lib/catalog";
 import { getDocPages } from "@/lib/docs";
 import styles from "./site-header.module.scss";
@@ -13,20 +14,29 @@ const isExternal = (href: string) => /^https?:\/\//.test(href);
  */
 export function SiteHeader() {
   const { site, tokens } = catalog;
+  const [rootClass, getChildClass] = getClassName({
+    rootClass: "SiteHeader",
+    styles,
+  });
   return (
-    <header className={styles.header}>
-      <div className={styles.left}>
-        <Link href="/" className={styles.brand}>
+    <header className={rootClass}>
+      <div className={getChildClass("left")}>
+        <Link href="/" className={getChildClass("brand")}>
           {site.logo ? (
             // A plain <img>: the static export has no image optimizer, and the
             // logo may be an external URL.
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={site.logo} alt={site.title} height={28} className={styles.logo} />
+            <img
+              src={site.logo}
+              alt={site.title}
+              height={28}
+              className={getChildClass("logo")}
+            />
           ) : (
             site.title
           )}
         </Link>
-        <nav className={styles.links} aria-label="Registry">
+        <nav className={getChildClass("links")} aria-label="Registry">
           <Link href="/#scopes">Scopes</Link>
           {/* The tokens page exists only when a scope declares a tokens.scss. */}
           {tokens && <Link href="/tokens">Design tokens</Link>}
@@ -35,9 +45,13 @@ export function SiteHeader() {
         </nav>
       </div>
       {site.links.length > 0 && (
-        <nav className={styles.nav} aria-label="Site links">
+        <nav className={getChildClass("nav")} aria-label="Site links">
           {site.links.map((link) => (
-            <a key={link.href} href={link.href} rel={isExternal(link.href) ? "noreferrer" : undefined}>
+            <a
+              key={link.href}
+              href={link.href}
+              rel={isExternal(link.href) ? "noreferrer" : undefined}
+            >
               {link.label}
             </a>
           ))}

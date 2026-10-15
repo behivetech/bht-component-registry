@@ -15,22 +15,36 @@ export const CATEGORY_LABELS: Record<string, string> = Object.fromEntries(
 );
 
 export const getScopes = (includePrivate = false): CatalogScope[] =>
-  catalog.scopes.filter((scope) => includePrivate || scope.visibility === "public");
+  catalog.scopes.filter(
+    (scope) => includePrivate || scope.visibility === "public",
+  );
 
 export const getScope = (slug: string): CatalogScope | undefined =>
   catalog.scopes.find((scope) => scope.slug === slug);
 
 export const getComponents = (scope?: string): CatalogComponent[] =>
-  scope ? catalog.components.filter((c) => c.scope === scope) : catalog.components;
+  scope
+    ? catalog.components.filter((c) => c.scope === scope)
+    : catalog.components;
 
-export const getComponent = (scope: string, category: string, name: string): CatalogComponent | undefined =>
-  catalog.components.find((c) => c.scope === scope && c.category === category && c.name === name);
+export const getComponent = (
+  scope: string,
+  category: string,
+  name: string,
+): CatalogComponent | undefined =>
+  catalog.components.find(
+    (c) => c.scope === scope && c.category === category && c.name === name,
+  );
 
-export const getComponentByPackage = (packageName: string): CatalogComponent | undefined =>
+export const getComponentByPackage = (
+  packageName: string,
+): CatalogComponent | undefined =>
   catalog.components.find((c) => c.packageName === packageName);
 
 /** Components grouped by category, in the catalog's category order. */
-export function groupByCategory(components: CatalogComponent[]): { key: string; label: string; components: CatalogComponent[] }[] {
+export function groupByCategory(
+  components: CatalogComponent[],
+): { key: string; label: string; components: CatalogComponent[] }[] {
   return catalog.categories
     .map((category) => ({
       key: category.key,
@@ -41,19 +55,34 @@ export function groupByCategory(components: CatalogComponent[]): { key: string; 
 }
 
 /** Case-insensitive match on name, title, package name and summary. */
-export function searchComponents(components: CatalogComponent[], query: string): CatalogComponent[] {
+export function searchComponents(
+  components: CatalogComponent[],
+  query: string,
+): CatalogComponent[] {
   const q = query.trim().toLowerCase();
   if (!q) return components;
   return components.filter((c) =>
-    [c.name, c.title, c.packageName, c.summary, c.category].some((field) => field.toLowerCase().includes(q)),
+    [c.name, c.title, c.packageName, c.summary, c.category].some((field) =>
+      field.toLowerCase().includes(q),
+    ),
   );
 }
 
 /** The most recent releases across the registry, for the home page. Newest versions first per component, then interleaved by file order. */
-export function latestReleases(limit = 8): { component: CatalogComponent; version: string; notes: string }[] {
+export function latestReleases(
+  limit = 8,
+): { component: CatalogComponent; version: string; notes: string }[] {
   return catalog.components
-    .flatMap((component) => component.releases.slice(0, 1).map((release) => ({ component, ...release })))
-    .sort((a, b) => compareVersions(b.version, a.version) || a.component.packageName.localeCompare(b.component.packageName))
+    .flatMap((component) =>
+      component.releases
+        .slice(0, 1)
+        .map((release) => ({ component, ...release })),
+    )
+    .sort(
+      (a, b) =>
+        compareVersions(b.version, a.version) ||
+        a.component.packageName.localeCompare(b.component.packageName),
+    )
     .slice(0, limit);
 }
 

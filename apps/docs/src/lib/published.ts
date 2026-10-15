@@ -6,7 +6,9 @@ export interface PublishedVersion {
 }
 
 /** Host of the registry a package publishes to, e.g. "registry.npmjs.org" or "npm.pkg.github.com". */
-export const publishedRegistryHost = (registry: string = catalog.npmRegistry): string => new URL(registry).host;
+export const publishedRegistryHost = (
+  registry: string = catalog.npmRegistry,
+): string => new URL(registry).host;
 
 /**
  * Versions actually published, as opposed to what the repo's package.json
@@ -35,10 +37,16 @@ export async function loadPublishedVersions(
     if (res.status === 404) return [];
     if (!res.ok) return null;
 
-    const data = (await res.json()) as { versions?: Record<string, unknown>; time?: Record<string, string> };
+    const data = (await res.json()) as {
+      versions?: Record<string, unknown>;
+      time?: Record<string, string>;
+    };
     return Object.keys(data.versions ?? {})
       .sort((a, b) => compareVersions(b, a))
-      .map((version) => ({ version, publishedAt: data.time?.[version] ?? null }));
+      .map((version) => ({
+        version,
+        publishedAt: data.time?.[version] ?? null,
+      }));
   } catch {
     return null;
   }

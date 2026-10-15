@@ -18,7 +18,13 @@ export interface EmptyStateProps extends HTMLAttributes<HTMLDivElement> {
  * Generic centered placeholder for empty lists/grids/results: icon, a
  * description, and an optional action.
  */
-export const EmptyState = ({ className, icon, description, children, ...rest }: EmptyStateProps) => {
+export const EmptyState = ({
+  className,
+  icon,
+  description,
+  children,
+  ...rest
+}: EmptyStateProps) => {
   const [rootClass, getChildClass] = getClassName({
     className,
     rootClass: "BHT__EmptyState",
@@ -27,9 +33,13 @@ export const EmptyState = ({ className, icon, description, children, ...rest }: 
 
   return (
     <div {...rest} className={rootClass}>
-      {icon !== undefined && <div className={getChildClass("icon")}>{icon}</div>}
+      {icon !== undefined && (
+        <div className={getChildClass("icon")}>{icon}</div>
+      )}
       <p className={getChildClass("description")}>{description}</p>
-      {children !== undefined && <div className={getChildClass("action")}>{children}</div>}
+      {children !== undefined && (
+        <div className={getChildClass("action")}>{children}</div>
+      )}
     </div>
   );
 };

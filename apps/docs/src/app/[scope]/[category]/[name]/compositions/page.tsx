@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { getComponent } from "@/lib/catalog";
 import { isOverlayComponent } from "@/lib/catalog/card-model";
 import { LiveExample } from "@/components/docs/live-example";
-import styles from "../page.module.scss";
+import { TabPage } from "@/components/docs/tab-page";
 
 /** An overlay opens inside its preview frame; give it a frame worth opening in. */
 const OVERLAY_PREVIEW_HEIGHT = 360;
@@ -22,19 +22,33 @@ export default async function CompositionsPage({ params }: Props) {
   if (!component) notFound();
 
   if (component.examples.length === 0) {
-    return <p className={styles.muted}>No compositions yet. Add exports to a <code>*.composition.tsx</code> file in the package.</p>;
+    return (
+      <TabPage.Note>
+        No compositions yet. Add exports to a <code>*.composition.tsx</code>{" "}
+        file in the package.
+      </TabPage.Note>
+    );
   }
 
-  const minHeight = isOverlayComponent(component) ? OVERLAY_PREVIEW_HEIGHT : undefined;
+  const minHeight = isOverlayComponent(component)
+    ? OVERLAY_PREVIEW_HEIGHT
+    : undefined;
 
   return (
-    <div className={styles.stack}>
+    <TabPage>
       {component.examples.map((example) => (
         <div key={example.name}>
-          {example.description && <p className={styles.muted}>{example.description}</p>}
-          <LiveExample code={example.code} noInline title={example.title} minHeight={minHeight} />
+          {example.description && (
+            <TabPage.Note>{example.description}</TabPage.Note>
+          )}
+          <LiveExample
+            code={example.code}
+            noInline
+            title={example.title}
+            minHeight={minHeight}
+          />
         </div>
       ))}
-    </div>
+    </TabPage>
   );
 }

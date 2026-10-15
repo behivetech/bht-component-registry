@@ -18,7 +18,14 @@ const base: CatalogComponent = {
   thumbnail: true,
   docs: [],
   functions: [],
-  examples: [{ name: "BasicPriceTag", title: "Basic Price Tag", description: "", code: "render(<PriceTag amount={1} />);" }],
+  examples: [
+    {
+      name: "BasicPriceTag",
+      title: "Basic Price Tag",
+      description: "",
+      code: "render(<PriceTag amount={1} />);",
+    },
+  ],
   files: [],
   releases: [],
   exportNames: ["PriceTag"],
@@ -40,12 +47,26 @@ describe("toCardModel", () => {
   });
 
   it("lets a package opt out of its tile with registry.preview.thumbnail: false", () => {
-    const popup = { ...base, name: "popup", exportNames: ["Popup"], thumbnail: false };
+    const popup = {
+      ...base,
+      name: "popup",
+      exportNames: ["Popup"],
+      thumbnail: false,
+    };
     expect(toCardModel(popup).thumbnailCode).toBeNull();
   });
 
   it("carries the package's own status and tags", () => {
-    const beta = { ...base, status: "BETA" as const, tags: ["commerce", "pricing"] };
-    expect(toCardModel(beta)).toMatchObject({ title: "Price Tag", summary: "From the README.", tags: ["commerce", "pricing"], status: "BETA" });
+    const beta = {
+      ...base,
+      status: "BETA" as const,
+      tags: ["commerce", "pricing"],
+    };
+    expect(toCardModel(beta)).toMatchObject({
+      title: "Price Tag",
+      summary: "From the README.",
+      tags: ["commerce", "pricing"],
+      status: "BETA",
+    });
   });
 });
