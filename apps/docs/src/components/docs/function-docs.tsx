@@ -28,6 +28,16 @@ const columns: TableColumn<CatalogDocParam>[] = [
     ),
   },
   {
+    key: "default",
+    title: "Default",
+    render: (_, param) =>
+      param.defaultValue !== null ? (
+        <code>{param.defaultValue}</code>
+      ) : (
+        <span className={getChildClass("muted")}>—</span>
+      ),
+  },
+  {
     key: "description",
     title: "Description",
     render: (_, param) =>

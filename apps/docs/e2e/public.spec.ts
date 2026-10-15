@@ -274,6 +274,8 @@ test.describe("hooks and utilities", () => {
       page.getByText("useToggle(initial?: boolean): [boolean, () => void]"),
     ).toBeVisible();
     await expect(page.getByRole("cell", { name: /^initial/ })).toBeVisible();
+    // The default comes from the signature (`initial = false`), like a prop default.
+    await expect(page.getByRole("cell", { name: "false", exact: true })).toBeVisible();
     await expect(page.getByText("The starting value.")).toBeVisible();
     // The composition is a live example, like a component's.
     await expect(page.locator("figure").first()).toBeVisible();

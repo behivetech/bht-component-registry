@@ -182,11 +182,16 @@ function documentSymbol(checker, symbol, declaration) {
     const params = signature.getParameters().map((param) => {
       const paramDeclaration = param.valueDeclaration;
       const paramType = checker.getTypeOfSymbolAtLocation(param, paramDeclaration ?? declaration);
-      const optional = Boolean(paramDeclaration && ts.isParameter(paramDeclaration) && (paramDeclaration.questionToken || paramDeclaration.initializer));
+      const parameter = paramDeclaration && ts.isParameter(paramDeclaration) ? paramDeclaration : null;
+      const optional = Boolean(parameter && (parameter.questionToken || parameter.initializer));
+      // The default is the initializer as written (`initial = false` → "false"),
+      // the way react-docgen reports a prop default — the source text, not a value.
+      const defaultValue = parameter?.initializer ? parameter.initializer.getText() : null;
       return {
         name: param.getName(),
         type: checker.typeToString(paramType, declaration, ts.TypeFormatFlags.NoTruncation),
         optional,
+        defaultValue,
         description: paramDocs.get(param.getName()) ?? "",
       };
     });
