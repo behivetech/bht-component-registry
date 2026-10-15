@@ -105,14 +105,14 @@ test.describe("component page", () => {
     await expect(
       page.frameLocator("iframe").first().getByText(/\$\d/).first(),
     ).toBeVisible();
-    // The frame is named after its composition, and the gallery links to the full list.
-    await expect(page.locator("iframe").first()).toHaveAttribute(
+    // A composition's frame is named after it (the README's examples have no
+    // title), and the gallery links to the full list.
+    const compositions = page
+      .locator("section")
+      .filter({ has: page.getByRole("heading", { name: "Compositions" }) });
+    await expect(compositions.locator("iframe").first()).toHaveAttribute(
       "title",
-      / — live preview$/,
-    );
-    await expect(page.locator("iframe").first()).not.toHaveAttribute(
-      "title",
-      /^ /,
+      /^\S.* — live preview$/,
     );
     await expect(
       page.getByRole("link", { name: /^Open all \d+/ }),
@@ -281,11 +281,9 @@ test.describe("hooks and utilities", () => {
     page,
   }) => {
     await page.goto("/example/utils/format-price");
-    const functions = page
-      .locator("section")
-      .filter({
-        has: page.getByRole("heading", { name: "Functions", exact: true }),
-      });
+    const functions = page.locator("section").filter({
+      has: page.getByRole("heading", { name: "Functions", exact: true }),
+    });
     await expect(functions).toBeVisible();
     await expect(
       functions.getByText("formatPrice(value: string): string"),
