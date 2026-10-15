@@ -103,6 +103,8 @@ import { RatingStars } from '@example/atoms.rating-stars';
 
 `<name>.composition.tsx` holds the examples shown on the Compositions tab, in the Playground, and as the live thumbnail on the catalog card.
 
+Every live example runs in its own document — an iframe the site serves at `/sandbox` — so a component that portals to `document.body` or positions itself `fixed` (a modal, a drawer, a toast) opens inside its preview and never over the docs page. The frame grows to fit its content; **Expand** gives an overlay room to open, and **Open in new tab** runs the example on its own, including any edits you have made. Catalog tiles render inline instead (dozens of frames would be heavy), and a component that only opens as an overlay has nothing to show in a tile: say so with `"registry": { "preview": { "thumbnail": false } }` in its `package.json` and the tile shows a placeholder.
+
 - **Each named export that starts with a capital letter is one example.** `export const BasicRatingStars = () => <RatingStars value={4} />;` becomes the example "Basic Rating Stars"; the title is the export name split at capitals.
 - **A JSDoc comment above the export becomes its description.**
 - **File-level helpers are pulled in.** Fixtures, interfaces and functions you declare at the top level without exporting are included in an example when the example references them (transitively), so the editor shows the ten lines that matter rather than the whole file.

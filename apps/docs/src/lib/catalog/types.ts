@@ -107,6 +107,12 @@ export interface CatalogComponent {
   tags: string[];
   /** From package.json `registry.design`: where this component's design lives. */
   design: CatalogDesignLink[];
+  /**
+   * From package.json `registry.preview.thumbnail`; true unless set to false.
+   * False keeps the component off its catalog tile — for anything that opens
+   * as an overlay and so has nothing to show in a tile.
+   */
+  thumbnail: boolean;
   docs: CatalogDocComponent[];
   /** Exported hooks and utility functions, with signatures and examples. */
   functions: CatalogDocFunction[];

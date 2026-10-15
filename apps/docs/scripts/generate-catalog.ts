@@ -159,8 +159,15 @@ function siteFromConfig(config: RegistryConfig): CatalogSite {
 
 const STATUSES: ReadonlySet<CatalogStatus> = new Set<CatalogStatus>(["DRAFT", "BETA", "STABLE", "DEPRECATED"]);
 
-function registryMeta(pkg: Record<string, unknown>, packageName: string, warnings: string[]): { status: CatalogStatus; tags: string[] } {
-  const field = (pkg.registry ?? {}) as { status?: unknown; tags?: unknown };
+function registryMeta(
+  pkg: Record<string, unknown>,
+  packageName: string,
+  warnings: string[],
+): { status: CatalogStatus; tags: string[]; thumbnail: boolean } {
+  const field = (pkg.registry ?? {}) as { status?: unknown; tags?: unknown; preview?: unknown };
+  const preview = (field.preview ?? {}) as { thumbnail?: unknown };
+  // Only an explicit false opts out; anything else (absent, true, junk) keeps the tile.
+  const thumbnail = preview.thumbnail !== false;
   let status: CatalogStatus = "STABLE";
   if (field.status !== undefined) {
     const upper = String(field.status).toUpperCase() as CatalogStatus;
@@ -170,7 +177,7 @@ function registryMeta(pkg: Record<string, unknown>, packageName: string, warning
   const tags = Array.isArray(field.tags)
     ? [...new Set(field.tags.map((t) => String(t).trim().toLowerCase()).filter(Boolean))].slice(0, 8)
     : [];
-  return { status, tags };
+  return { status, tags, thumbnail };
 }
 
 // ---------------------------------------------------------------------------
@@ -458,7 +465,7 @@ async function main() {
     }
 
     const deps = { ...(pkg.dependencies as Record<string, string> | undefined), ...(pkg.peerDependencies as Record<string, string> | undefined) };
-    const { status, tags } = registryMeta(pkg, packageName, warnings);
+    const { status, tags, thumbnail } = registryMeta(pkg, packageName, warnings);
     const design = designLinks((pkg.registry as { design?: unknown } | undefined)?.design, config.scope, packageName, warnings);
 
     components.push({
@@ -473,6 +480,7 @@ async function main() {
       status,
       tags,
       design,
+      thumbnail,
       docs,
       functions,
       examples,
