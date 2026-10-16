@@ -1,6 +1,6 @@
 {
   "name": "create-bht-component-registry",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Scaffold a bht-component-registry — a component registry that stays in git — and keep it up to date with `update`.",
   "keywords": [
     "component-registry",
