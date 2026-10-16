@@ -12,7 +12,7 @@ interface Props {
   params: Promise<{ scope: string; category: string; name: string }>;
 }
 
-/** Overview: the README (with live snippets), a compositions gallery, and the props tables. */
+/** Overview: the README (with live snippets), a examples gallery, and the props tables. */
 export default async function OverviewPage({ params }: Props) {
   const { scope, category, name } = await params;
   const component = getComponent(scope, category, name);
@@ -37,8 +37,8 @@ export default async function OverviewPage({ params }: Props) {
       {component.examples.length > 0 && (
         <section>
           <div className={getChildClass("section-head")}>
-            <h2>Compositions</h2>
-            <Link href={`${base}/compositions`}>
+            <h2>Examples</h2>
+            <Link href={`${base}/examples`}>
               Open all {component.examples.length} →
             </Link>
           </div>

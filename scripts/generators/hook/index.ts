@@ -19,7 +19,7 @@ import {
  *   registry/<scope>/hooks/<name>  →  @<scope>/hooks.<name>
  *
  * The hook's TypeScript signature and JSDoc (`@param`, `@returns`,
- * `@example`) become its docs; a composition — a small component that uses
+ * `@example`) become its docs; an example — a small component that uses
  * the hook — is its live example, the same way a component's is.
  */
 

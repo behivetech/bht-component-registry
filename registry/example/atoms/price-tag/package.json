@@ -19,7 +19,7 @@
     "index.ts",
     "price-tag.tsx",
     "price-tag.module.scss",
-    "*.composition.tsx",
+    "*.example.tsx",
     "docs.json"
   ],
   "scripts": {

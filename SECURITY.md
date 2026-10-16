@@ -16,7 +16,7 @@ The only secrets involved anywhere are publish tokens and an optional registry r
 
 Things that are in scope for a report:
 
-- the generated site executing untrusted content in an unexpected way (README and composition code is trusted repo content, as in any docs site, but the sandbox should not reach outside the page);
+- the generated site executing untrusted content in an unexpected way (README and example code is trusted repo content, as in any docs site, but the sandbox should not reach outside the page);
 - the `create` or `update` CLI writing outside the target directory, or touching paths it promises not to;
 - the generator writing files from untrusted input;
 - dependencies with known vulnerabilities that affect the built output or the CLI.

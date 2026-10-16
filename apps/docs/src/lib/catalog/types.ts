@@ -69,11 +69,11 @@ export interface CatalogDocFunction {
 }
 
 export interface CatalogExample {
-  /** The composition's export name, e.g. "PrimaryButton". */
+  /** The example's export name, e.g. "PrimaryButton". */
   name: string;
   /** "Primary Button". */
   title: string;
-  /** JSDoc above the composition, when present. */
+  /** JSDoc above the example, when present. */
   description: string;
   /** Self-contained TSX for react-live's noInline mode — ends with `render(...)`. */
   code: string;

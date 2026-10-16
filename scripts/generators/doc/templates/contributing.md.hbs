@@ -23,13 +23,13 @@ pnpm install
 pnpm dev
 ```
 
-A component ships with its source, a `.module.scss`, a `*.composition.tsx` of named examples, a spec and a README. The docs site is generated from exactly those files, so there is nothing else to update.
+A component ships with its source, a `.module.scss`, a `*.example.tsx` of named examples, a spec and a README. The docs site is generated from exactly those files, so there is nothing else to update.
 
 ## Before you open a pull request
 
 - `pnpm verify` is green (build, lint, types, unit tests).
 - Every public prop has a JSDoc line; the props table on the site is generated from them.
-- There is a composition for each visual state that matters.
+- There is an example for each visual state that matters.
 - You have run `pnpm changeset` and described the change the way you would want to read it in the changelog.
 
 ## Releasing

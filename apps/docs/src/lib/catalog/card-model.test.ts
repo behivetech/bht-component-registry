@@ -37,7 +37,7 @@ const base: CatalogComponent = {
 };
 
 describe("toCardModel", () => {
-  it("uses the first composition as the tile's live thumbnail", () => {
+  it("uses the first example as the tile's live thumbnail", () => {
     expect(toCardModel(base).thumbnailCode).toContain("PriceTag");
   });
 

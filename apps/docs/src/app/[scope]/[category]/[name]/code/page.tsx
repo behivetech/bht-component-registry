@@ -7,7 +7,7 @@ interface Props {
   params: Promise<{ scope: string; category: string; name: string }>;
 }
 
-/** The package's own source files — component, styles, exports, compositions, tests. */
+/** The package's own source files — component, styles, exports, examples, tests. */
 export default async function CodePage({ params }: Props) {
   const { scope, category, name } = await params;
   const component = getComponent(scope, category, name);

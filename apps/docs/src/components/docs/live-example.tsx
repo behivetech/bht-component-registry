@@ -104,7 +104,7 @@ function FramedExample({
   const [ready, setReady] = useState(false);
   const [contentHeight, setContentHeight] = useState(0);
 
-  // Mount the frame only as it approaches the viewport; a long compositions
+  // Mount the frame only as it approaches the viewport; a long examples
   // page would otherwise boot every example at once.
   useEffect(() => {
     const element = figureRef.current;

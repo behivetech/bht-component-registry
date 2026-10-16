@@ -8,7 +8,7 @@ const [rootClass, getChildClass] = getClassName({
 });
 
 /**
- * The body of a component tab (Code, Compositions, Playground, Changelog,
+ * The body of a component tab (Code, Examples, Playground, Changelog,
  * Design): a vertical stack of sections. `TabPage.Note` is the muted
  * paragraph those tabs use for a path, a hint or an empty state — part of
  * this component so no tab reaches into another's stylesheet.
