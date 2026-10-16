@@ -1,6 +1,7 @@
 {
   "name": "@bht-component-registry/env",
   "version": "0.1.0",
+  "license": "MIT",
   "type": "module",
   "private": true,
   "description": "Everything a component package builds, lints, type-checks and tests with — tsup config, tsconfig, ESLint config, Vitest config and setup, SCSS-module typings — plus the docgen used by both the docs site and the bht-registry-docgen bin.",

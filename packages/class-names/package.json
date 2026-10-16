@@ -1,6 +1,7 @@
 {
   "name": "@bht-component-registry/class-names",
   "version": "0.0.6",
+  "license": "MIT",
   "type": "module",
   "private": true,
   "exports": {

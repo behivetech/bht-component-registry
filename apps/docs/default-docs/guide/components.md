@@ -21,7 +21,7 @@ registry/acme/atoms/button/
 ├─ index.ts                   the package's public exports
 ├─ README.md                  the Overview tab
 ├─ CHANGELOG.md               written by Changesets; the Changelog tab
-├─ package.json               @acme/atoms.button, scripts, files, publishConfig, registry
+├─ package.json               @acme/atoms.button, scripts, files, publishConfig, registry, license (MIT by default; yours to change)
 ├─ tsup.config.ts             createComponentConfig() from @bht-component-registry/env
 ├─ tsconfig.json              extends the env's tsconfig (which also types *.module.scss imports); excludes specs and compositions from the build
 └─ eslint.config.mjs          re-exports the env's ESLint config

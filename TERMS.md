@@ -1,45 +1,29 @@
 # Terms
 
-The terms under which the bht-component-registry template, the `create-bht-component-registry` tool, the code they generate and a documentation site built from them are provided. The same text ships as a page of the site's guide (`apps/docs/default-docs/guide/terms.md`, `/docs/guide/terms`), where the links below resolve to site pages.
-
-These terms cover the bht-component-registry template, the `create-bht-component-registry` tool, the code either of them generates, and this documentation site. By using any of them you agree to them. If you do not, do not use them.
+How the bht-component-registry template, the `create-bht-component-registry` tool, the code they generate and a documentation site built from them are provided. The same text ships as a page of the site's guide (`apps/docs/default-docs/guide/terms.md`, `/docs/guide/terms`), where the links resolve to site pages.
 
 ## Licence
 
-The template and the tool are open source under the [MIT License](https://github.com/behivetech/bht-component-registry/blob/main/LICENSE). The licence is the whole of the permission you are given, and its disclaimer applies in full: the software is provided **"as is", without warranty of any kind**, express or implied, including the warranties of merchantability, fitness for a particular purpose and non-infringement. Code generated for you (components, pages, configuration) is yours; Behive Tech claims no rights in it.
+Everything here is open source under the [MIT License](https://github.com/behivetech/bht-component-registry/blob/main/LICENSE), the same licence most open-source component libraries use. It is short, and it is the whole of the terms: you may use, copy, change and redistribute the software for any purpose, as long as the copyright notice stays with it, and it is provided **"as is", without warranty of any kind** — no promise that it is correct, secure, fit for your purpose or free of defects, and no liability for what happens when you use it. Read the licence; everything below only spells out what it means here.
 
-## No warranty, no guarantee
+## What is yours
 
-Nothing here is guaranteed to be correct, complete, secure, free of defects, suitable for your purpose, or available without interruption. A documentation site built from this template is published by whoever deploys it, not by Behive Tech, and may be changed or taken down at any time. Behive Tech may change or discontinue the template or the tool at any time without notice.
+Code generated for you — components, pages, configuration — is yours. Behive Tech claims no rights in it, and you choose the licence for your own packages (`license` in each `package.json`; the generator writes `MIT`, change it as you like).
 
-## Your responsibilities
+## What you run is yours to run
 
-You are responsible for what you build, publish and deploy with these tools: the components and packages you release, the registries and credentials you use, the content you put on your site, and compliance with any law or agreement that applies to you. Third-party services you connect — npm registries, GitHub, hosting providers, identity providers and the like — have their own terms, which are between you and them.
+A site built from this template is published by whoever deploys it. The packages you release, the registries and credentials you use, the content you put on your site, and the third-party services you connect — npm registries, GitHub, hosting providers, embedded design files — are between you and them, under their terms. Nothing in the template, the tool or this documentation is legal, security, accessibility or compliance advice.
 
-## Not advice
+## Trademarks
 
-Nothing in the template, the tool or this documentation is legal, security, accessibility, compliance or professional advice of any kind. Descriptions of tools and services are for information only.
-
-## Trademarks and third parties
-
-Names and marks of third parties belong to their owners. Mentioning a tool, service or company does not imply affiliation, endorsement or partnership, in either direction.
-
-## Limitation of liability
-
-To the maximum extent permitted by law, Behive Tech and its contributors are not liable for any loss or damage — direct, indirect, incidental, consequential, special or otherwise, including loss of data, revenue or profit — arising from the use of or inability to use the template, the tool, generated code or this site, even if advised of the possibility. Where liability cannot be excluded, it is limited to the greatest extent the law allows.
-
-## Consulting and the expanded version
-
-Any consulting engagement, and any provision, support or update of the [expanded version](expanded.md), is governed solely by a separate written agreement. Nothing in this repository or on this site is an offer of either, and these terms do not apply to them.
+Names and marks of third parties belong to their owners. Mentioning a tool, service or company does not imply affiliation or endorsement in either direction.
 
 ## Privacy
 
-A site built from this template collects no personal data by default: it is static files, with no accounts, forms or analytics. Anything the operator adds — analytics, embedded third-party content, forms — is the operator's responsibility to disclose and handle lawfully.
+A site built from this template collects no personal data by default: it is static files, with no accounts, forms or analytics. Anything the operator adds — analytics, embedded third-party content, forms — is the operator's to disclose and handle.
 
-## Governing law
+## Consulting and the expanded version
 
-These terms are governed by the law of the jurisdiction in which Behive Tech is established, without regard to conflict-of-law rules. If any part of these terms is held unenforceable, the rest remains in effect.
+Consulting engagements, and any provision, support or update of the [expanded version](expanded.md), are governed by a separate written agreement. Nothing in this repository or on this site is an offer of either.
 
-## Changes
-
-These terms may change with a new version of the template; the version in your repository applies to it. Last updated: 2026-10-12.
+Last updated: 2026-10-15.
