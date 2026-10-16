@@ -45,6 +45,8 @@ export interface CatalogDocParam {
   name: string;
   type: string;
   optional: boolean;
+  /** The parameter's default as written in the source, or null. */
+  defaultValue: string | null;
   /** The `@param` text, if any. */
   description: string;
 }

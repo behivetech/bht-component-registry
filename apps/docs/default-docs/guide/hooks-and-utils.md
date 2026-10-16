@@ -27,7 +27,7 @@ A hook package has a `use-<name>.ts`, a composition, a spec (with `renderHook`) 
 For every exported function whose name starts with a lowercase letter — hooks are `useX`, utilities are anything else; PascalCase exports are treated as components — the site shows:
 
 - the **signature**, as TypeScript prints it (`useToggle(initial?: boolean): [boolean, () => void]`), one per overload;
-- a **parameters** table: name, type, optional, and the `@param` text;
+- a **parameters** table: name, type, default (as written in the signature, `initial = false`), and the `@param` text — the same columns as a component's props table;
 - the **return** type and the `@returns` text;
 - each **`@example`** block as code (a ```` ```ts ```` fence inside the tag is fine).
 

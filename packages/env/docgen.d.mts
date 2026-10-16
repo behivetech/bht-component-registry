@@ -19,6 +19,8 @@ export interface DocParam {
   name: string;
   type: string;
   optional: boolean;
+  /** The initializer as written in the source (`initial = false` → "false"), or null. */
+  defaultValue: string | null;
   /** The `@param` text, if any. */
   description: string;
 }
