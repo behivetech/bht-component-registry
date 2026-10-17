@@ -19,7 +19,7 @@ export const {{ pascalCase name }} = ({
 }: {{ pascalCase name }}Props) => {
   const [rootClass] = getClassName({
     className,
-    rootClass: '{{ constantCase scope }}__{{ pascalCase name }}',
+    rootClass: '{{ classPrefix scope }}__{{ pascalCase name }}',
     styles,
   });
 
