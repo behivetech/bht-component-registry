@@ -130,6 +130,17 @@ export function registerPublishHelpers(plop: NodePlopAPI, config: RegistryConfig
   plop.setHelper("publishRegistry", (visibility: string) => (visibility === "private" ? config.privateRegistry : publicRegistry));
   plop.setHelper("publishAccess", (visibility: string) => (visibility === "private" ? "restricted" : "public"));
   plop.setHelper("titleWords", titleWords);
+  // The root class a scaffolded component starts from: `<prefix>__<PascalName>`.
+  // A scope names its prefix in scope.json ("classPrefix": "BHT"); without one
+  // it is the scope in CONSTANT_CASE (acme → ACME).
+  plop.setHelper("classPrefix", (scope: string) => {
+    const file = join(ROOT, "registry", String(scope), "scope.json");
+    if (existsSync(file)) {
+      const manifest = JSON.parse(readFileSync(file, "utf8")) as { classPrefix?: string };
+      if (manifest.classPrefix) return manifest.classPrefix;
+    }
+    return plop.getHelper("constantCase")(String(scope));
+  });
 }
 
 /** `registry/<scope>/<category>/<name>` must not exist yet. */

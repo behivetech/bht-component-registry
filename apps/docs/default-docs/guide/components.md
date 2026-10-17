@@ -48,7 +48,7 @@ Every class name in a component — and in the docs site itself — comes from `
 
 ```tsx
 const [rootClass, getChildClass] = getClassName({
-  rootClass: "ACME__Button", // <SCOPE>__<PascalName>; the generator fills it in
+  rootClass: "ACME__Button", // <classPrefix>__<PascalName> — scope.json's classPrefix, else the scope in CONSTANT_CASE
   styles,                     // the CSS-module map, so names resolve to the hashed classes
   className,                  // whatever the consumer passed, merged onto the root
   modifiers: { loading },     // `ACME__Button--loading` while true

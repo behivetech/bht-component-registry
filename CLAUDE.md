@@ -50,7 +50,7 @@ replaced by `npx create-bht-component-registry update`.
   either alone. Guides treat plain pnpm as the baseline; a task runner is named only in the optional section of `apps/docs/default-docs/guide/adopting.md`. Never name competing or comparable products anywhere (no "X-style", no "like X").
 - Don't `pnpm install` while `next dev` runs; restart the dev server after. Never `cd` in Bash; use `--filter`, `-C`, `--dir`.
 - Every class name goes through `getClassName` (`@bht-component-registry/class-names`) with BEM names: `rootClass` is
-  `<SCOPE>__<PascalName>` for a registry package and `<PascalName>` for the docs app's own chrome and routes; inner elements are
+  `<classPrefix>__<PascalName>` for a registry package (`classPrefix` from `scope.json`, else the scope in CONSTANT_CASE) and `<PascalName>` for the docs app's own chrome and routes; inner elements are
   `getChildClass("kebab-name")`, variants are `modifiers`, and the `.module.scss` mirrors it (`.Root { &__child {} &--modifier {} }`).
   Never `styles.foo`, never a hand-written class string, never a selector into another component's classes (pass `className`
   instead), and never a class for a state the DOM already carries (`aria-current`, `disabled`): style the attribute.
