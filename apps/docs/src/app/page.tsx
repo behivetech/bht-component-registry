@@ -20,7 +20,7 @@ const PILLARS = [
   },
   {
     title: "Docs generated, not written twice",
-    body: "react-docgen reads each component's TypeScript for the props table; examples become live, editable examples; the README is rendered with its snippets running.",
+    body: "react-docgen reads each component's TypeScript for the props table; the exports of each `*.example.tsx` run live, editable in place; the README is rendered with its snippets running.",
   },
   {
     title: "Versioned and published",

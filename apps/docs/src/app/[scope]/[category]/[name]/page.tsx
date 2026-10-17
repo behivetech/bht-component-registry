@@ -12,7 +12,7 @@ interface Props {
   params: Promise<{ scope: string; category: string; name: string }>;
 }
 
-/** Overview: the README (with live snippets), a examples gallery, and the props tables. */
+/** Overview: the README (with live snippets), an examples gallery, and the props tables. */
 export default async function OverviewPage({ params }: Props) {
   const { scope, category, name } = await params;
   const component = getComponent(scope, category, name);
