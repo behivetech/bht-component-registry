@@ -10,7 +10,7 @@ Short answers to the questions that come up when teams evaluate this registry: w
 
 ## Why no database?
 
-Everything the docs show is already in the repo: the README, the compositions, the TypeScript interface, the CHANGELOG, the version, the status and tags in `package.json`. A database would hold a copy that someone has to keep in step. The catalog step reads the folder tree at build time instead, so a pull request that changes a component changes its docs in the same diff, reviewed together.
+Everything the docs show is already in the repo: the README, the examples, the TypeScript interface, the CHANGELOG, the version, the status and tags in `package.json`. A database would hold a copy that someone has to keep in step. The catalog step reads the folder tree at build time instead, so a pull request that changes a component changes its docs in the same diff, reviewed together.
 
 ## Why a static export?
 
@@ -30,8 +30,8 @@ Because you already have both, and they are enough:
 |---|---|
 | Scopes | an npm scope and a folder under `registry/` |
 | One package per component | `registry/<scope>/<category>/<name>` is `@<scope>/<category>.<name>` |
-| Examples | the named exports of `<name>.composition.tsx` |
-| Generated docs | README, compositions, react-docgen props, CHANGELOG |
+| Examples | the named exports of `<name>.example.tsx` |
+| Generated docs | README, examples, react-docgen props, CHANGELOG |
 | Versions | Changesets and the npm registry you already use |
 | Deleting a component | deleting a folder |
 | Source of truth | git |

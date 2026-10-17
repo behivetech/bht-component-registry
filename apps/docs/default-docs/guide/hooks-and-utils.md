@@ -20,7 +20,7 @@ pnpm gen hook      # scope → name (use-…) → visibility
 pnpm gen util      # scope → name → visibility
 ```
 
-A hook package has a `use-<name>.ts`, a composition, a spec (with `renderHook`) and a README; a util package has a `<name>.ts`, a spec and a README. Both share the component template's tooling (tsconfig, ESLint, tsup, CHANGELOG) and publish the same way. A util package has no React dependency at all.
+A hook package has a `use-<name>.ts`, an example, a spec (with `renderHook`) and a README; a util package has a `<name>.ts`, a spec and a README. Both share the component template's tooling (tsconfig, ESLint, tsup, CHANGELOG) and publish the same way. A util package has no React dependency at all.
 
 ## What the docs show
 
@@ -31,7 +31,7 @@ For every exported function whose name starts with a lowercase letter — hooks 
 - the **return** type and the `@returns` text;
 - each **`@example`** block as code (a ```` ```ts ```` fence inside the tag is fine).
 
-Hooks additionally get **live examples** from their compositions, exactly like components: a composition is a small component that uses the hook, and the Compositions tab and the catalog page run it.
+Hooks additionally get **live examples** exactly like components: `use-<name>.example.tsx` exports small components that use the hook, and the Examples tab and the catalog page run them.
 
 Everything above comes from the source file. The same information is written into the package's `docs.json` on build, so a published version documents itself.
 
@@ -55,7 +55,7 @@ Every exported function carries a JSDoc block with:
 - The first paragraph is the description; keep it to the point.
 - One `@param` per parameter, matched by name. A parameter without one shows an empty description — the type alone is rarely enough.
 - `@returns` is worth writing even when the type is obvious: say what the value *means*.
-- At least one `@example`, runnable as written. For a hook, a composition is the better example because it runs live; use `@example` for the one-liner.
+- At least one `@example`, runnable as written. For a hook, `*.example.tsx` is the better place for a worked example because it runs live; keep `@example` for the one-liner.
 
 The generators write a block in this shape with `TODO` text; replace the text, keep the tags.
 

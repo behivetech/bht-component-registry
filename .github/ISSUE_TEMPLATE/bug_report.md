@@ -18,7 +18,7 @@ A clear description of the problem.
 2.
 3.
 
-If it is in the docs site, link or paste the component folder (README, composition, `package.json`) that triggers it. If it is in `create` or `update`, paste the command and the output.
+If it is in the docs site, link or paste the component folder (README, example, `package.json`) that triggers it. If it is in `create` or `update`, paste the command and the output.
 
 ## Environment
 

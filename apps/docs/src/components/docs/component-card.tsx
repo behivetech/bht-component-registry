@@ -8,7 +8,7 @@ import { StatusBadge } from "./status-badge";
 import styles from "./component-card.module.scss";
 
 /**
- * One tile in a scope's catalog: a live thumbnail of the first composition,
+ * One tile in a scope's catalog: a live thumbnail of the first example,
  * the name, version and summary. Rendering the real component instead of a
  * screenshot means the tile is never stale.
  */
@@ -39,7 +39,7 @@ export function ComponentCard({
           <span className={getChildClass("no-preview")}>
             {component.category === "hooks" || component.category === "utils"
               ? "No visual preview — see its signatures and examples"
-              : "Opens as an overlay — see its compositions"}
+              : "Opens as an overlay — see its examples"}
           </span>
         )}
       </div>

@@ -7,7 +7,7 @@ interface Props {
   params: Promise<{ scope: string; category: string; name: string }>;
 }
 
-/** A blank sandbox with the whole registry in scope, seeded with the first composition. */
+/** A blank sandbox with the whole registry in scope, seeded with the first example. */
 export default async function PlaygroundPage({ params }: Props) {
   const { scope, category, name } = await params;
   const component = getComponent(scope, category, name);

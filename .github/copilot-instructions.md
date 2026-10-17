@@ -19,7 +19,7 @@ pnpm gen generator <name>                  # a skeleton for a generator of your 
 ```
 
 The generators are where the conventions live — folder layout, `package.json` (name, `publishConfig`,
-build scripts, `registry` metadata), the composition and README shape, docs frontmatter. A copy made
+build scripts, `registry` metadata), the example and README shape, docs frontmatter. A copy made
 by hand drifts from them and `update` cannot bring it back in line. If no generator produces what is
 needed, extend the generator (or write a new one under `generators/<name>/` with `pnpm gen generator`)
 rather than working around it.

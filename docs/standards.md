@@ -35,7 +35,7 @@ The rules every component in this registry follows. Keep this page short enough 
 
 ## Examples
 
-Every visual state has a named export in `*.composition.tsx`. A fenced `jsx live` block in any docs page renders live with the whole registry in scope, so a standard can show itself:
+Every visual state has a named export in `*.example.tsx`. A fenced `jsx live` block in any docs page renders live with the whole registry in scope, so a standard can show itself:
 
 ```jsx live
 <button type="button">Primary action</button>

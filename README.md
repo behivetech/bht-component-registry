@@ -32,9 +32,9 @@ Then set `scope` in `registry.config.json`, rename `registry/example` to your sc
 
 ## What you get
 
-- A docs site per component with tabs as routes: Overview, Compositions, Code, Playground, Changelog.
+- A docs site per component with tabs as routes: Overview, Examples, Code, Playground, Changelog.
 - The Overview is the component's `README.md`; its ```` ```jsx ```` and ```` ```tsx ```` blocks run live.
-- `*.composition.tsx` exports become live, editable examples and the catalog thumbnails.
+- `*.example.tsx` exports become live, editable examples and the catalog thumbnails.
 - A props table built by react-docgen-typescript from the TypeScript interface and its JSDoc.
 - The Changelog tab is the package's `CHANGELOG.md`, written by Changesets.
 - Status (`stable`, `beta`, `draft`, `deprecated`) and tags per component, from `package.json`.
@@ -46,7 +46,7 @@ Then set `scope` in `registry.config.json`, rename `registry/example` to your sc
 ## How it works
 
 - The folder tree is the registry: `registry/<scope>/<category>/<name>` is the npm package `@<scope>/<category>.<name>`.
-- Before every `dev` and `build`, `apps/docs/scripts/generate-catalog.ts` reads every package (README, compositions, source, CHANGELOG, `package.json`) and writes a catalog the pages are generated from.
+- Before every `dev` and `build`, `apps/docs/scripts/generate-catalog.ts` reads every package (README, examples, source, CHANGELOG, `package.json`) and writes a catalog the pages are generated from.
 - Each component's build runs `tsup` and then `bht-registry-docgen`, which writes `docs.json` into the package, so a published tarball describes itself.
 - Changesets owns versions: `pnpm changeset`, `pnpm version-packages`, `pnpm release`.
 - `registry.config.json` holds the scope, the npm registry and the site branding. It is committed and contains no secrets.
@@ -54,7 +54,7 @@ Then set `scope` in `registry.config.json`, rename `registry/example` to your sc
 ## Guides
 
 - [Getting started](apps/docs/default-docs/guide/getting-started.md): create or clone, prerequisites, a tour of the repo.
-- [Components](apps/docs/default-docs/guide/components.md): the anatomy of a component folder, `pnpm gen`, README and composition conventions, the props table, status and tags, removing a component.
+- [Components](apps/docs/default-docs/guide/components.md): the anatomy of a component folder, `pnpm gen`, README and example conventions, the props table, status and tags, removing a component.
 - [Scopes](apps/docs/default-docs/guide/scopes.md): the one-scope rule, `registry.config.json`, `scope.json`, creating the npm org, multiple scopes.
 - [Publishing](apps/docs/default-docs/guide/publishing.md): the Changesets flow, npmjs, GitHub Packages and private registries, what a tarball contains, the release workflow.
 - [Deploy](apps/docs/default-docs/guide/deploy.md): Vercel, Netlify, Cloudflare Pages, any static host, Docker and nginx.

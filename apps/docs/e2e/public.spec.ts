@@ -89,7 +89,7 @@ test("status and tags come from the package's registry field, with no database",
 });
 
 test.describe("component page", () => {
-  test("overview renders the README live, the compositions and the docgen props table", async ({
+  test("overview renders the README live, the examples and the docgen props table", async ({
     page,
   }) => {
     await page.goto("/example/atoms/price-tag");
@@ -100,25 +100,25 @@ test.describe("component page", () => {
       page.getByText("pnpm add @example/atoms.price-tag"),
     ).toBeVisible();
 
-    // A composition, executed: a real rendered price, not a screenshot. Live
+    // An example, executed: a real rendered price, not a screenshot. Live
     // examples run in their own frame (see sandbox-protocol.ts).
     await expect(
       page.frameLocator("iframe").first().getByText(/\$\d/).first(),
     ).toBeVisible();
-    // A composition's frame is named after it (the README's examples have no
+    // An example's frame is named after it (the README's examples have no
     // title), and the gallery links to the full list.
-    const compositions = page
+    const examples = page
       .locator("section")
-      .filter({ has: page.getByRole("heading", { name: "Compositions" }) });
+      .filter({ has: page.getByRole("heading", { name: "Examples" }) });
     // Frames mount as they scroll into view, so bring the gallery up first.
-    await compositions.scrollIntoViewIfNeeded();
-    await expect(compositions.locator("iframe").first()).toHaveAttribute(
+    await examples.scrollIntoViewIfNeeded();
+    await expect(examples.locator("iframe").first()).toHaveAttribute(
       "title",
       /^\S.* — live preview$/,
     );
     await expect(
       page.getByRole("link", { name: /^Open all \d+/ }),
-    ).toHaveAttribute("href", "/example/atoms/price-tag/compositions");
+    ).toHaveAttribute("href", "/example/atoms/price-tag/examples");
 
     // Props straight from TypeScript via react-docgen. Scoped to the
     // Properties section — the README may have a hand-written table of its own.
@@ -134,10 +134,10 @@ test.describe("component page", () => {
     ).toBeVisible();
   });
 
-  test("tabs are routes: compositions, code, playground and changelog", async ({
+  test("tabs are routes: examples, code, playground and changelog", async ({
     page,
   }) => {
-    await page.goto("/example/atoms/price-tag/compositions");
+    await page.goto("/example/atoms/price-tag/examples");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(
       "Price Tag",
     );
@@ -260,7 +260,7 @@ test.describe("design links", () => {
 });
 
 test.describe("hooks and utilities", () => {
-  test("a hook page shows its signature, parameters and a live composition", async ({
+  test("a hook page shows its signature, parameters and a live example", async ({
     page,
   }) => {
     await page.goto("/example/hooks/use-toggle");
@@ -277,7 +277,7 @@ test.describe("hooks and utilities", () => {
     // The default comes from the signature (`initial = false`), like a prop default.
     await expect(page.getByRole("cell", { name: "false", exact: true })).toBeVisible();
     await expect(page.getByText("The starting value.")).toBeVisible();
-    // The composition is a live example, like a component's.
+    // The example is a live example, like a component's.
     await expect(page.locator("figure").first()).toBeVisible();
   });
 

@@ -19,7 +19,7 @@
     "index.ts",
     "rating-stars.tsx",
     "rating-stars.module.scss",
-    "*.composition.tsx",
+    "*.example.tsx",
     "docs.json"
   ],
   "scripts": {

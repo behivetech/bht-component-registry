@@ -9,7 +9,7 @@ before relying on it. The sibling private repo `../bht-platform` has its own HAN
 The public, docs-only version of Behive Tech's component registry. A registry that stays
 in git: one npm package per component at `registry/<scope>/<category>/<name>`
 (`@<scope>/<category>.<name>`), docs generated from source (README snippets run live,
-`*.composition.tsx` exports are live editable examples, react-docgen builds the props table,
+`*.example.tsx` exports are live editable examples, react-docgen builds the props table,
 CHANGELOG.md from Changesets is the Changelog tab, an optional tokens.scss is a Design tokens
 page). No auth, no database, no required env vars. `apps/docs` is a Next.js 16 **static
 export** (`apps/docs/out`) that deploys anywhere: Vercel, Netlify/Cloudflare Pages, any static
@@ -33,7 +33,7 @@ Made with Bruce over a long planning session; the full plan is in
   *reader* over registries clients already use (npmjs default), never a store Behive runs.
 - **Self-describing tarballs.** Every component's build runs `tsup && bht-registry-docgen`
   and `files` ships `dist`, `README.md`, `index.ts`, the source `.tsx`/`.scss`,
-  `*.composition.tsx` and `docs.json`. A published version can be documented from the
+  `*.example.tsx` and `docs.json`. A published version can be documented from the
   tarball alone. This is what makes the future hosted reader possible without a migration.
 - **One scope per client, enforced.** `registry.config.json#scope`; validated by
   `packages/scope` (lowercase, DNS-label-like, not reserved); the generator and the create CLI
@@ -67,7 +67,7 @@ apps/docs/                 the static docs site (Next 16, output: "export")
   src/lib/published.ts          build-time "published versions" lookup against npmRegistry (token optional)
   src/ui/                       internal chrome: button, card, badge, text-field, table, empty-state, hero-banner
   src/components/docs/          live-example (react-live), markdown, props-table, scope-catalog, …
-  src/app/                      /, /[scope], /[scope]/[category]/[name]/{,compositions,code,playground,changelog}, /tokens, not-found
+  src/app/                      /, /[scope], /[scope]/[category]/[name]/{,examples,code,playground,changelog}, /tokens, not-found
   e2e/public.spec.ts            Playwright against the static build (pnpm build && serve)
 packages/env/              shared tsup config (bundles @bht-component-registry/* in), docgen.mjs, bin/bht-registry-docgen
 packages/scope/            scope naming rules (slugProblem, slugify, RESERVED_SLUGS, titleCase)
@@ -111,7 +111,7 @@ Verified locally on 2026-10-07:
   a non-kebab name and an existing destination, each with one sentence and exit 1;
   `pnpm gen --args testco atoms thing` → 12 files, package builds (`dist/` + `docs.json`),
   tests and lints, and the export contains `testco.html` and `testco/atoms/thing.html`. Test
-  scope removed afterwards. Earlier `pnpm pack` check (tarball = dist + source + composition +
+  scope removed afterwards. Earlier `pnpm pack` check (tarball = dist + source + example +
   README + docs.json + LICENSE) still holds; the template is unchanged.
 - `pnpm dev` on a fresh tree: builds the three upstream packages, then Next dev answers :3000.
 - CLI: 62 unit tests; `create demo --scope bobsburgers --from . --no-install -y` ships
