@@ -1,5 +1,12 @@
 # create-bht-component-registry
 
+## 0.4.0
+
+### Minor Changes
+
+- 55711bd: Template: compositions are now examples. A component's live examples live in `<name>.example.tsx` (the generators write that), the site's tab and route are **Examples** (`/examples`), and the guide, seeds and tooling use the word throughout. The old `*.composition.tsx` name is still read, with a build-time warning naming the file, so a registry can take this update first and rename at leisure; template 0.5 stops reading it.
+- 9ef1ae5: Template: a scope can name the class prefix its components use. `registry/<scope>/scope.json` takes `"classPrefix": "BHT"` and `pnpm gen component` puts it on every new component's root class (`BHT__Button`, `.BHT__Button { &__label {} }`). Without it the prefix is the scope in CONSTANT_CASE, as before, so existing registries are unaffected. Set it before a scope's first component so the whole scope shares one prefix.
+
 ## 0.3.0
 
 ### Minor Changes
