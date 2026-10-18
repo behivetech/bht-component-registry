@@ -71,6 +71,7 @@ Each `registry/<scope>/scope.json` describes the scope for the site:
   "name": "Acme",
   "tagline": "Commerce components for Acme's storefronts.",
   "visibility": "public",
+  "classPrefix": "ACME",
   "tokens": "theme/tokens.scss"
 }
 ```
@@ -80,6 +81,7 @@ Each `registry/<scope>/scope.json` describes the scope for the site:
 | `name` | Display name on the home page and the scope page. Defaults to the title-cased folder name. |
 | `tagline` | One line under the name. |
 | `visibility` | `public` (default) lists the scope on the home page. `private` keeps it reachable at `/<scope>` but off the home page. |
+| `classPrefix` | Optional. The prefix `pnpm gen component` puts on a new component's root class: `<classPrefix>__<PascalName>`, so `"BHT"` gives `BHT__Button`. Without it, the scope in CONSTANT_CASE (`acme` → `ACME__Button`). Set it before the first component so every package in the scope shares one prefix. |
 | `tokens` | Optional. Path, relative to the scope folder, to a `tokens.scss`. When any scope sets it, the site gets a Design tokens page and nav item. See [Design tokens](design-tokens.md). |
 
 `private` is a listing choice, not access control: a static site has no way to restrict who opens a URL. Use it for internal or in-progress scopes you do not want on the landing page.

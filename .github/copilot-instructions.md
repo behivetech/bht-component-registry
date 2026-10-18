@@ -27,7 +27,7 @@ rather than working around it.
 ## Class names are BEM through `getClassName`
 
 Every styled element gets its class from `getClassName` (`@bht-component-registry/class-names`): the root is
-`rootClass` (`<SCOPE>__<PascalName>` in a registry package, `<PascalName>` in the docs app), children are
+`rootClass` (`<classPrefix>__<PascalName>` in a registry package — `classPrefix` from `scope.json`, else the scope in CONSTANT_CASE — and `<PascalName>` in the docs app), children are
 `getChildClass("kebab-name")`, variants are `modifiers`, and the `.module.scss` mirrors that tree with
 `&__child` and `&--modifier`. Never write `styles.foo`, a literal class string, a selector that reaches into
 another component's classes (pass it `className` instead), or a class for a state the DOM already carries
