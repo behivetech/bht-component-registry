@@ -2,7 +2,10 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { NodePlopAPI } from "plop";
-import { describeSlugProblem, slugProblem } from "../../packages/scope/src/index.ts";
+import {
+  describeSlugProblem,
+  slugProblem,
+} from "../../packages/scope/src/index.ts";
 
 /**
  * What the package generators (component, hook, util) have in common: the
@@ -18,10 +21,16 @@ import { describeSlugProblem, slugProblem } from "../../packages/scope/src/index
 export const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
 /** The component templates' tooling files, which hook and util packages share. */
-export const COMPONENT_TEMPLATES = join(ROOT, "scripts/generators/component/templates");
-export const SHARED_TOOLING_TEMPLATES = ["CHANGELOG.md.hbs", "eslint.config.mjs.hbs", "tsconfig.json.hbs", "tsup.config.ts.hbs"].map(
-  (file) => join(COMPONENT_TEMPLATES, file),
+export const COMPONENT_TEMPLATES = join(
+  ROOT,
+  "scripts/generators/component/templates",
 );
+export const SHARED_TOOLING_TEMPLATES = [
+  "CHANGELOG.md.hbs",
+  "eslint.config.mjs.hbs",
+  "tsconfig.json.hbs",
+  "tsup.config.ts.hbs",
+].map((file) => join(COMPONENT_TEMPLATES, file));
 
 export const KEBAB = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
 
@@ -41,11 +50,17 @@ export function readJson<T>(file: string, fallback: T): T {
   }
 }
 
-export const readRegistryConfig = (): RegistryConfig => readJson<RegistryConfig>(join(ROOT, "registry.config.json"), {});
+export const readRegistryConfig = (): RegistryConfig =>
+  readJson<RegistryConfig>(join(ROOT, "registry.config.json"), {});
 
 export function repositoryUrl(): string {
-  const rootPkg = readJson<{ repository?: { url?: string } | string }>(join(ROOT, "package.json"), {});
-  return typeof rootPkg.repository === "string" ? rootPkg.repository : (rootPkg.repository?.url ?? "");
+  const rootPkg = readJson<{ repository?: { url?: string } | string }>(
+    join(ROOT, "package.json"),
+    {},
+  );
+  return typeof rootPkg.repository === "string"
+    ? rootPkg.repository
+    : (rootPkg.repository?.url ?? "");
 }
 
 /** Scopes that already exist in the registry, so the prompt can offer them. */
@@ -85,15 +100,22 @@ export function visibilityPrompt(config: RegistryConfig) {
   return {
     type: "list" as const,
     name: "visibility",
-    message: "Visibility — permanent: a package cannot move between registries after its first release",
+    message:
+      "Visibility — permanent: a package cannot move between registries after its first release",
     choices: [
-      { name: `public   — publishes to ${publicRegistry}; anyone can install it`, value: "public", short: "public" },
+      {
+        name: `public   — publishes to ${publicRegistry}; anyone can install it`,
+        value: "public",
+        short: "public",
+      },
       {
         name: `private  — publishes to ${privateRegistry ?? "privateRegistry"}; needs a token to install`,
         value: "private",
         short: "private",
         // Inquirer shows a disabled choice with this text instead of letting it be picked.
-        disabled: privateRegistry ? false : 'set "privateRegistry" in registry.config.json first',
+        disabled: privateRegistry
+          ? false
+          : 'set "privateRegistry" in registry.config.json first',
       },
     ],
     default: "public",
@@ -110,9 +132,13 @@ export function checkVisibility(config: RegistryConfig) {
   const publicRegistry = config.npmRegistry ?? DEFAULT_PUBLIC_REGISTRY;
   return (answers: { visibility?: string }) => {
     if (answers.visibility === "private" && !config.privateRegistry) {
-      throw new Error('"privateRegistry" is not set in registry.config.json; a private package has nowhere to publish.');
+      throw new Error(
+        '"privateRegistry" is not set in registry.config.json; a private package has nowhere to publish.',
+      );
     }
-    return answers.visibility === "private" ? `private → ${config.privateRegistry}` : `public → ${publicRegistry}`;
+    return answers.visibility === "private"
+      ? `private → ${config.privateRegistry}`
+      : `public → ${publicRegistry}`;
   };
 }
 
@@ -125,28 +151,44 @@ export const titleWords = (slug: string) =>
     .join(" ");
 
 /** The package.json templates read publishConfig through these, keyed by the visibility answer; READMEs use titleWords. */
-export function registerPublishHelpers(plop: NodePlopAPI, config: RegistryConfig) {
+export function registerPublishHelpers(
+  plop: NodePlopAPI,
+  config: RegistryConfig,
+) {
   const publicRegistry = config.npmRegistry ?? DEFAULT_PUBLIC_REGISTRY;
-  plop.setHelper("publishRegistry", (visibility: string) => (visibility === "private" ? config.privateRegistry : publicRegistry));
-  plop.setHelper("publishAccess", (visibility: string) => (visibility === "private" ? "restricted" : "public"));
+  plop.setHelper("publishRegistry", (visibility: string) =>
+    visibility === "private" ? config.privateRegistry : publicRegistry,
+  );
+  plop.setHelper("publishAccess", (visibility: string) =>
+    visibility === "private" ? "restricted" : "public",
+  );
   plop.setHelper("titleWords", titleWords);
   // The root class a scaffolded component starts from: `<prefix>__<PascalName>`.
   // A scope names its prefix in scope.json ("classPrefix": "BHT"); without one
   // it is the scope in CONSTANT_CASE (acme → ACME).
   plop.setHelper("classPrefix", (scope: string) => {
-    const file = join(ROOT, "registry", String(scope), "scope.json");
-    if (existsSync(file)) {
-      const manifest = JSON.parse(readFileSync(file, "utf8")) as { classPrefix?: string };
-      if (manifest.classPrefix) return manifest.classPrefix;
-    }
-    return plop.getHelper("constantCase")(String(scope));
+    const manifest = readJson<{ classPrefix?: string }>(
+      join(ROOT, "registry", String(scope), "scope.json"),
+      {},
+    );
+    return (
+      manifest.classPrefix || plop.getHelper("constantCase")(String(scope))
+    );
   });
 }
 
 /** `registry/<scope>/<category>/<name>` must not exist yet. */
 export function refuseExisting(category: string) {
   return (input: string, answers?: { scope?: string }) => {
-    const dest = join(ROOT, "registry", String(answers?.scope), category, input);
-    return existsSync(dest) ? `registry/${answers?.scope}/${category}/${input} already exists.` : true;
+    const dest = join(
+      ROOT,
+      "registry",
+      String(answers?.scope),
+      category,
+      input,
+    );
+    return existsSync(dest)
+      ? `registry/${answers?.scope}/${category}/${input} already exists.`
+      : true;
   };
 }
