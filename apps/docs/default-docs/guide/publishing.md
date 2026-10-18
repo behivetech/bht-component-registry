@@ -6,7 +6,7 @@ order: 7
 
 # Publishing
 
-Every component is its own npm package with its own semver. Changesets records what changed, bumps versions and writes each package's `CHANGELOG.md`; `pnpm release` builds the packages and publishes them to the registry named in `registry.config.json#npmRegistry`. npmjs is the default, GitHub Packages and private registries are a one-line change, and the published tarball carries enough (source, README, compositions, `docs.json`) that its docs can be rendered from the registry alone.
+Every component is its own npm package with its own semver. Changesets records what changed, bumps versions and writes each package's `CHANGELOG.md`; `pnpm release` builds the packages and publishes them to the registry named in `registry.config.json#npmRegistry`. npmjs is the default, GitHub Packages and private registries are a one-line change, and the published tarball carries enough (source, README, examples, `docs.json`) that its docs can be rendered from the registry alone.
 
 ## The Changesets flow
 
@@ -123,7 +123,7 @@ A component's `package.json#files` ships:
 
 - `dist/`: the built ESM, CJS, type declarations and `index.css`;
 - `README.md`;
-- `*.composition.tsx`;
+- `*.example.tsx`;
 - the component source: `*.tsx` and `*.scss`;
 - `docs.json`: the props table as computed by react-docgen-typescript.
 

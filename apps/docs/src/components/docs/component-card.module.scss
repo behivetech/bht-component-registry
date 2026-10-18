@@ -24,7 +24,7 @@
     background: transparent;
     max-width: 100%;
     // Thumbnails are for recognition, not interaction — the page behind them is
-    // the link, and a Modal or Drawer composition must not open on hover.
+    // the link, and a Modal or Drawer example must not open on hover.
     pointer-events: none;
   }
 

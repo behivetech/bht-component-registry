@@ -25,7 +25,7 @@ function escapeRegExp(text: string): string {
 /**
  * The narrow rewrite for component sources: package names (`@example/`) and
  * registry paths (`registry/example`). Nothing else, because a component's
- * README or composition may legitimately say "example" or link example.com.
+ * README or example may legitimately say "example" or link example.com.
  */
 export function rewritePackageRefs(text: string, r: ScopeRename): string {
   if (r.fromScope === r.toScope) return text;

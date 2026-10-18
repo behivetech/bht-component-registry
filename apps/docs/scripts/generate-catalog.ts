@@ -39,7 +39,16 @@ import type {
   DocPage,
   DocsIndex,
 } from "../src/lib/catalog/types";
-import { extractTokens, humanizeTitle, parseChangelog, readmeSummary, readmeTitle, splitPascal, stripTitle, toTitle } from "../src/lib/catalog/parse";
+import {
+  extractTokens,
+  humanizeTitle,
+  parseChangelog,
+  readmeSummary,
+  readmeTitle,
+  splitPascal,
+  stripTitle,
+  toTitle,
+} from "../src/lib/catalog/parse";
 
 const APP_DIR = path.resolve(import.meta.dirname, "..");
 const REPO_ROOT = path.resolve(APP_DIR, "../..");
@@ -64,7 +73,8 @@ const CATEGORIES = [
 ];
 
 const readJson = (file: string) => JSON.parse(fs.readFileSync(file, "utf8"));
-const readText = (file: string) => (fs.existsSync(file) ? fs.readFileSync(file, "utf8") : "");
+const readText = (file: string) =>
+  fs.existsSync(file) ? fs.readFileSync(file, "utf8") : "";
 
 // ---------------------------------------------------------------------------
 // registry.config.json — the repo's own settings
@@ -89,13 +99,17 @@ interface RegistryConfig {
 function readConfig(): RegistryConfig {
   const file = path.join(REPO_ROOT, "registry.config.json");
   if (!fs.existsSync(file)) {
-    throw new Error("registry.config.json is missing at the repo root. See the Scopes guide (apps/docs/default-docs/guide/scopes.md).");
+    throw new Error(
+      "registry.config.json is missing at the repo root. See the Scopes guide (apps/docs/default-docs/guide/scopes.md).",
+    );
   }
   const config = readJson(file) as Partial<RegistryConfig>;
   for (const key of ["scope", "npmRegistry", "site"] as const) {
-    if (!config[key]) throw new Error(`registry.config.json: "${key}" is required.`);
+    if (!config[key])
+      throw new Error(`registry.config.json: "${key}" is required.`);
   }
-  if (!config.site?.title) throw new Error('registry.config.json: "site.title" is required.');
+  if (!config.site?.title)
+    throw new Error('registry.config.json: "site.title" is required.');
   return config as RegistryConfig;
 }
 
@@ -104,7 +118,8 @@ function readConfig(): RegistryConfig {
 // recognised for embedding. Declared in package.json, never pasted into docs.
 // ---------------------------------------------------------------------------
 
-const FIGMA_URL = /^https:\/\/(?:www\.)?figma\.com\/(design|file|board|proto)\/([A-Za-z0-9]+)(?:\/[^?#]*)?(?:\?([^#]*))?/;
+const FIGMA_URL =
+  /^https:\/\/(?:www\.)?figma\.com\/(design|file|board|proto)\/([A-Za-z0-9]+)(?:\/[^?#]*)?(?:\?([^#]*))?/;
 
 /**
  * Shapes a `{ label, url }` (or a bare URL) into a catalog link. A Figma URL
@@ -113,11 +128,21 @@ const FIGMA_URL = /^https:\/\/(?:www\.)?figma\.com\/(design|file|board|proto)\/(
  * same frame the link points at. `embed-host` names the registry, as Figma
  * asks of embedding apps.
  */
-function designLink(raw: unknown, host: string, fallbackLabel: string): CatalogDesignLink | null {
-  const entry = typeof raw === "string" ? { url: raw } : (raw as { label?: unknown; url?: unknown } | null);
+function designLink(
+  raw: unknown,
+  host: string,
+  fallbackLabel: string,
+): CatalogDesignLink | null {
+  const entry =
+    typeof raw === "string"
+      ? { url: raw }
+      : (raw as { label?: unknown; url?: unknown } | null);
   const url = typeof entry?.url === "string" ? entry.url.trim() : "";
   if (!/^https?:\/\//.test(url)) return null;
-  const label = typeof entry?.label === "string" && entry.label.trim() ? entry.label.trim() : fallbackLabel;
+  const label =
+    typeof entry?.label === "string" && entry.label.trim()
+      ? entry.label.trim()
+      : fallbackLabel;
   const figma = FIGMA_URL.exec(url);
   if (!figma) return { label, url, kind: "link", embedUrl: null };
   const [, kind, key, query = ""] = figma;
@@ -126,17 +151,30 @@ function designLink(raw: unknown, host: string, fallbackLabel: string): CatalogD
   const nodeId = params.get("node-id");
   if (nodeId) embed.set("node-id", nodeId);
   const embedKind = kind === "file" ? "design" : kind;
-  return { label, url, kind: "figma", embedUrl: `https://embed.figma.com/${embedKind}/${key}?${embed.toString()}` };
+  return {
+    label,
+    url,
+    kind: "figma",
+    embedUrl: `https://embed.figma.com/${embedKind}/${key}?${embed.toString()}`,
+  };
 }
 
-function designLinks(raw: unknown, host: string, packageName: string, warnings: string[]): CatalogDesignLink[] {
+function designLinks(
+  raw: unknown,
+  host: string,
+  packageName: string,
+  warnings: string[],
+): CatalogDesignLink[] {
   if (raw === undefined) return [];
   const list = Array.isArray(raw) ? raw : [raw];
   const links: CatalogDesignLink[] = [];
   for (const item of list) {
     const link = designLink(item, host, "Design");
     if (link) links.push(link);
-    else warnings.push(`${packageName}: registry.design entry ${JSON.stringify(item)} is not a { label, url } with an http(s) url — skipped`);
+    else
+      warnings.push(
+        `${packageName}: registry.design entry ${JSON.stringify(item)} is not a { label, url } with an http(s) url — skipped`,
+      );
   }
   return links;
 }
@@ -149,7 +187,10 @@ function siteFromConfig(config: RegistryConfig): CatalogSite {
     primaryColor: config.site.primaryColor ?? null,
     links: config.site.links ?? [],
     embedDesigns: config.site.embedDesigns === true,
-    design: config.site.design === undefined ? null : designLink(config.site.design, config.scope, "Design system"),
+    design:
+      config.site.design === undefined
+        ? null
+        : designLink(config.site.design, config.scope, "Design system"),
   };
 }
 
@@ -157,14 +198,23 @@ function siteFromConfig(config: RegistryConfig): CatalogSite {
 // package.json `registry` field — status and tags, curated in code
 // ---------------------------------------------------------------------------
 
-const STATUSES: ReadonlySet<CatalogStatus> = new Set<CatalogStatus>(["DRAFT", "BETA", "STABLE", "DEPRECATED"]);
+const STATUSES: ReadonlySet<CatalogStatus> = new Set<CatalogStatus>([
+  "DRAFT",
+  "BETA",
+  "STABLE",
+  "DEPRECATED",
+]);
 
 function registryMeta(
   pkg: Record<string, unknown>,
   packageName: string,
   warnings: string[],
 ): { status: CatalogStatus; tags: string[]; thumbnail: boolean } {
-  const field = (pkg.registry ?? {}) as { status?: unknown; tags?: unknown; preview?: unknown };
+  const field = (pkg.registry ?? {}) as {
+    status?: unknown;
+    tags?: unknown;
+    preview?: unknown;
+  };
   const preview = (field.preview ?? {}) as { thumbnail?: unknown };
   // Only an explicit false opts out; anything else (absent, true, junk) keeps the tile.
   const thumbnail = preview.thumbnail !== false;
@@ -172,16 +222,23 @@ function registryMeta(
   if (field.status !== undefined) {
     const upper = String(field.status).toUpperCase() as CatalogStatus;
     if (STATUSES.has(upper)) status = upper;
-    else warnings.push(`${packageName}: registry.status "${String(field.status)}" is not one of draft, beta, stable, deprecated — using stable`);
+    else
+      warnings.push(
+        `${packageName}: registry.status "${String(field.status)}" is not one of draft, beta, stable, deprecated — using stable`,
+      );
   }
   const tags = Array.isArray(field.tags)
-    ? [...new Set(field.tags.map((t) => String(t).trim().toLowerCase()).filter(Boolean))].slice(0, 8)
+    ? [
+        ...new Set(
+          field.tags.map((t) => String(t).trim().toLowerCase()).filter(Boolean),
+        ),
+      ].slice(0, 8)
     : [];
   return { status, tags, thumbnail };
 }
 
 // ---------------------------------------------------------------------------
-// Live examples from *.composition.tsx
+// Live examples from *.example.tsx
 // ---------------------------------------------------------------------------
 
 function declaredNames(statement: ts.Statement): string[] {
@@ -205,7 +262,9 @@ function declaredNames(statement: ts.Statement): string[] {
 
 const isExported = (statement: ts.Statement) =>
   ts.canHaveModifiers(statement) &&
-  (ts.getModifiers(statement) ?? []).some((m) => m.kind === ts.SyntaxKind.ExportKeyword);
+  (ts.getModifiers(statement) ?? []).some(
+    (m) => m.kind === ts.SyntaxKind.ExportKeyword,
+  );
 
 function leadingDoc(statement: ts.Statement, sourceText: string): string {
   const ranges = ts.getLeadingCommentRanges(sourceText, statement.pos) ?? [];
@@ -224,7 +283,7 @@ function leadingDoc(statement: ts.Statement, sourceText: string): string {
 }
 
 /**
- * Each exported component in a composition file becomes a standalone
+ * Each exported component in an example file becomes a standalone
  * react-live program. Imports are dropped — every package export is already
  * in the sandbox scope — and each example carries only the file-level helpers
  * it references (fixtures, interfaces), so the editor shows the ten lines
@@ -232,24 +291,37 @@ function leadingDoc(statement: ts.Statement, sourceText: string): string {
  */
 function extractExamples(file: string): CatalogExample[] {
   const sourceText = fs.readFileSync(file, "utf8");
-  const source = ts.createSourceFile(file, sourceText, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const source = ts.createSourceFile(
+    file,
+    sourceText,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TSX,
+  );
 
   const helpers: { names: string[]; text: string }[] = [];
   const exported: { name: string; text: string; doc: string }[] = [];
 
   for (const statement of source.statements) {
-    if (ts.isImportDeclaration(statement) || ts.isExportDeclaration(statement)) continue;
+    if (ts.isImportDeclaration(statement) || ts.isExportDeclaration(statement))
+      continue;
     const names = declaredNames(statement);
     const text = statement.getText(source);
-    const isComponent = isExported(statement) && names.length === 1 && /^[A-Z]/.test(names[0]!);
+    const isComponent =
+      isExported(statement) && names.length === 1 && /^[A-Z]/.test(names[0]!);
     if (isComponent) {
-      exported.push({ name: names[0]!, text: text.replace(/^export\s+/, ""), doc: leadingDoc(statement, sourceText) });
+      exported.push({
+        name: names[0]!,
+        text: text.replace(/^export\s+/, ""),
+        doc: leadingDoc(statement, sourceText),
+      });
     } else {
       helpers.push({ names, text: text.replace(/^export\s+/, "") });
     }
   }
 
-  const references = (code: string, name: string) => new RegExp(`\\b${name}\\b`).test(code);
+  const references = (code: string, name: string) =>
+    new RegExp(`\\b${name}\\b`).test(code);
 
   return exported.map(({ name, text, doc }) => {
     // Pull helpers in transitively: a fixture can reference a type, which can
@@ -260,14 +332,20 @@ function extractExamples(file: string): CatalogExample[] {
     while (grew) {
       grew = false;
       helpers.forEach((helper, index) => {
-        if (!included.has(index) && helper.names.some((n) => references(body, n))) {
+        if (
+          !included.has(index) &&
+          helper.names.some((n) => references(body, n))
+        ) {
           included.add(index);
           body = `${helper.text}\n${body}`;
           grew = true;
         }
       });
     }
-    const preamble = [...included].sort((a, b) => a - b).map((index) => helpers[index]!.text).join("\n\n");
+    const preamble = [...included]
+      .sort((a, b) => a - b)
+      .map((index) => helpers[index]!.text)
+      .join("\n\n");
     return {
       name,
       title: splitPascal(name),
@@ -289,16 +367,43 @@ const LANGUAGE: Record<string, CatalogSourceFile["language"]> = {
 
 /** The files worth showing on the Code tab — the component's own source, not its tooling. */
 function sourceFiles(dir: string): CatalogSourceFile[] {
-  const skip = new Set(["package.json", "tsconfig.json", "tsup.config.ts", "eslint.config.mjs", "global.d.ts", "CHANGELOG.md", "README.md", "docs.json"]);
+  const skip = new Set([
+    "package.json",
+    "tsconfig.json",
+    "tsup.config.ts",
+    "eslint.config.mjs",
+    "global.d.ts",
+    "CHANGELOG.md",
+    "README.md",
+    "docs.json",
+  ]);
   return fs
     .readdirSync(dir)
-    .filter((f) => !skip.has(f) && LANGUAGE[path.extname(f)] && fs.statSync(path.join(dir, f)).isFile())
+    .filter(
+      (f) =>
+        !skip.has(f) &&
+        LANGUAGE[path.extname(f)] &&
+        fs.statSync(path.join(dir, f)).isFile(),
+    )
     .sort((a, b) => {
       // The component itself first, then its styles, then everything else.
-      const rank = (f: string) => (f.endsWith(".spec.tsx") ? 4 : f.endsWith(".composition.tsx") ? 3 : f === "index.ts" ? 2 : f.endsWith(".scss") ? 1 : 0);
+      const rank = (f: string) =>
+        f.endsWith(".spec.tsx")
+          ? 4
+          : f.endsWith(".example.tsx") || f.endsWith(".composition.tsx")
+            ? 3
+            : f === "index.ts"
+              ? 2
+              : f.endsWith(".scss")
+                ? 1
+                : 0;
       return rank(a) - rank(b) || a.localeCompare(b);
     })
-    .map((f) => ({ path: f, language: LANGUAGE[path.extname(f)]!, content: fs.readFileSync(path.join(dir, f), "utf8") }));
+    .map((f) => ({
+      path: f,
+      language: LANGUAGE[path.extname(f)]!,
+      content: fs.readFileSync(path.join(dir, f), "utf8"),
+    }));
 }
 
 // ---------------------------------------------------------------------------
@@ -315,7 +420,8 @@ function markdownFiles(dir: string, prefix = ""): string[] {
     .flatMap((entry) => {
       if (entry.name.startsWith(".")) return [];
       const rel = prefix ? `${prefix}/${entry.name}` : entry.name;
-      if (entry.isDirectory()) return markdownFiles(path.join(dir, entry.name), rel);
+      if (entry.isDirectory())
+        return markdownFiles(path.join(dir, entry.name), rel);
       return entry.name.endsWith(".md") ? [rel] : [];
     })
     .sort();
@@ -356,18 +462,30 @@ function collectDocs(): DocPage[] {
       path: path.relative(REPO_ROOT, file),
       section,
       sectionLabel: toTitle(section),
-      title: typeof data.title === "string" && data.title.trim() ? data.title.trim() : (readmeTitle(content) ?? fileTitle),
-      description: typeof data.description === "string" && data.description.trim() ? data.description.trim() : null,
-      order: Number.isFinite(Number(data.order)) && data.order !== undefined ? Number(data.order) : 100,
+      title:
+        typeof data.title === "string" && data.title.trim()
+          ? data.title.trim()
+          : (readmeTitle(content) ?? fileTitle),
+      description:
+        typeof data.description === "string" && data.description.trim()
+          ? data.description.trim()
+          : null,
+      order:
+        Number.isFinite(Number(data.order)) && data.order !== undefined
+          ? Number(data.order)
+          : 100,
       body: stripTitle(content),
     });
   }
   // General first (the owner's own pages), then sections by name; within a
   // section by order, then title.
-  const sectionRank = (section: string) => (section === GENERAL_SECTION ? "" : section);
+  const sectionRank = (section: string) =>
+    section === GENERAL_SECTION ? "" : section;
   return pages.sort(
     (a, b) =>
-      sectionRank(a.section).localeCompare(sectionRank(b.section)) || a.order - b.order || a.title.localeCompare(b.title),
+      sectionRank(a.section).localeCompare(sectionRank(b.section)) ||
+      a.order - b.order ||
+      a.title.localeCompare(b.title),
   );
 }
 
@@ -375,10 +493,16 @@ function collectDocs(): DocPage[] {
 function readScope(slug: string, componentCount: number): CatalogScope {
   const scopeDir = path.join(REGISTRY_DIR, slug);
   const manifestFile = path.join(scopeDir, "scope.json");
-  const manifest = fs.existsSync(manifestFile) ? (readJson(manifestFile) as Partial<CatalogScope> & { tokens?: string }) : {};
-  const tokensPath = manifest.tokens ? path.relative(REPO_ROOT, path.join(scopeDir, manifest.tokens)) : null;
+  const manifest = fs.existsSync(manifestFile)
+    ? (readJson(manifestFile) as Partial<CatalogScope> & { tokens?: string })
+    : {};
+  const tokensPath = manifest.tokens
+    ? path.relative(REPO_ROOT, path.join(scopeDir, manifest.tokens))
+    : null;
   if (tokensPath && !fs.existsSync(path.join(REPO_ROOT, tokensPath))) {
-    throw new Error(`registry/${slug}/scope.json points at tokens "${manifest.tokens}" but ${tokensPath} does not exist.`);
+    throw new Error(
+      `registry/${slug}/scope.json points at tokens "${manifest.tokens}" but ${tokensPath} does not exist.`,
+    );
   }
   return {
     slug,
@@ -394,10 +518,18 @@ async function main() {
   const started = Date.now();
   const config = readConfig();
   const warnings: string[] = [];
-  const entries: { scope: string; category: string; name: string; dir: string; pkg: Record<string, unknown> }[] = [];
+  const entries: {
+    scope: string;
+    category: string;
+    name: string;
+    dir: string;
+    pkg: Record<string, unknown>;
+  }[] = [];
 
   if (!fs.existsSync(REGISTRY_DIR)) {
-    throw new Error("No registry/ folder. Create one with `pnpm gen` — see the Components guide (apps/docs/default-docs/guide/components.md).");
+    throw new Error(
+      "No registry/ folder. Create one with `pnpm gen` — see the Components guide (apps/docs/default-docs/guide/components.md).",
+    );
   }
 
   for (const scope of fs.readdirSync(REGISTRY_DIR).sort()) {
@@ -416,11 +548,14 @@ async function main() {
   }
 
   // ONE parser (one TypeScript program) for every source file in the registry.
-  const parsed = createDocgen().parse(entries.flatMap(({ dir }) => componentSourceFiles(dir)));
+  const parsed = createDocgen().parse(
+    entries.flatMap(({ dir }) => componentSourceFiles(dir)),
+  );
   // Hooks and utilities: one TypeScript program over every package, the way
   // the props pass is one parser.
   const functionFiles = entries.flatMap(({ dir }) => functionSourceFiles(dir));
-  const functionProgram = functionFiles.length > 0 ? createFunctionProgram(functionFiles) : null;
+  const functionProgram =
+    functionFiles.length > 0 ? createFunctionProgram(functionFiles) : null;
 
   const components: CatalogComponent[] = [];
   const failures: string[] = [];
@@ -429,27 +564,51 @@ async function main() {
     const packageName = String(pkg.name);
     const expected = `@${scope}/${category}.${name}`;
     if (packageName !== expected) {
-      warnings.push(`${dir}: package.json name is "${packageName}" but the folder says "${expected}" — the folder tree is the registry; rename one to match`);
+      warnings.push(
+        `${dir}: package.json name is "${packageName}" but the folder says "${expected}" — the folder tree is the registry; rename one to match`,
+      );
     }
     const readme = readText(path.join(dir, "README.md"));
     const docs = toDocs(parsed, dir);
-    const functions = functionProgram ? toFunctionDocs(functionProgram, dir) : [];
+    const functions = functionProgram
+      ? toFunctionDocs(functionProgram, dir)
+      : [];
 
-    const examples = fs
+    // `*.composition.tsx` was the name before template 0.4; still read, with a
+    // warning, so a registry can upgrade first and rename at leisure. 0.5 drops it.
+    const exampleFiles = fs
       .readdirSync(dir)
-      .filter((f) => f.endsWith(".composition.tsx"))
-      .flatMap((f) => extractExamples(path.join(dir, f)));
+      .filter(
+        (f) => f.endsWith(".example.tsx") || f.endsWith(".composition.tsx"),
+      );
+    for (const f of exampleFiles) {
+      if (f.endsWith(".composition.tsx"))
+        warnings.push(
+          `${dir}/${f}: *.composition.tsx is the old name for *.example.tsx — rename it; template 0.5 stops reading it`,
+        );
+    }
+    const examples = exampleFiles.flatMap((f) =>
+      extractExamples(path.join(dir, f)),
+    );
 
     const exportsField = pkg.exports as Record<string, unknown> | undefined;
-    const hasStyles = Boolean(exportsField?.["./styles.css"]) && fs.existsSync(path.join(dir, "dist/index.css"));
+    const hasStyles =
+      Boolean(exportsField?.["./styles.css"]) &&
+      fs.existsSync(path.join(dir, "dist/index.css"));
     // Where the package publishes decides where the Changelog tab looks it up
     // and whether the site marks it private. `pnpm check:publish` keeps these
     // consistent with registry.config.json; here they are read as-is.
-    const publishConfig = (pkg.publishConfig ?? {}) as { registry?: string; access?: string };
-    const publishRegistry = String(publishConfig.registry ?? config.npmRegistry).replace(/\/+$/, "");
+    const publishConfig = (pkg.publishConfig ?? {}) as {
+      registry?: string;
+      access?: string;
+    };
+    const publishRegistry = String(
+      publishConfig.registry ?? config.npmRegistry,
+    ).replace(/\/+$/, "");
     const visibility: CatalogComponent["visibility"] =
       publishConfig.access === "restricted" ||
-      (config.privateRegistry !== undefined && publishRegistry === config.privateRegistry.replace(/\/+$/, ""))
+      (config.privateRegistry !== undefined &&
+        publishRegistry === config.privateRegistry.replace(/\/+$/, ""))
         ? "private"
         : "public";
 
@@ -459,14 +618,30 @@ async function main() {
     let exportNames: string[] = [];
     try {
       const mod = await import(require.resolve(packageName));
-      exportNames = Object.keys(mod).filter((n) => /^[A-Z]/.test(n) || /^(use|show|create)[A-Z]/.test(n));
+      exportNames = Object.keys(mod).filter(
+        (n) => /^[A-Z]/.test(n) || /^(use|show|create)[A-Z]/.test(n),
+      );
     } catch (error) {
-      failures.push(`${packageName}: ${(error as Error).message.split("\n")[0]}`);
+      failures.push(
+        `${packageName}: ${(error as Error).message.split("\n")[0]}`,
+      );
     }
 
-    const deps = { ...(pkg.dependencies as Record<string, string> | undefined), ...(pkg.peerDependencies as Record<string, string> | undefined) };
-    const { status, tags, thumbnail } = registryMeta(pkg, packageName, warnings);
-    const design = designLinks((pkg.registry as { design?: unknown } | undefined)?.design, config.scope, packageName, warnings);
+    const deps = {
+      ...(pkg.dependencies as Record<string, string> | undefined),
+      ...(pkg.peerDependencies as Record<string, string> | undefined),
+    };
+    const { status, tags, thumbnail } = registryMeta(
+      pkg,
+      packageName,
+      warnings,
+    );
+    const design = designLinks(
+      (pkg.registry as { design?: unknown } | undefined)?.design,
+      config.scope,
+      packageName,
+      warnings,
+    );
 
     components.push({
       scope,
@@ -475,7 +650,11 @@ async function main() {
       packageName,
       version: String(pkg.version),
       title: humanizeTitle(readmeTitle(readme) ?? toTitle(name)),
-      summary: (pkg.description as string | undefined) || readmeSummary(readme) || docs[0]?.description || "",
+      summary:
+        (pkg.description as string | undefined) ||
+        readmeSummary(readme) ||
+        docs[0]?.description ||
+        "",
       readme: stripTitle(readme),
       status,
       tags,
@@ -491,7 +670,9 @@ async function main() {
       publishRegistry,
       visibility,
       sourcePath: path.relative(REPO_ROOT, dir),
-      dependencies: Object.keys(deps).filter((d) => d.startsWith("@") && entries.some((e) => e.pkg.name === d)),
+      dependencies: Object.keys(deps).filter(
+        (d) => d.startsWith("@") && entries.some((e) => e.pkg.name === d),
+      ),
     });
   }
 
@@ -499,27 +680,41 @@ async function main() {
     readScope(slug, components.filter((c) => c.scope === slug).length),
   );
   if (!scopes.some((s) => s.slug === config.scope)) {
-    warnings.push(`registry.config.json names "${config.scope}" as the primary scope but registry/${config.scope}/ has no packages yet`);
+    warnings.push(
+      `registry.config.json names "${config.scope}" as the primary scope but registry/${config.scope}/ has no packages yet`,
+    );
   }
 
   // The sandbox imports every registry package, so every one has to be a
   // dependency of this app. Adding a component to the registry (pnpm gen)
   // then only needs `pnpm install` — nobody has to remember a second list.
   const appPkgFile = path.join(APP_DIR, "package.json");
-  const appPkg = readJson(appPkgFile) as { dependencies: Record<string, string> };
-  const missing = components.map((c) => c.packageName).filter((name) => !appPkg.dependencies[name]);
+  const appPkg = readJson(appPkgFile) as {
+    dependencies: Record<string, string>;
+  };
+  const missing = components
+    .map((c) => c.packageName)
+    .filter((name) => !appPkg.dependencies[name]);
   if (missing.length > 0) {
     for (const name of missing) appPkg.dependencies[name] = "workspace:*";
-    appPkg.dependencies = Object.fromEntries(Object.entries(appPkg.dependencies).sort(([a], [b]) => a.localeCompare(b)));
+    appPkg.dependencies = Object.fromEntries(
+      Object.entries(appPkg.dependencies).sort(([a], [b]) =>
+        a.localeCompare(b),
+      ),
+    );
     fs.writeFileSync(appPkgFile, `${JSON.stringify(appPkg, null, 2)}\n`);
-    console.log(`added ${missing.length} registry package(s) to apps/docs/package.json — run \`pnpm install\`:`);
+    console.log(
+      `added ${missing.length} registry package(s) to apps/docs/package.json — run \`pnpm install\`:`,
+    );
     for (const name of missing) console.log(`  + ${name}`);
   }
 
   // Design tokens: the first scope that declares a tokens.scss provides the
   // page; with none, the page and its nav link are hidden.
   const tokensScope = scopes.find((s) => s.tokensPath);
-  const tokens = tokensScope ? extractTokens(readText(path.join(REPO_ROOT, tokensScope.tokensPath!))) : null;
+  const tokens = tokensScope
+    ? extractTokens(readText(path.join(REPO_ROOT, tokensScope.tokensPath!)))
+    : null;
 
   const catalog: Catalog = {
     generatedAt: new Date().toISOString(),
@@ -534,10 +729,16 @@ async function main() {
   };
 
   fs.mkdirSync(OUT_DIR, { recursive: true });
-  fs.writeFileSync(path.join(OUT_DIR, "catalog.json"), `${JSON.stringify(catalog, null, 2)}\n`);
+  fs.writeFileSync(
+    path.join(OUT_DIR, "catalog.json"),
+    `${JSON.stringify(catalog, null, 2)}\n`,
+  );
 
   const docs: DocsIndex = { pages: collectDocs() };
-  fs.writeFileSync(path.join(OUT_DIR, "docs.json"), `${JSON.stringify(docs, null, 2)}\n`);
+  fs.writeFileSync(
+    path.join(OUT_DIR, "docs.json"),
+    `${JSON.stringify(docs, null, 2)}\n`,
+  );
 
   // A real module with static imports, not a runtime `import()` by name: the
   // bundler has to see every import to include the package and its CSS.
@@ -563,7 +764,9 @@ async function main() {
   for (const warning of warnings) console.warn(`  ! ${warning}`);
   for (const failure of failures) console.warn(`  ! ${failure}`);
   if (failures.length > 0) {
-    console.error("\nSome packages have no build output. Run `pnpm build --filter='./registry/*/*/*'` first.");
+    console.error(
+      "\nSome packages have no build output. Run `pnpm build --filter='./registry/*/*/*'` first.",
+    );
     process.exit(1);
   }
 }

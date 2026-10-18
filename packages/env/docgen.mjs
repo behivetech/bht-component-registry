@@ -15,7 +15,7 @@ import { withCompilerOptions } from "react-docgen-typescript";
  */
 
 /** Which files in a package folder hold components (not examples, not tests). */
-export const isComponentSource = (file) => file.endsWith(".tsx") && !/\.(spec|composition|test)\.tsx$/.test(file);
+export const isComponentSource = (file) => file.endsWith(".tsx") && !/\.(spec|example|composition|test)\.tsx$/.test(file);
 
 export function componentSourceFiles(dir) {
   return fs
@@ -114,7 +114,7 @@ export function documentPackage(dir, parser = createDocgen()) {
  * too, so the exclusion of PascalCase exports below is what keeps them out.
  */
 export const isFunctionSource = (file) =>
-  /\.tsx?$/.test(file) && !/\.(spec|composition|test)\.tsx?$/.test(file) && !/\.d\.ts$/.test(file) && path.basename(file) !== "index.ts";
+  /\.tsx?$/.test(file) && !/\.(spec|example|composition|test)\.tsx?$/.test(file) && !/\.d\.ts$/.test(file) && path.basename(file) !== "index.ts";
 
 export function functionSourceFiles(dir) {
   return fs

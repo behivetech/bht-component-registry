@@ -44,8 +44,8 @@ Playwright's `webServer` runs `pnpm build && pnpm serve` inside `apps/docs`: the
 - a scope page groups components by category and searches them client-side;
 - a catalog card opens its own component;
 - status and tags render from `package.json#registry`;
-- the Overview tab renders the README live, the compositions and the props table;
-- the tabs are routes (compositions, code, playground, changelog);
+- the Overview tab renders the README live, the examples and the props table;
+- the tabs are routes (examples, code, playground, changelog);
 - editing a live example re-renders it;
 - an unknown scope and an unknown component are real 404s.
 
@@ -84,7 +84,7 @@ The CI badge in the README points at this workflow.
 ## Writing tests for your components
 
 - Keep `<name>.spec.tsx` next to the component. The generator's template tests that children render and that `className` is merged; add behaviour tests from there.
-- The props table and live examples need no tests of their own: if a composition does not compile, the build fails, and if a README snippet throws at render time, the e2e suite catches the broken page.
+- The props table and live examples need no tests of their own: if an example does not compile, the build fails, and if a README snippet throws at render time, the e2e suite catches the broken page.
 - For a new component you consider important, add one line to `public.spec.ts` that opens its page and checks the H1. It costs a second and proves the route is generated.
 
 ## Related

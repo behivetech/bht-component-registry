@@ -7,7 +7,7 @@ import styles from "./component-tabs.module.scss";
 
 const TABS = [
   { path: "", label: "Overview" },
-  { path: "/compositions", label: "Compositions" },
+  { path: "/examples", label: "Examples" },
   { path: "/code", label: "Code" },
   { path: "/playground", label: "Playground" },
   { path: "/changelog", label: "Changelog" },

@@ -1,12 +1,12 @@
 ---
 title: Components
-description: The anatomy of a component folder, scaffolding, README and composition conventions, status and tags.
+description: The anatomy of a component folder, scaffolding, README and example conventions, status and tags.
 order: 2
 ---
 
 # Components
 
-A component is a folder at `registry/<scope>/<category>/<name>`, which is also the npm package `@<scope>/<category>.<name>`. Everything the docs site shows for it is derived from that folder at build time: the README is the Overview tab, the compositions are the live examples, the TypeScript interface is the props table, the CHANGELOG is the Changelog tab, and `package.json` carries the version, status and tags. There is no record anywhere else to keep in step.
+A component is a folder at `registry/<scope>/<category>/<name>`, which is also the npm package `@<scope>/<category>.<name>`. Everything the docs site shows for it is derived from that folder at build time: the README is the Overview tab, the examples are the live examples, the TypeScript interface is the props table, the CHANGELOG is the Changelog tab, and `package.json` carries the version, status and tags. There is no record anywhere else to keep in step.
 
 ## Anatomy of a component folder
 
@@ -16,14 +16,14 @@ A component is a folder at `registry/<scope>/<category>/<name>`, which is also t
 registry/acme/atoms/button/
 ├─ button.tsx                 the component and its exported ButtonProps interface
 ├─ button.module.scss         styles (CSS Modules), compiled into dist/index.css
-├─ button.composition.tsx     named exports that become the live examples
+├─ button.example.tsx         named exports that become the live examples
 ├─ button.spec.tsx            unit tests (Vitest + Testing Library)
 ├─ index.ts                   the package's public exports
 ├─ README.md                  the Overview tab
 ├─ CHANGELOG.md               written by Changesets; the Changelog tab
 ├─ package.json               @acme/atoms.button, scripts, files, publishConfig, registry, license (MIT by default; yours to change)
 ├─ tsup.config.ts             createComponentConfig() from @bht-component-registry/env
-├─ tsconfig.json              extends the env's tsconfig (which also types *.module.scss imports); excludes specs and compositions from the build
+├─ tsconfig.json              extends the env's tsconfig (which also types *.module.scss imports); excludes specs and examples from the build
 └─ eslint.config.mjs          re-exports the env's ESLint config
 ```
 
@@ -36,9 +36,9 @@ Two files appear after a build and are gitignored:
 
 Why each file is there:
 
-- `<name>.tsx` holds exactly one exported component whose props interface is `<Name>Props`. The docs engine documents every exported, capitalised component it finds in the package's `.tsx` files (specs and compositions excluded), so keep helpers un-exported or in `index.ts`.
+- `<name>.tsx` holds exactly one exported component whose props interface is `<Name>Props`. The docs engine documents every exported, capitalised component it finds in the package's `.tsx` files (specs and examples excluded), so keep helpers un-exported or in `index.ts`.
 - `<name>.module.scss` is compiled by the shared tsup config into `dist/index.css`, which the package exposes as `./styles.css`. The docs site imports it for every package so examples are styled.
-- `<name>.composition.tsx`: each named export is one example. See below.
+- `<name>.example.tsx`: each named export is one example. See below.
 - `index.ts` is what consumers and the docs sandbox import. Only export from here what you want in the Playground scope.
 - `README.md` and `CHANGELOG.md` are shown as-is. The generator writes a CHANGELOG containing only the package-name heading; Changesets adds releases under it.
 
@@ -118,9 +118,11 @@ import { RatingStars } from '@example/atoms.rating-stars';
 ```
 ````
 
-## Compositions
+## Examples
 
-`<name>.composition.tsx` holds the examples shown on the Compositions tab, in the Playground, and as the live thumbnail on the catalog card.
+`<name>.example.tsx` holds the examples shown on the Examples tab, in the Playground, and as the live thumbnail on the catalog card.
+
+Until template 0.4 the file was `<name>.composition.tsx`. The site still reads that name and warns about it at build time; rename when convenient — 0.5 stops reading it.
 
 Every live example runs in its own document — an iframe the site serves at `/sandbox` — so a component that portals to `document.body` or positions itself `fixed` (a modal, a drawer, a toast) opens inside its preview and never over the docs page. The frame grows to fit its content; **Expand** gives an overlay room to open, and **Open in new tab** runs the example on its own, including any edits you have made. Catalog tiles render inline instead (dozens of frames would be heavy), and a component that only opens as an overlay has nothing to show in a tile: say so with `"registry": { "preview": { "thumbnail": false } }` in its `package.json` and the tile shows a placeholder.
 
@@ -139,7 +141,7 @@ const reviews = { value: 4.3, count: 128 };
 export const FractionalRatingStars = () => <RatingStars value={reviews.value} count={reviews.count} />;
 ```
 
-Compositions are excluded from the package build by `tsconfig.json` but shipped in the tarball as source, so other tools can render them.
+Examples are excluded from the package build by `tsconfig.json` but shipped in the tarball as source, so other tools can render them.
 
 ## The props table
 

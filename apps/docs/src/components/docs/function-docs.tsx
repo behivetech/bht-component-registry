@@ -49,7 +49,7 @@ const columns: TableColumn<CatalogDocParam>[] = [
  * A hook or utility function, straight from its TypeScript and JSDoc: every
  * call signature with its parameters (and their `@param` text), what it
  * returns (and `@returns`), and the `@example` blocks as code. Hooks also get
- * live examples from their compositions, the way components do.
+ * live examples from their `*.example.tsx`, the way components do.
  */
 export function FunctionDocs({ fn }: { fn: CatalogDocFunction }) {
   return (
