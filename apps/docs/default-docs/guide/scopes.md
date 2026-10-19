@@ -51,7 +51,7 @@ Committed at the repo root. Nothing in it is secret.
 | `site.design` | Optional. The design-system file (a URL or `{ label, url }`), linked from the design-tokens page. |
 | `site.description` | One sentence for the home page hero and `<meta name="description">`. |
 | `site.logo` | A path under `apps/docs/public`, for example `/logo.svg`. Omit to show the title as text. |
-| `site.primaryColor` | Hex colour used as the Material Design 3 primary role; the palette derives from it. |
+| `site.primaryColor` | Hex colour for the Material Design primary role in the light scheme. Pick a mid-dark tone (roughly M3 tone 40) so white text reads on it; the dark scheme derives its lighter primary and dark label from it, and the container roles derive from it in both. |
 | `site.links` | Footer links, `{ "label", "href" }`. |
 
 The schema is `registry.config.schema.json` next to it; editors that read `$schema` validate as you type. Branding changes need no code changes.
