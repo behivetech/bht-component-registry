@@ -394,3 +394,83 @@ test.describe("routing", () => {
     expect(response?.status()).toBe(404);
   });
 });
+
+test.describe("theme", () => {
+  // WCAG 2.x relative-luminance contrast of two colors given as [r, g, b]
+  // bytes. Computed colors are resolved to bytes in the page (see `rgb`),
+  // because a derived color serializes as `color(srgb …)` or `oklch(…)`, not
+  // `rgb(…)`.
+  type Rgb = [number, number, number];
+  const contrast = (fg: Rgb, bg: Rgb) => {
+    const linear = (v: number) => {
+      const s = v / 255;
+      return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+    };
+    const lum = ([r, g, b]: Rgb) =>
+      0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b);
+    const hi = Math.max(lum(fg), lum(bg));
+    const lo = Math.min(lum(fg), lum(bg));
+    return (hi + 0.05) / (lo + 0.05);
+  };
+  // Runs in the page: paint the CSS color on a canvas and read the bytes back.
+  const rgb = (color: string): Rgb => {
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = 1;
+    const ctx = canvas.getContext("2d")!;
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, 1, 1);
+    const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+    return [r!, g!, b!];
+  };
+
+  for (const scheme of ["light", "dark"] as const) {
+    test(`the configured primaryColor keeps the filled button legible in the ${scheme} scheme`, async ({
+      page,
+    }) => {
+      await page.emulateMedia({ colorScheme: scheme });
+      await page.goto("/");
+      // The hero's first action is a filled (primary) button: the configured
+      // colour is its background and the scheme's on-primary its label.
+      const filled = page.getByRole("link", { name: "Browse @example" });
+      const colors = await filled.evaluate((el, resolve) => {
+        const toRgb = new Function("color", `return (${resolve})(color)`) as (
+          c: string,
+        ) => [number, number, number];
+        const s = getComputedStyle(el);
+        return {
+          fg: toRgb(s.color),
+          bg: toRgb(s.backgroundColor),
+          bgAlpha: s.backgroundColor,
+          surface: toRgb(getComputedStyle(document.body).backgroundColor),
+        };
+      }, rgb.toString());
+      expect(colors.bgAlpha).not.toMatch(/rgba\(\d+, \d+, \d+, 0\)/);
+      expect(contrast(colors.fg, colors.bg)).toBeGreaterThanOrEqual(4.5);
+      // And the same primary as text on the page's surface (outlined and text
+      // buttons, links) must read too.
+      const outlined = page.getByRole("link", { name: "How to add a component" });
+      const label = await outlined.evaluate((el, resolve) => {
+        const toRgb = new Function("color", `return (${resolve})(color)`) as (
+          c: string,
+        ) => [number, number, number];
+        return toRgb(getComputedStyle(el).color);
+      }, rgb.toString());
+      expect(contrast(label, colors.surface)).toBeGreaterThanOrEqual(4.5);
+    });
+  }
+
+  test("without a configured primaryColor the dark scheme falls back to the sheet's own pair", async ({
+    page,
+  }) => {
+    await page.emulateMedia({ colorScheme: "dark" });
+    await page.goto("/");
+    await page.evaluate(() => document.documentElement.style.removeProperty("--site-primary"));
+    const filled = page.getByRole("link", { name: "Browse @example" });
+    const colors = await filled.evaluate((el) => {
+      const s = getComputedStyle(el);
+      return { fg: s.color, bg: s.backgroundColor };
+    });
+    expect(colors.bg).toBe("rgb(206, 189, 254)"); // #cebdfe
+    expect(colors.fg).toBe("rgb(53, 39, 93)"); // #35275d
+  });
+});

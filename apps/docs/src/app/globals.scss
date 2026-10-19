@@ -28,6 +28,14 @@
     var(--md-sys-color-primary) 75%,
     black
   );
+
+  // The dark scheme needs a lighter primary (MD3 tone 80) under a dark label
+  // (tone 20). A configured colour is the light scheme's tone 40, far too dark
+  // to carry the dark scheme's label, so both are derived from it here in
+  // OKLCH, which keeps the hue. Without a configured colour these two are
+  // invalid and the dark blocks below fall back to the sheet's own pair.
+  --site-primary-dark: color-mix(in oklch, var(--site-primary) 50%, white);
+  --site-on-primary-dark: color-mix(in oklch, var(--site-primary) 60%, black);
 }
 
 // The live-preview frame (/sandbox) is a bare document: the embedding page
@@ -39,12 +47,14 @@
   background: transparent;
 }
 
-// Dark scheme: the sheet's dark primary is a lighter tone (#cebdfe), so the
-// same roles are re-derived toward black. These two blocks mirror the sheet's
+// Dark scheme: the primary is the derived lighter tone (or the sheet's own
+// #cebdfe), its label the derived dark one, and the container roles are
+// re-derived toward black. These two blocks mirror the sheet's
 // own pair (OS preference unless forced light; or forced dark).
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --md-sys-color-primary: var(--site-primary, #cebdfe);
+    --md-sys-color-primary: var(--site-primary-dark, #cebdfe);
+    --md-sys-color-on-primary: var(--site-on-primary-dark, #35275d);
     --md-sys-color-primary-container: color-mix(
       in srgb,
       var(--md-sys-color-primary) 35%,
@@ -59,7 +69,8 @@
 }
 
 :root[data-theme="dark"] {
-  --md-sys-color-primary: var(--site-primary, #cebdfe);
+  --md-sys-color-primary: var(--site-primary-dark, #cebdfe);
+  --md-sys-color-on-primary: var(--site-on-primary-dark, #35275d);
   --md-sys-color-primary-container: color-mix(
     in srgb,
     var(--md-sys-color-primary) 35%,
