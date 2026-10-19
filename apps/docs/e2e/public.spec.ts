@@ -441,14 +441,17 @@ test.describe("theme", () => {
           fg: toRgb(s.color),
           bg: toRgb(s.backgroundColor),
           bgAlpha: s.backgroundColor,
-          surface: toRgb(getComputedStyle(document.body).backgroundColor),
+          // The page background is on <html> (tokens.scss), not <body>.
+          surface: toRgb(getComputedStyle(document.documentElement).backgroundColor),
         };
       }, rgb.toString());
       expect(colors.bgAlpha).not.toMatch(/rgba\(\d+, \d+, \d+, 0\)/);
       expect(contrast(colors.fg, colors.bg)).toBeGreaterThanOrEqual(4.5);
-      // And the same primary as text on the page's surface (outlined and text
-      // buttons, links) must read too.
-      const outlined = page.getByRole("link", { name: "How to add a component" });
+      // And the same primary as text on the page's surface must read too: the
+      // scope card's "Browse" button is outlined, so its label is the primary
+      // role on the page background (the hero's second CTA is white on the
+      // image, so it would prove nothing).
+      const outlined = page.getByRole("link", { name: "Browse Example" });
       const label = await outlined.evaluate((el, resolve) => {
         const toRgb = new Function("color", `return (${resolve})(color)`) as (
           c: string,
