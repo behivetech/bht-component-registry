@@ -38,6 +38,8 @@ pnpm dev
 
 Open http://localhost:3000.
 
+To open the dev server by your machine's LAN address, or from a phone on the same network, name that host first: Next refuses dev resources from hosts it was not told about, so the page loads but never hydrates (no live examples, and the console shows a failed `/_next/hmr` WebSocket). Run `ALLOWED_DEV_ORIGINS=192.168.1.20 pnpm dev` with your address; several hosts are comma-separated. The static build (`pnpm build` and `pnpm serve`) has no such restriction.
+
 ## Or clone this repo
 
 ```bash
