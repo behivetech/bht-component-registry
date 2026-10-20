@@ -55,8 +55,9 @@ jobs:
 
       # changesets/action publishes whenever there are no pending changesets,
       # which on a fresh repo would try to push every package on the first
-      # merge to main. Until a publish method is configured, skip and say so,
-      # so a fresh repo's first pushes stay green.
+      # merge to main. Until a publish method is configured the action only
+      # versions (release PRs still open; nothing publishes) and says so, so a
+      # fresh repo's first pushes stay green.
       - name: Decide how to publish
         id: publish
         env:
@@ -69,7 +70,7 @@ jobs:
             echo "method=token" >> "$GITHUB_OUTPUT"
           else
             echo "method=none" >> "$GITHUB_OUTPUT"
-            echo "::notice::Releases are off: set the repository variable NPM_TRUSTED_PUBLISHING=true (after adding a trusted publisher on npmjs) or the secret NPM_TOKEN. See apps/docs/default-docs/guide/publishing.md."
+            echo "::notice::Publishing is off (release PRs still open): set the repository variable NPM_TRUSTED_PUBLISHING=true (after adding a trusted publisher on npmjs) or the secret NPM_TOKEN. See apps/docs/default-docs/guide/publishing.md."
           fi
 
       # Private packages (publishConfig.registry = registry.config.json#privateRegistry)
@@ -96,15 +97,17 @@ jobs:
           echo "//$host/:_authToken=$token" >> "$HOME/.npmrc"
           echo "Private packages publish to $host."
 
-      # With no NPM_TOKEN the action writes no .npmrc and `changeset publish`
-      # (pnpm publish) authenticates with the job's OIDC token.
+      # Versioning always runs, so pending changesets always become a release
+      # PR; only the `publish` input depends on the decision above, and with no
+      # method the action versions only. With no NPM_TOKEN the action writes no
+      # .npmrc and `changeset publish` (pnpm publish) authenticates with the
+      # job's OIDC token.
       - name: Version or publish
-        if: steps.publish.outputs.method != 'none'
         id: changesets
         uses: changesets/action@v1
         with:
           version: pnpm version-packages
-          publish: pnpm release
+          publish: ${{ steps.publish.outputs.method != 'none' && 'pnpm release' || '' }}
           commit: "chore: release packages"
           title: "chore: release packages"
         env:
