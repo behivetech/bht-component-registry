@@ -1,8 +1,8 @@
-// Material Design 3 tokens + reset. Every component under src/ui reads
-// `--md-sys-*` custom properties, so the whole site re-themes by overriding a
-// handful of roles. The sheet is a local copy: the docs site depends on
-// nothing from a registry.
-@use "./tokens.scss";
+// Material Design 3 tokens + reset. The site's chrome is the @behivetech
+// components and every one of them reads `--md-sys-*` custom properties, so
+// the whole site re-themes by overriding a handful of roles. The sheet is the
+// one those components are built against.
+@use "@behivetech/cms.base-styles/tokens.scss";
 
 :root {
   // next/font loads Inter and exposes it on this variable; the tokens file

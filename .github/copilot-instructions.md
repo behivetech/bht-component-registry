@@ -24,6 +24,13 @@ by hand drifts from them and `update` cannot bring it back in line. If no genera
 needed, extend the generator (or write a new one under `generators/<name>/` with `pnpm gen generator`)
 rather than working around it.
 
+## The docs app's chrome is the @behivetech packages
+
+The site's own buttons, cards, badges, tables, text fields, empty states and hero come from the
+published `@behivetech` components (pinned in `apps/docs/package.json`), with `@behivetech/cms.base-styles`
+as the token sheet. Do not copy a component into `apps/docs` or style a package's classes from the app;
+change the package. `globals.scss` holds only site-level theming (the configured primary colour).
+
 ## Class names are BEM through `getClassName`
 
 Every styled element gets its class from `getClassName` (`@bht-component-registry/class-names`): the root is

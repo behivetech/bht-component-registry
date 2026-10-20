@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { EmptyState } from "@/ui/empty-state";
+import { EmptyState } from "@behivetech/molecules.empty-state";
 import {
   getComponents,
   getScope,

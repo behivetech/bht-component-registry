@@ -30,3 +30,12 @@ allowBuilds:
   esbuild: true
   unrs-resolver: true
   "@parcel/watcher": true
+
+minimumReleaseAgeExclude:
+  - '@behivetech/atoms.badge@0.4.2'
+  - '@behivetech/atoms.button@0.4.2'
+  - '@behivetech/atoms.card@0.4.2'
+  - '@behivetech/atoms.table@0.2.2'
+  - '@behivetech/atoms.text-field@0.3.2'
+  - '@behivetech/molecules.empty-state@0.3.2'
+  - '@behivetech/organisms.hero-banner@0.7.2'

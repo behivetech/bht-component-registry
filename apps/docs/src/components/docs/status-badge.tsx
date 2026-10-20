@@ -1,4 +1,4 @@
-import { Badge, type BadgeVariant } from "@/ui/badge";
+import { Badge, type BadgeVariant } from "@behivetech/atoms.badge";
 import type { CatalogStatus } from "@/lib/catalog";
 
 const LOOK: Record<CatalogStatus, { label: string; variant: BadgeVariant }> = {

@@ -2,8 +2,8 @@
 
 import { useDeferredValue, useState } from "react";
 import { getClassName } from "@bht-component-registry/class-names";
-import { TextField } from "@/ui/text-field";
-import { EmptyState } from "@/ui/empty-state";
+import { TextField } from "@behivetech/atoms.text-field";
+import { EmptyState } from "@behivetech/molecules.empty-state";
 import type { ComponentCardModel } from "@/lib/catalog/card-model";
 import { ComponentCard } from "./component-card";
 import styles from "./scope-catalog.module.scss";

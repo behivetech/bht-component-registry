@@ -9,7 +9,7 @@ import {
 } from "@/lib/catalog";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { Badge } from "@/ui/badge";
+import { Badge } from "@behivetech/atoms.badge";
 import { ComponentTabs } from "@/components/docs/component-tabs";
 import { StatusBadge } from "@/components/docs/status-badge";
 import { getClassName } from "@bht-component-registry/class-names";

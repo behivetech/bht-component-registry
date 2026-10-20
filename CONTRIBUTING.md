@@ -13,7 +13,7 @@ pnpm install
 pnpm dev
 ```
 
-`pnpm install` needs no token and no `.npmrc`; the repo depends on nothing private. Keep it that way.
+`pnpm install` needs no token and no `.npmrc`; the repo depends on nothing private. Keep it that way. One temporary exception: the docs site's chrome is the `@behivetech` components, which install from GitHub Packages until that scope is fully on the public npm registry, so for now a token with `read:packages` is needed (see the root `.npmrc`). That line, the CI guard's exception and this sentence go away together.
 
 ## Before you open a pull request
 

@@ -34,6 +34,9 @@ export interface TemplateManifest {
 export const DEFAULT_MANIFEST: TemplateManifest = {
   owned: [
     "apps/docs/**",
+    // Routes @behivetech (the docs app's chrome) to its registry; template-owned so a
+    // registry follows the switch back to the public registry on its next update.
+    ".npmrc",
     "packages/**",
     "scripts/**",
     // The generator entry point; the generators it loads from scripts/generators
