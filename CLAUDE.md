@@ -32,9 +32,12 @@ replaced by `npx create-bht-component-registry update`.
   no request-time data. Every param route sets `export const dynamicParams = false` and lists its params
   in `generateStaticParams`. A real 404 comes from the host serving `404.html` with a 404 status.
 - No environment variable may be required for dev, build, test or deploy. The only ones that exist are
-  optional publish/read tokens; never write them to the repo.
+  optional publish/read tokens; never write them to the repo. (Temporary exception, below: a read token
+  for the `@behivetech` chrome until that scope is on the public registry.)
 - Nothing may depend on a private registry. `pnpm install` must work with no `.npmrc` and no token; CI
-  fails if the lockfile mentions one. Registry packages depend only on `@bht-component-registry/*` workspace packages.
+  fails if the lockfile mentions one — with `@behivetech` as the one temporary exception (see below),
+  which the guard in ci.yml excepts by name. Registry packages depend only on `@bht-component-registry/*`
+  workspace packages.
 - Everything public is `bht`-prefixed (`create-bht-component-registry`, `bht-registry-docgen`,
   `@behivetech/bht-*`); workspace-only packages are `@bht-component-registry/*` and never published.
 - The docs app's chrome is the published `@behivetech` components (Button, Card, Badge, Table,
