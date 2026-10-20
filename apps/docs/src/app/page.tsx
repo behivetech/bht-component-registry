@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { Button } from "@/ui/button";
-import { Card } from "@/ui/card";
-import { HeroBanner } from "@/ui/hero-banner";
+import { Button } from "@behivetech/atoms.button";
+import { Card } from "@behivetech/atoms.card";
+import { HeroBanner } from "@behivetech/organisms.hero-banner";
 import { catalog, getScopes, latestReleases } from "@/lib/catalog";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";

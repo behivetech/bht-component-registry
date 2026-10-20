@@ -2,6 +2,14 @@ import type { Metadata } from "next";
 import { catalog } from "@/lib/catalog";
 import { inter } from "@/app/fonts";
 import "@/app/globals.scss";
+// The site's chrome is the @behivetech components; each package ships its own stylesheet.
+import "@behivetech/atoms.badge/styles.css";
+import "@behivetech/atoms.button/styles.css";
+import "@behivetech/atoms.card/styles.css";
+import "@behivetech/atoms.table/styles.css";
+import "@behivetech/atoms.text-field/styles.css";
+import "@behivetech/molecules.empty-state/styles.css";
+import "@behivetech/organisms.hero-banner/styles.css";
 
 const { site } = catalog;
 

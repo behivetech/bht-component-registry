@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getClassName } from "@bht-component-registry/class-names";
-import { Badge } from "@/ui/badge";
-import { Card } from "@/ui/card";
+import { Badge } from "@behivetech/atoms.badge";
+import { Card } from "@behivetech/atoms.card";
 import type { ComponentCardModel } from "@/lib/catalog/card-model";
 import { LiveExample } from "./live-example";
 import { StatusBadge } from "./status-badge";

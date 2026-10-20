@@ -31,6 +31,14 @@ The command prompts for:
 
 It then writes `registry.config.json`, renames the example scope to yours, runs `pnpm install` and a first `pnpm build`, and prints the next steps.
 
+For now, installing needs a GitHub token: the docs site's own chrome is built from the `@behivetech` components, which install from GitHub Packages until that scope is fully on the public npm registry. Put a token with `read:packages` in your `~/.npmrc` before you run the command:
+
+```
+//npm.pkg.github.com/:_authToken=<your token>
+```
+
+The registry's root `.npmrc` routes the scope; that file goes away when the switch to the public registry happens, and `update` brings the change.
+
 ```bash
 cd my-registry
 pnpm dev

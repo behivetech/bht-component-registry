@@ -2,6 +2,7 @@
   "$schema": "./template.manifest.schema.json",
   "owned": [
     "apps/docs/**",
+    ".npmrc",
     "packages/**",
     "scripts/**",
     "plopfile.ts",

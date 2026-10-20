@@ -37,8 +37,13 @@ replaced by `npx create-bht-component-registry update`.
   fails if the lockfile mentions one. Registry packages depend only on `@bht-component-registry/*` workspace packages.
 - Everything public is `bht`-prefixed (`create-bht-component-registry`, `bht-registry-docgen`,
   `@behivetech/bht-*`); workspace-only packages are `@bht-component-registry/*` and never published.
-- The docs app's chrome lives in `apps/docs/src/ui/` and `globals.scss`; it never imports a registry
-  package except through the generated sandbox module.
+- The docs app's chrome is the published `@behivetech` components (Button, Card, Badge, Table,
+  TextField, EmptyState, HeroBanner) and `@behivetech/cms.base-styles` for the token sheet, pinned in
+  `apps/docs/package.json`; `globals.scss` holds only the site-level theming. Never copy a component
+  into the app or style a package's classes from the app — fix or extend the package. The app never
+  imports a registry (`registry/`) package except through the generated sandbox module.
+- TEMPORARY: `@behivetech` installs from GitHub Packages (root `.npmrc`) until every package is on
+  the public registry; CI authenticates with the secret PACKAGES_READ_TOKEN.
 - Status and tags come from `package.json#registry`; scope identity from `scope.json`; tokens from
   `scope.json#tokens`. Nothing is hardcoded to a scope name.
 - The component template (`package.json.hbs`) takes `publishConfig.registry` from `registry.config.json`,

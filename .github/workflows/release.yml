@@ -51,6 +51,12 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
+      # TEMPORARY until every @behivetech package is on the public npm registry:
+      # the docs site's chrome installs from GitHub Packages (see .npmrc).
+      - name: GitHub Packages read auth
+        run: echo "//npm.pkg.github.com/:_authToken=${PACKAGES_READ_TOKEN}" >> "$HOME/.npmrc"
+        env:
+          PACKAGES_READ_TOKEN: ${{ secrets.PACKAGES_READ_TOKEN }}
       - run: pnpm install --frozen-lockfile
 
       # changesets/action publishes whenever there are no pending changesets,

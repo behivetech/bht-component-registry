@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { Table, type TableColumn } from "@/ui/table";
+import { Table, type TableColumn } from "@behivetech/atoms.table";
 import { catalog, type CatalogTokens } from "@/lib/catalog";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";

@@ -31,11 +31,19 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
+      # TEMPORARY until every @behivetech package is on the public npm registry:
+      # the docs site's chrome installs from GitHub Packages (see .npmrc).
+      - name: GitHub Packages read auth
+        run: echo "//npm.pkg.github.com/:_authToken=${PACKAGES_READ_TOKEN}" >> "$HOME/.npmrc"
+        env:
+          PACKAGES_READ_TOKEN: ${{ secrets.PACKAGES_READ_TOKEN }}
       - run: pnpm install --frozen-lockfile
       - name: Nothing may come from a private registry
         run: |
-          if grep -q "npm.pkg.github.com" pnpm-lock.yaml; then
-            echo "pnpm-lock.yaml references GitHub Packages; a public template must install with no token." >&2
+          # The @behivetech chrome is the one allowed exception, until that scope is
+          # fully on the public registry (see .npmrc).
+          if grep "npm.pkg.github.com" pnpm-lock.yaml | grep -v "@behivetech/" | grep -q .; then
+            echo "pnpm-lock.yaml references GitHub Packages for something other than @behivetech; a public template must install with no token." >&2
             exit 1
           fi
       - run: pnpm verify
@@ -52,6 +60,12 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
+      # TEMPORARY until every @behivetech package is on the public npm registry:
+      # the docs site's chrome installs from GitHub Packages (see .npmrc).
+      - name: GitHub Packages read auth
+        run: echo "//npm.pkg.github.com/:_authToken=${PACKAGES_READ_TOKEN}" >> "$HOME/.npmrc"
+        env:
+          PACKAGES_READ_TOKEN: ${{ secrets.PACKAGES_READ_TOKEN }}
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter docs exec playwright install --with-deps chromium
       - run: pnpm test:e2e

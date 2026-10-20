@@ -1,5 +1,5 @@
 import { getClassName } from "@bht-component-registry/class-names";
-import { Table, type TableColumn } from "@/ui/table";
+import { Table, type TableColumn } from "@behivetech/atoms.table";
 import type { CatalogDocComponent, CatalogProp } from "@/lib/catalog";
 import styles from "./props-table.module.scss";
 
