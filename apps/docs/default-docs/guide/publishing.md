@@ -152,7 +152,7 @@ How it authenticates, in order of preference:
 
    The "Version Packages" pull request gets no CI run of its own, because pushes made with the workflow's token do not trigger workflows; it only changes versions, changelogs and the consumed changeset files.
 2. **A token.** Store a granular access token as the secret `NPM_TOKEN`. It expires within 90 days, so expect to rotate it.
-3. **Neither.** The workflow skips versioning and publishing with a notice rather than failing, so a fresh repo's first pushes to `main` stay green.
+3. **Neither.** The workflow still versions, so pending changesets still become a "Version Packages" pull request, but it publishes nothing and says so in a notice rather than failing. A fresh repo's first pushes to `main` stay green, and merging that pull request publishes nothing until one of the two methods above is configured.
 
 For GitHub Packages, pass `GITHUB_TOKEN` as `NPM_TOKEN` as the commented lines show and give the workflow `packages: write`.
 
