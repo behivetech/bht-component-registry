@@ -102,6 +102,7 @@ if (restore) {
     const url = docsUrl(dir);
     const text = readFileSync(pkgFile, "utf8");
     const pkg = JSON.parse(text);
+    if (pkg.private) continue; // workspace-only, never published
     const next = { ...pkg };
     if (summary && !summary.startsWith("TODO")) next.description = summary;
     if (url) next.homepage = url;
