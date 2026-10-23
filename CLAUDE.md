@@ -32,11 +32,9 @@ replaced by `npx create-bht-component-registry update`.
   no request-time data. Every param route sets `export const dynamicParams = false` and lists its params
   in `generateStaticParams`. A real 404 comes from the host serving `404.html` with a 404 status.
 - No environment variable may be required for dev, build, test or deploy. The only ones that exist are
-  optional publish/read tokens; never write them to the repo. (Temporary exception, below: a read token
-  for the `@behivetech` chrome until that scope is on the public registry.)
+  optional publish tokens; never write them to the repo.
 - Nothing may depend on a private registry. `pnpm install` must work with no `.npmrc` and no token; CI
-  fails if the lockfile mentions one — with `@behivetech` as the one temporary exception (see below),
-  which the guard in ci.yml excepts by name. Registry packages depend only on `@bht-component-registry/*`
+  fails if the lockfile mentions one. Registry packages depend only on `@bht-component-registry/*`
   workspace packages.
 - Everything public is `bht`-prefixed (`create-bht-component-registry`, `bht-registry-docgen`,
   `@behivetech/bht-*`); workspace-only packages are `@bht-component-registry/*` and never published.
@@ -45,8 +43,6 @@ replaced by `npx create-bht-component-registry update`.
   `apps/docs/package.json`; `globals.scss` holds only the site-level theming. Never copy a component
   into the app or style a package's classes from the app — fix or extend the package. The app never
   imports a registry (`registry/`) package except through the generated sandbox module.
-- TEMPORARY: `@behivetech` installs from GitHub Packages (root `.npmrc`) until every package is on
-  the public registry; CI authenticates with the secret PACKAGES_READ_TOKEN.
 - Status and tags come from `package.json#registry`; scope identity from `scope.json`; tokens from
   `scope.json#tokens`. Nothing is hardcoded to a scope name.
 - The component template (`package.json.hbs`) takes `publishConfig.registry` from `registry.config.json`,
