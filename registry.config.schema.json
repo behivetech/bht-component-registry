@@ -39,7 +39,7 @@
         "url": {
           "type": "string",
           "format": "uri",
-          "description": "Where the docs site is served, e.g. \"https://components.acme.example\". With it set, the generator writes a `Docs:` link into each new README that points npm readers at the package's page."
+          "description": "Where the docs site is served, e.g. \"https://components.acme.example\". With it set, `pnpm release` gives each published package its docs page as `homepage` and a `Docs:` line in its README, so the npm page points here rather than at the repository."
         },
         "description": { "type": "string", "description": "One sentence for the home page hero and <meta name=\"description\">." },
         "logo": { "type": "string", "description": "Path under apps/docs/public, e.g. \"/logo.svg\". Omit to show the title as text." },
