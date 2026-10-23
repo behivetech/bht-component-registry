@@ -36,6 +36,11 @@
       "required": ["title"],
       "properties": {
         "title": { "type": "string", "description": "Site name, shown in the header and the <title>." },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Where the docs site is served, e.g. \"https://components.acme.example\". With it set, `pnpm release` gives each published package its docs page as `homepage` and a `Docs:` line in its README, so the npm page points here rather than at the repository."
+        },
         "description": { "type": "string", "description": "One sentence for the home page hero and <meta name=\"description\">." },
         "logo": { "type": "string", "description": "Path under apps/docs/public, e.g. \"/logo.svg\". Omit to show the title as text." },
         "primaryColor": {

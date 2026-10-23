@@ -2,7 +2,7 @@
   "name": "@example/atoms.price-tag",
   "version": "0.0.0",
   "license": "MIT",
-  "description": "A formatted price with an optional compare-at price and the saving.",
+  "description": "",
   "type": "module",
   "private": true,
   "exports": {

@@ -21,7 +21,7 @@
     "gen": "cross-env NODE_OPTIONS=\"--import tsx\" plop --plopfile=plopfile.ts",
     "changeset": "changeset",
     "version-packages": "changeset version && node scripts/sync-template-version.mjs",
-    "release": "pnpm --filter \"{./registry/**}...\" --filter create-bht-component-registry run build && changeset publish",
+    "release": "pnpm --filter \"{./registry/**}...\" --filter create-bht-component-registry run build && node scripts/prepare-publish.mjs && changeset publish; status=$?; node scripts/prepare-publish.mjs --restore; exit $status",
     "serve": "pnpm --filter docs serve"
   },
   "devDependencies": {
