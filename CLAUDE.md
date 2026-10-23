@@ -43,6 +43,9 @@ replaced by `npx create-bht-component-registry update`.
   `apps/docs/package.json`; `globals.scss` holds only the site-level theming. Never copy a component
   into the app or style a package's classes from the app — fix or extend the package. The app never
   imports a registry (`registry/`) package except through the generated sandbox module.
+- A package's description is its README's first paragraph, nowhere else: `package.json#description` stays empty
+  in git, `pnpm release` injects the paragraph before `changeset publish` and restores the file after. The
+  README's `Docs:` line comes from `registry.config.json#site.url` via the generator.
 - Status and tags come from `package.json#registry`; scope identity from `scope.json`; tokens from
   `scope.json#tokens`. Nothing is hardcoded to a scope name.
 - The component template (`package.json.hbs`) takes `publishConfig.registry` from `registry.config.json`,

@@ -32,6 +32,13 @@ export function humanizeTitle(title: string): string {
 export const stripTitle = (readme: string) =>
   readme.replace(/^#\s+.*\r?\n/, "").trim();
 
+/**
+ * README without its `Docs: <url>` line. The line points npm readers at the
+ * package's page on this site; on that page it would link to itself.
+ */
+export const stripDocsLine = (readme: string) =>
+  readme.replace(/^Docs:[ \t]+\S+[ \t]*\r?\n(?:\r?\n)?/m, "").trim();
+
 /** First prose paragraph after the README's H1, on one line — the component's summary. */
 export function readmeSummary(readme: string): string {
   const paragraphs = stripTitle(readme)
@@ -44,7 +51,8 @@ export function readmeSummary(readme: string): string {
         !p.startsWith("#") &&
         !p.startsWith("<!--") &&
         !p.startsWith("|") &&
-        !p.startsWith("-"),
+        !p.startsWith("-") &&
+        !/^Docs:\s/.test(p),
     );
   return paragraphs[0]?.replace(/\s+/g, " ") ?? "";
 }

@@ -50,7 +50,7 @@ pnpm install
 
 Then make the repo yours:
 
-1. Set `scope` in `registry.config.json` (and the `site.title`, `site.description` and `site.links` while you are there).
+1. Set `scope` in `registry.config.json` (and the `site.title`, `site.url`, `site.description` and `site.links` while you are there).
 2. Rename `registry/example` to `registry/<your-scope>`, and edit `registry/<your-scope>/scope.json` (`name`, `tagline`).
 3. In each component's `package.json`, change `@example/` to `@<your-scope>/` in `name` and `repository.directory`. Do the same in each `README.md` import line and `CHANGELOG.md` heading.
 4. Remove the `@example/*` entries from `apps/docs/package.json#dependencies`; the catalog step re-adds your renamed packages on the next run.

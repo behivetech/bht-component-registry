@@ -7,6 +7,7 @@ import {
   readmeSummary,
   readmeTitle,
   splitPascal,
+  stripDocsLine,
   stripTitle,
   toTitle,
 } from "./parse";
@@ -35,6 +36,16 @@ describe("readme helpers", () => {
     expect(readmeSummary(README)).toBe(
       "Full-width hero section with a headline, subtext and call to action. Second line of the same paragraph.",
     );
+  });
+
+  it("skips the Docs line when summarising, and strips it from the body", () => {
+    const readme =
+      "# Price Tag\n\nDocs: https://components.acme.example/acme/atoms/price-tag\n\nA formatted price.\n\n## Usage\n";
+    expect(readmeSummary(readme)).toBe("A formatted price.");
+    expect(stripDocsLine(stripTitle(readme))).toBe(
+      "A formatted price.\n\n## Usage",
+    );
+    expect(stripDocsLine("No such line.")).toBe("No such line.");
   });
 
   it("skips code blocks, headings, lists and tables when summarising", () => {

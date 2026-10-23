@@ -64,7 +64,7 @@ pnpm changeset tag                                         # tags every publishe
 git push --follow-tags
 ```
 
-`pnpm release` is for CI, where trusted publishing or a token answers for you.
+`pnpm release` is for CI, where trusted publishing or a token answers for you. Before `changeset publish` it writes each package's README summary into `package.json#description` so npm search and package lists show it, and restores the files afterwards; the repo keeps the sentence in the README only. Publishing by hand as above skips that step, so a hand-published version has no description until the next release.
 
 ## GitHub Packages
 

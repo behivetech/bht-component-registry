@@ -46,6 +46,7 @@ import {
   readmeSummary,
   readmeTitle,
   splitPascal,
+  stripDocsLine,
   stripTitle,
   toTitle,
 } from "../src/lib/catalog/parse";
@@ -655,7 +656,7 @@ async function main() {
         readmeSummary(readme) ||
         docs[0]?.description ||
         "",
-      readme: stripTitle(readme),
+      readme: stripDocsLine(stripTitle(readme)),
       status,
       tags,
       design,

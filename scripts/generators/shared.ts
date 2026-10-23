@@ -40,6 +40,7 @@ export interface RegistryConfig {
   scope?: string;
   npmRegistry?: string;
   privateRegistry?: string;
+  site?: { url?: string };
 }
 
 export function readJson<T>(file: string, fallback: T): T {
@@ -163,6 +164,18 @@ export function registerPublishHelpers(
     visibility === "private" ? "restricted" : "public",
   );
   plop.setHelper("titleWords", titleWords);
+  // The README's `Docs:` line, pointing npm readers at the package's page on
+  // the docs site — only when registry.config.json#site.url is set. Ends with
+  // a blank line so the template reads the same with or without it.
+  plop.setHelper(
+    "docsLine",
+    (scope: string, category: string, name: string) => {
+      const url = config.site?.url?.replace(/\/+$/, "");
+      if (!url) return "";
+      const slug = plop.getHelper("dashCase")(String(name));
+      return `Docs: ${url}/${scope}/${category}/${slug}\n\n`;
+    },
+  );
   // The root class a scaffolded component starts from: `<prefix>__<PascalName>`.
   // A scope names its prefix in scope.json ("classPrefix": "BHT"); without one
   // it is the scope in CONSTANT_CASE (acme → ACME).

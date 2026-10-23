@@ -29,6 +29,7 @@ Committed at the repo root. Nothing in it is secret.
   "templateVersion": "0.1.0",
   "site": {
     "title": "Acme Components",
+    "url": "https://components.acme.example",
     "description": "Acme's component library: docs from source, live examples, versions via Changesets.",
     "logo": "/logo.svg",
     "primaryColor": "#6750a4",
@@ -47,6 +48,7 @@ Committed at the repo root. Nothing in it is secret.
 | `privateRegistry` | Optional. Where private packages publish — GitHub Packages, Verdaccio, a paid npmjs org. With it set, `pnpm gen component` asks whether a package is public or private; the answer is permanent after the first release. See [Publishing](publishing.md#public-and-private-packages). |
 | `templateVersion` | The template version this repo was created from or last updated to. Maintained by `npx create-bht-component-registry update`; do not edit by hand. See [Updating](updating.md). |
 | `site.title` | Required. Site name in the header and `<title>`. |
+| `site.url` | Optional. Where the site is served. With it set, `pnpm gen` writes a `Docs:` link into each new README so the package's npm page points back at its docs page. See [Components](components.md#readme-conventions). |
 | `site.embedDesigns` | Optional, default `false`. Show components' Figma links as embedded frames on their Design tab. See [Design links](design-links.md). |
 | `site.design` | Optional. The design-system file (a URL or `{ label, url }`), linked from the design-tokens page. |
 | `site.description` | One sentence for the home page hero and `<meta name="description">`. |
