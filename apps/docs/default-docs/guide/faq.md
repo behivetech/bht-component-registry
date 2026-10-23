@@ -20,7 +20,7 @@ The trade-offs: no per-request logic (sign-in, forms, writes), and a change need
 
 ## Do I need any environment variables?
 
-No. Developing, building, testing and deploying need none. Two optional tokens exist for publishing and for listing published versions from a private registry; both live in CI secrets or your shell. See [Publishing](publishing.md). One optional dev-only variable, `ALLOWED_DEV_ORIGINS`, lets you open the dev server by LAN address or from another device; see [Getting started](getting-started.md). For now, installing also needs a GitHub token with `read:packages` in `~/.npmrc` (and the secret `PACKAGES_READ_TOKEN` in CI), because the docs site's chrome installs from GitHub Packages until the `@behivetech` scope is fully on the public registry; Getting started shows the line.
+No. Developing, building, testing and deploying need none. Two optional tokens exist for publishing and for listing published versions from a private registry; both live in CI secrets or your shell. See [Publishing](publishing.md). One optional dev-only variable, `ALLOWED_DEV_ORIGINS`, lets you open the dev server by LAN address or from another device; see [Getting started](getting-started.md).
 
 ## Why git and npm rather than a hosted component platform?
 
