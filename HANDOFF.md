@@ -100,7 +100,7 @@ pnpm --filter create-bht-component-registry build   # dist/cli.js; test it with 
 
 Verified locally on 2026-10-07:
 
-- `pnpm install` with no `.npmrc` and no token → OK (9 workspace projects). (Since 2026-10-20 the `@behivetech` chrome needs a `read:packages` token until that scope is on the public registry — see CLAUDE.md.)
+- `pnpm install` with no `.npmrc` and no token → OK (9 workspace projects).
 - `pnpm verify` → green (unit tests: scope 7, class-names 4, docs 17, two example
   packages 9, CLI 62).
 - `pnpm build` → 16 static pages; served with `serve`: known routes 200, unknown scope and
