@@ -1,7 +1,7 @@
 ---
 title: Terms
 description: The licence the template, the tool and this site are provided under, and what it means here.
-order: 16
+order: 19
 ---
 
 # Terms

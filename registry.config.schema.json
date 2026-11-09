@@ -5,9 +5,16 @@
   "description": "Repo-level settings for a bht-component-registry site. Everything here is non-secret and committed; secrets (publish and read tokens) live only in CI secrets or your shell.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["scope", "npmRegistry", "templateVersion", "site"],
+  "required": [
+    "scope",
+    "npmRegistry",
+    "templateVersion",
+    "site"
+  ],
   "properties": {
-    "$schema": { "type": "string" },
+    "$schema": {
+      "type": "string"
+    },
     "scope": {
       "type": "string",
       "description": "Your primary npm scope without the @, e.g. \"acme\" for @acme/*. Every component this registry generates is published under it. Must be lowercase, DNS-label safe, and not a reserved word. Create the matching org on npmjs before your first publish.",
@@ -33,20 +40,302 @@
       "type": "object",
       "description": "Branding for the docs site. Code never needs to change for these.",
       "additionalProperties": false,
-      "required": ["title"],
+      "required": [
+        "title"
+      ],
       "properties": {
-        "title": { "type": "string", "description": "Site name, shown in the header and the <title>." },
+        "title": {
+          "type": "string",
+          "description": "Site name, shown in the header and the <title>."
+        },
         "url": {
           "type": "string",
           "format": "uri",
           "description": "Where the docs site is served, e.g. \"https://components.acme.example\". With it set, `pnpm release` gives each published package its docs page as `homepage` and a `Docs:` line in its README, so the npm page points here rather than at the repository."
         },
-        "description": { "type": "string", "description": "One sentence for the home page hero and <meta name=\"description\">." },
-        "logo": { "type": "string", "description": "Path under apps/docs/public, e.g. \"/logo.svg\". Omit to show the title as text." },
+        "description": {
+          "type": "string",
+          "description": "One sentence for the home page hero and <meta name=\"description\">."
+        },
+        "logo": {
+          "type": "string",
+          "description": "The header logo, shown instead of the title text. A file under branding/ at the repo root, e.g. \"logo.svg\" (served at /branding/logo.svg); an absolute URL also works. `update` never touches branding/."
+        },
+        "logoDark": {
+          "type": "string",
+          "description": "A logo for the dark scheme, swapped in automatically; omit to use `logo` in both. A file under branding/ at the repo root, e.g. \"logo.svg\" (served at /branding/logo.svg); an absolute URL also works. `update` never touches branding/."
+        },
+        "favicon": {
+          "type": "string",
+          "description": "The browser-tab icon (<link rel=\"icon\">), ideally an SVG. Omit to keep the template's default favicon.ico. A file under branding/ at the repo root, e.g. \"logo.svg\" (served at /branding/logo.svg); an absolute URL also works. `update` never touches branding/."
+        },
+        "icons": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Larger icons for home screens and install prompts, as PNG files under branding/.",
+          "properties": {
+            "apple": {
+              "type": "string",
+              "description": "180×180 PNG for <link rel=\"apple-touch-icon\">."
+            },
+            "png192": {
+              "type": "string",
+              "description": "192×192 PNG icon."
+            },
+            "png512": {
+              "type": "string",
+              "description": "512×512 PNG icon."
+            }
+          }
+        },
+        "themeColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "description": "<meta name=\"theme-color\">: the browser-chrome tint on mobile. Defaults to theme.primary."
+        },
+        "headerTheme": {
+          "type": "string",
+          "enum": [
+            "light",
+            "dark"
+          ],
+          "default": "light",
+          "description": "\"dark\" keeps the header on the dark scheme's surface in both colour schemes, so a light wordmark always has its background."
+        },
         "primaryColor": {
           "type": "string",
-          "description": "Hex color used as the Material Design 3 primary role; the rest of the palette derives from the token sheet.",
-          "pattern": "^#[0-9a-fA-F]{6}$"
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "description": "Older alias of theme.primary, kept so existing configs keep working. Prefer `theme`."
+        },
+        "theme": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "primary"
+          ],
+          "description": "Seed colours for the site's Material Design 3 theme. The build generates every colour role for the light and dark schemes from them with Google's material-color-utilities (the same algorithm as the Material Theme Builder) into src/generated/theme.css. The /theme page lets you pick these interactively and download the same CSS for your own app.",
+          "properties": {
+            "primary": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$",
+              "description": "The primary seed: the brand colour. MD3 picks the tone that reads; a very dark or very light brand colour still yields a legible primary."
+            },
+            "secondary": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$",
+              "description": "A pinned secondary seed (keeps its own hue and chroma). Omit and MD3 derives a muted secondary from the primary."
+            },
+            "tertiary": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$",
+              "description": "A pinned tertiary seed. Omit and MD3 derives one by hue rotation."
+            },
+            "neutral": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$",
+              "description": "A neutral seed: backgrounds and surfaces take its hue at MD3's low chroma. Omit and they follow the primary."
+            },
+            "scheme": {
+              "type": "string",
+              "enum": [
+                "tonalspot",
+                "vibrant",
+                "expressive",
+                "fidelity",
+                "content",
+                "neutral",
+                "monochrome"
+              ],
+              "default": "tonalspot",
+              "description": "The MD3 scheme variant. tonalspot is Material's default; fidelity and content keep the primary closest to the seed; neutral and monochrome desaturate."
+            },
+            "contrast": {
+              "type": "string",
+              "enum": [
+                "standard",
+                "medium",
+                "high"
+              ],
+              "default": "standard",
+              "description": "MD3 contrast level."
+            },
+            "overrides": {
+              "type": "object",
+              "additionalProperties": false,
+              "description": "Hand edits to single roles after generation, per scheme. The /theme page writes this for you when you edit a swatch.",
+              "properties": {
+                "light": {
+                  "type": "object",
+                  "description": "Role name in camel case as material-color-utilities names it (\"primary\", \"onPrimaryContainer\") to a hex colour.",
+                  "propertyNames": {
+                    "pattern": "^[a-z][A-Za-z]*$"
+                  },
+                  "additionalProperties": {
+                    "type": "string",
+                    "pattern": "^#[0-9a-fA-F]{6}$"
+                  }
+                },
+                "dark": {
+                  "type": "object",
+                  "description": "Role name in camel case as material-color-utilities names it (\"primary\", \"onPrimaryContainer\") to a hex colour.",
+                  "propertyNames": {
+                    "pattern": "^[a-z][A-Za-z]*$"
+                  },
+                  "additionalProperties": {
+                    "type": "string",
+                    "pattern": "^#[0-9a-fA-F]{6}$"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "fonts": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Self-hosted web fonts from branding/fonts, loaded with next/font/local (no request to a font service at build or run time). Omit a slot to keep Inter, the template's default. Latin woff2 files for most open fonts are in the @fontsource packages on npm.",
+          "properties": {
+            "body": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "family",
+                    "files"
+                  ],
+                  "properties": {
+                    "family": {
+                      "type": "string",
+                      "description": "The family name, e.g. \"Ubuntu\"."
+                    },
+                    "files": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "path"
+                        ],
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "description": "A font file under branding/, e.g. \"fonts/ubuntu-latin-400.woff2\"."
+                          },
+                          "weight": {
+                            "type": "string",
+                            "description": "CSS font-weight the file covers: \"400\", \"700\", or a range like \"100 900\" for a variable font."
+                          },
+                          "style": {
+                            "type": "string",
+                            "enum": [
+                              "normal",
+                              "italic"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "description": "The body face: body, label and title roles."
+            },
+            "heading": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "family",
+                    "files"
+                  ],
+                  "properties": {
+                    "family": {
+                      "type": "string",
+                      "description": "The family name, e.g. \"Ubuntu\"."
+                    },
+                    "files": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "path"
+                        ],
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "description": "A font file under branding/, e.g. \"fonts/ubuntu-latin-400.woff2\"."
+                          },
+                          "weight": {
+                            "type": "string",
+                            "description": "CSS font-weight the file covers: \"400\", \"700\", or a range like \"100 900\" for a variable font."
+                          },
+                          "style": {
+                            "type": "string",
+                            "enum": [
+                              "normal",
+                              "italic"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "description": "The heading face: headline and display roles. Omit to use the body face."
+            }
+          }
+        },
+        "hero": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "The home page hero. Defaults: the site title and description, a \"Browse components\" button into your scope and, when the Docs section has pages, a \"Docs\" button.",
+          "properties": {
+            "headline": {
+              "type": "string"
+            },
+            "subtext": {
+              "type": "string"
+            },
+            "actions": {
+              "type": "array",
+              "description": "Replaces the default buttons entirely. The first is primary unless `variant` says otherwise.",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "label",
+                  "href"
+                ],
+                "properties": {
+                  "label": {
+                    "type": "string"
+                  },
+                  "href": {
+                    "type": "string"
+                  },
+                  "variant": {
+                    "type": "string",
+                    "enum": [
+                      "primary",
+                      "secondary"
+                    ]
+                  }
+                }
+              }
+            }
+          }
         },
         "links": {
           "type": "array",
@@ -54,8 +343,18 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["label", "href"],
-            "properties": { "label": { "type": "string" }, "href": { "type": "string" } }
+            "required": [
+              "label",
+              "href"
+            ],
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "href": {
+                "type": "string"
+              }
+            }
           }
         },
         "embedDesigns": {
@@ -66,14 +365,68 @@
         "design": {
           "description": "The design-system file — a Figma URL or any URL — linked from the design-tokens page. A string, or { label, url }.",
           "oneOf": [
-            { "type": "string", "format": "uri" },
+            {
+              "type": "string",
+              "format": "uri"
+            },
             {
               "type": "object",
               "additionalProperties": false,
-              "required": ["url"],
-              "properties": { "label": { "type": "string" }, "url": { "type": "string", "format": "uri" } }
+              "required": [
+                "url"
+              ],
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
             }
           ]
+        }
+      }
+    },
+    "docs": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Behaviour of the docs site, as opposed to `site`, which is branding. Every key has a default; the object may be omitted.",
+      "properties": {
+        "history": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Docs for earlier versions of each component. `pnpm version-packages` snapshots a component's README, source, examples and props into docs-history/<scope>/<category>/<name>/<version>/ (committed with the version bump), and the site builds a page per version with a switcher on the component page.",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true,
+              "description": "false: no snapshots are written and no version pages are built."
+            },
+            "keep": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "all",
+                    "majors"
+                  ]
+                },
+                {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              ],
+              "default": "all",
+              "description": "Which snapshots to keep per component: \"all\"; a number, the newest N; or \"majors\", the newest of each older major plus everything in the current major. Pruned folders stay in git history."
+            }
+          }
+        },
+        "themeBuilder": {
+          "type": "boolean",
+          "default": true,
+          "description": "Build the /theme page: pick seed colours, see every MD3 role update, edit roles, and download the CSS or the site.theme snippet."
         }
       }
     }

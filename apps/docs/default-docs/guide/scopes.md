@@ -1,7 +1,7 @@
 ---
 title: Scopes
 description: The one-scope rule, registry.config.json, scope.json, and several scopes in one repo.
-order: 6
+order: 8
 ---
 
 # Scopes
@@ -31,12 +31,17 @@ Committed at the repo root. Nothing in it is secret.
     "title": "Acme Components",
     "url": "https://components.acme.example",
     "description": "Acme's component library: docs from source, live examples, versions via Changesets.",
-    "logo": "/logo.svg",
-    "primaryColor": "#6750a4",
+    "logo": "logo.svg",
+    "favicon": "mark.svg",
+    "theme": { "primary": "#6750a4" },
     "links": [
       { "label": "GitHub", "href": "https://github.com/acme/components" },
       { "label": "Design", "href": "https://design.acme.example" }
     ]
+  },
+  "docs": {
+    "history": { "enabled": true, "keep": "all" },
+    "themeBuilder": true
   }
 }
 ```
@@ -52,11 +57,18 @@ Committed at the repo root. Nothing in it is secret.
 | `site.embedDesigns` | Optional, default `false`. Show components' Figma links as embedded frames on their Design tab. See [Design links](design-links.md). |
 | `site.design` | Optional. The design-system file (a URL or `{ label, url }`), linked from the design-tokens page. |
 | `site.description` | One sentence for the home page hero and `<meta name="description">`. |
-| `site.logo` | A path under `apps/docs/public`, for example `/logo.svg`. Omit to show the title as text. |
-| `site.primaryColor` | Hex colour for the Material Design primary role in the light scheme. Pick a mid-dark tone (roughly M3 tone 40) so white text reads on it; the dark scheme derives its lighter primary and dark label from it, and the container roles derive from it in both. |
-| `site.links` | Footer links, `{ "label", "href" }`. |
+| `site.logo`, `site.logoDark` | The header logo, and an optional one for the dark scheme: files under `branding/` at the repo root (`"logo.svg"`), or absolute URLs. Omit to show the title as text. See [Branding](branding.md). |
+| `site.favicon`, `site.icons` | The tab icon and the 180/192/512 PNG icons, from `branding/`. Omit to keep the default favicon. |
+| `site.themeColor` | `<meta name="theme-color">`; defaults to the theme's primary. |
+| `site.headerTheme` | `"dark"` keeps the header on the dark surface in both schemes, for a light wordmark. Default `"light"`. |
+| `site.theme` | Seed colours (`primary` required; `secondary`, `tertiary`, `neutral`, `scheme`, `contrast` optional). The build generates every Material Design 3 colour role for both schemes from them. `site.primaryColor`, the older single colour, still works as `theme.primary`. See [Branding](branding.md) and the `/theme` page. |
+| `site.fonts` | Self-hosted faces for `body` and `heading` from `branding/fonts/`; omit to keep Inter. See [Branding](branding.md). |
+| `site.hero` | The home page hero's headline, text and buttons; defaults to the title, the description, "Browse components" and "Docs". |
+| `site.links` | Header and footer links, `{ "label", "href" }`. |
+| `docs.history` | `enabled` (default `true`) and `keep` (`"all"`, a number, or `"majors"`): docs for earlier versions of each component, snapshotted by `pnpm version-packages`. See [Versioned docs](versioned-docs.md). |
+| `docs.themeBuilder` | Default `true`. Build the `/theme` page. |
 
-The schema is `registry.config.schema.json` next to it; editors that read `$schema` validate as you type. Branding changes need no code changes.
+The schema is `registry.config.schema.json` next to it; editors that read `$schema` validate as you type and show each key's description. Branding changes need no code changes; the files they name live in `branding/`, which `update` never touches.
 
 ## Create the npm org first
 

@@ -1,0 +1,14 @@
+.ThemePage {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 1rem 1.5rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  &__lead {
+    max-width: 48rem;
+    font-size: 1.0625rem;
+    color: var(--md-sys-color-on-surface-variant);
+  }
+}

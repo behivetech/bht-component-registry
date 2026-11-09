@@ -33,3 +33,6 @@ test-results/
 .vercel
 npm-debug.log*
 .pnpm-debug.log*
+
+# the owner's brand assets (branding/ at the root), mirrored here by the catalog generator
+apps/docs/public/branding/

@@ -1,12 +1,14 @@
 .SiteHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-  max-width: 80rem;
-  margin: 0 auto;
-  padding: 0.875rem 1.5rem;
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 0.875rem 1.5rem;
+  }
 
   &__left {
     display: flex;
@@ -23,10 +25,16 @@
     color: var(--md-sys-color-on-surface);
   }
 
-  &__logo {
+  &__logo,
+  &__logo-dark {
     display: block;
     height: 1.75rem;
     width: auto;
+  }
+
+  // The dark-scheme logo is hidden until the dark scheme is in effect (below).
+  &__logo-dark {
+    display: none;
   }
 
   &__links,
@@ -45,5 +53,54 @@
         color: var(--md-sys-color-primary);
       }
     }
+  }
+
+  // headerTheme "dark": the bar sits on the dark scheme's surface whatever the
+  // page's scheme, so a light wordmark always has its background. The fixed
+  // `--site-dark-*` values come from src/generated/theme.css; without a theme
+  // the sheet's inverse-surface pair is the nearest equivalent.
+  &--dark {
+    background: var(--site-dark-surface, var(--md-sys-color-inverse-surface));
+    color: var(--site-dark-on-surface, var(--md-sys-color-inverse-on-surface));
+  }
+
+  &--dark &__brand {
+    color: inherit;
+  }
+
+  &--dark &__links a,
+  &--dark &__nav a {
+    color: var(
+      --site-dark-on-surface-variant,
+      var(--md-sys-color-inverse-on-surface)
+    );
+
+    &:hover {
+      color: var(--site-dark-primary, var(--md-sys-color-inverse-primary));
+    }
+  }
+}
+
+// `paired`: a light and a dark logo are both configured; swap them with the
+// scheme, following the same two selectors the token sheet uses to pick it.
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .SiteHeader--paired {
+    .SiteHeader__logo {
+      display: none;
+    }
+
+    .SiteHeader__logo-dark {
+      display: block;
+    }
+  }
+}
+
+:root[data-theme="dark"] .SiteHeader--paired {
+  .SiteHeader__logo {
+    display: none;
+  }
+
+  .SiteHeader__logo-dark {
+    display: block;
   }
 }

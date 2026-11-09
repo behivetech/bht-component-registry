@@ -11,14 +11,18 @@ replaced by `npx create-bht-component-registry update`.
 ## Layout
 
 - `apps/docs` — the only app. `scripts/generate-catalog.ts` reads the registry before dev/build and
-  writes `src/generated/` (gitignored). Pages under `src/app/(site)/`; docs UI in `src/components/docs/`;
-  catalog access and README/CHANGELOG parsing in `src/lib/catalog/`; e2e in `e2e/`.
+  writes `src/generated/` (gitignored: the catalog, the docs index, `theme.css` from `site.theme`, `fonts.ts` from
+  `site.fonts`, and a copy of `branding/` under `public/branding/`). Pages under `src/app/`; docs UI in
+  `src/components/docs/`; catalog access and README/CHANGELOG parsing in `src/lib/catalog/`; branding helpers in
+  `src/lib/branding.ts`; the Material Design 3 colour engine (build time and the `/theme` builder) in `src/lib/theme/`;
+  e2e in `e2e/`.
 - `packages/env` — everything a component package builds, lints, type-checks and tests with: tsup config, `tsconfig.json` (carries the `*.module.scss` typings via `files`), ESLint config, Vitest config + setup (root `vitest.config.ts` re-exports it), and the `bht-registry-docgen` bin (writes `docs.json` per package).
 - `packages/class-names`, `eslint-config`, `typescript-config`, `scope` — workspace-only (`@bht-component-registry/*`).
 - `packages/create-bht-component-registry` — the npx `create` and `update` CLI; `template.manifest.json` lists what `update` may replace.
 - `registry/<scope>/` — `scope.json` plus one package per component. `registry/example` is the shipped example; deleting it must not break the build.
 - `plopfile.ts` + `scripts/generators/<name>/{index.ts,templates/}` — `pnpm gen` is plop, launched as its docs say for TypeScript (`NODE_OPTIONS="--import tsx" plop --plopfile=plopfile.ts`): `component`, `hook`, `util`, `doc`, `generator`; shared prompts/helpers in `scripts/generators/shared.ts`. The owner's own generators go in `generators/<name>/` (never template-owned); both folders are auto-loaded. Stay within plop's documented API (plopjs.com) — no hand-rolled rendering.
-- `registry.config.json` — scope, `npmRegistry`, `templateVersion`, `site` branding. Committed, non-secret, validated by `registry.config.schema.json`.
+- `branding/` — the owner's logo, icons and fonts, named from `registry.config.json#site`; never template-owned.
+- `registry.config.json` — scope, `npmRegistry`, `templateVersion`, `site` branding, `docs` options. Committed, non-secret, validated by `registry.config.schema.json`. A new `site.*` or `docs.*` key is added to the schema (with a description) and to the table in `guide/scopes.md` in the same commit.
 
 ## Commands (root package scripts; a plain pnpm workspace, no task runner)
 
@@ -40,7 +44,8 @@ replaced by `npx create-bht-component-registry update`.
   `@behivetech/bht-*`); workspace-only packages are `@bht-component-registry/*` and never published.
 - The docs app's chrome is the published `@behivetech` components (Button, Card, Badge, Table,
   TextField, EmptyState, HeroBanner) and `@behivetech/cms.base-styles` for the token sheet, pinned in
-  `apps/docs/package.json`; `globals.scss` holds only the site-level theming. Never copy a component
+  `apps/docs/package.json`; `globals.scss` holds only the site-level typography wiring and the generated
+  `theme.css` the colours (never hand-written colour roles). Never copy a component
   into the app or style a package's classes from the app — fix or extend the package. The app never
   imports a registry (`registry/`) package except through the generated sandbox module.
 - A package's description is its README's first paragraph, nowhere else, and its docs URL is

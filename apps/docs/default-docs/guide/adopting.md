@@ -1,7 +1,7 @@
 ---
 title: Adopting the registry into a monorepo you already have
 description: Adding the registry to a monorepo you already have.
-order: 13
+order: 16
 ---
 
 # Adopting the registry into a monorepo you already have

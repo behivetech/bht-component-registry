@@ -1,7 +1,7 @@
 ---
 title: FAQ
 description: Why no database, why a static export, and why git and npm rather than a vendor.
-order: 14
+order: 17
 ---
 
 # FAQ
@@ -46,9 +46,9 @@ Yes. Any folder under `registry/` is a scope. `registry.config.json#scope` names
 
 Set `"visibility": "private"` in its `scope.json`. It stays reachable at `/<scope>` but is not listed on the home page. A static site cannot restrict access; use it for in-progress scopes, not secrets.
 
-## How do I change the site's title, logo or colour?
+## How do I change the site's title, logo, icons, colours or fonts?
 
-Edit `registry.config.json#site`. No code changes are needed, and `update` leaves the file alone. See [Scopes](scopes.md).
+Edit `registry.config.json#site` and put the files it names (logo, favicon, fonts) in a `branding/` folder at the repo root. No code changes are needed, and `update` touches neither. Colours are seeds: the build generates the whole Material Design 3 palette from `site.theme`, and the `/theme` page lets you try seeds and download the result. See [Branding](branding.md).
 
 ## How do I set a component to beta or deprecated, or tag it?
 

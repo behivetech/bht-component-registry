@@ -32,6 +32,7 @@ import type {
   CatalogComponent,
   CatalogDesignLink,
   CatalogExample,
+  CatalogDocsConfig,
   CatalogScope,
   CatalogSite,
   CatalogSourceFile,
@@ -39,6 +40,15 @@ import type {
   DocPage,
   DocsIndex,
 } from "../src/lib/catalog/types";
+import {
+  fontProblems,
+  fontsModule,
+  resolveAsset,
+  resolveHero,
+  type FontsConfig,
+  type HeroConfig,
+} from "../src/lib/branding";
+import { buildTheme, themeCss, type ThemeSeeds } from "../src/lib/theme/scheme";
 import {
   extractTokens,
   humanizeTitle,
@@ -88,11 +98,79 @@ interface RegistryConfig {
   site: {
     title: string;
     description?: string;
+    /** Brand assets: a file under branding/, an absolute URL, or (legacy) a path under apps/docs/public. */
     logo?: string;
+    logoDark?: string;
+    favicon?: string;
+    icons?: { apple?: string; png192?: string; png512?: string };
+    themeColor?: string;
+    headerTheme?: "light" | "dark";
+    /** Alias for theme.primary, kept from earlier templates. */
     primaryColor?: string;
+    theme?: ThemeSeeds;
+    fonts?: FontsConfig;
+    hero?: HeroConfig;
     links?: { label: string; href: string }[];
     embedDesigns?: boolean;
     design?: string | { label?: string; url: string };
+  };
+  /** Docs-site behaviour (as opposed to `site`, which is branding). */
+  docs?: {
+    history?: { enabled?: boolean; keep?: "all" | "majors" | number };
+    themeBuilder?: boolean;
+  };
+}
+
+/** The owner's brand assets; copied to apps/docs/public/branding at build. */
+const BRANDING_DIR = path.join(REPO_ROOT, "branding");
+const PUBLIC_BRANDING_DIR = path.join(APP_DIR, "public", "branding");
+
+const repoFileExists = (repoRelative: string) => {
+  const file = path.join(REPO_ROOT, repoRelative);
+  return fs.existsSync(file) && fs.statSync(file).isFile();
+};
+
+/**
+ * Mirrors branding/ into apps/docs/public/branding/ so the static export
+ * serves the owner's files. The copy is gitignored and rebuilt every run, so a
+ * removed file disappears from the site too.
+ */
+function syncBranding(): void {
+  fs.rmSync(PUBLIC_BRANDING_DIR, { recursive: true, force: true });
+  if (!fs.existsSync(BRANDING_DIR)) return;
+  fs.mkdirSync(path.dirname(PUBLIC_BRANDING_DIR), { recursive: true });
+  fs.cpSync(BRANDING_DIR, PUBLIC_BRANDING_DIR, { recursive: true });
+}
+
+/** `site.theme`, or the `primaryColor` alias wrapped as one; null when the sheet's defaults stand. */
+function themeSeeds(site: RegistryConfig["site"]): ThemeSeeds | null {
+  if (site.theme?.primary) return { ...site.theme, primary: site.theme.primary };
+  if (site.primaryColor) return { primary: site.primaryColor };
+  return null;
+}
+
+/** The name in the nearest package.json above `file` inside the repo, or null. */
+function packageAbove(file: string): string | null {
+  let dir = path.dirname(file);
+  while (dir.startsWith(REPO_ROOT) && dir !== REPO_ROOT) {
+    const pkgFile = path.join(dir, "package.json");
+    if (fs.existsSync(pkgFile)) {
+      const name = (readJson(pkgFile) as { name?: string }).name;
+      return typeof name === "string" ? name : null;
+    }
+    dir = path.dirname(dir);
+  }
+  return null;
+}
+
+function docsConfig(config: RegistryConfig): CatalogDocsConfig {
+  const history = config.docs?.history ?? {};
+  return {
+    history: {
+      enabled: history.enabled !== false,
+      keep: history.keep ?? "all",
+    },
+    themeBuilder: config.docs?.themeBuilder !== false,
   };
 }
 
@@ -179,19 +257,75 @@ function designLinks(
   return links;
 }
 
-function siteFromConfig(config: RegistryConfig): CatalogSite {
-  return {
-    title: config.site.title,
-    description: config.site.description ?? null,
-    logo: config.site.logo ?? null,
-    primaryColor: config.site.primaryColor ?? null,
-    links: config.site.links ?? [],
-    embedDesigns: config.site.embedDesigns === true,
-    design:
-      config.site.design === undefined
-        ? null
-        : designLink(config.site.design, config.scope, "Design system"),
+function siteFromConfig(
+  config: RegistryConfig,
+  context: { hasDocs: boolean },
+  warnings: string[],
+): CatalogSite {
+  const { site } = config;
+  const asset = (key: string, value: string | undefined) => {
+    const resolved = resolveAsset(`site.${key}`, value, repoFileExists);
+    if (resolved?.warning) warnings.push(resolved.warning);
+    return resolved?.url ?? null;
   };
+  const description = site.description ?? null;
+  const theme = themeSeeds(site);
+  if (site.theme?.primary && site.primaryColor)
+    warnings.push("site.primaryColor is ignored because site.theme.primary is set; remove one.");
+  return {
+    title: site.title,
+    description,
+    logo: asset("logo", site.logo),
+    logoDark: asset("logoDark", site.logoDark),
+    favicon: asset("favicon", site.favicon),
+    icons: {
+      apple: asset("icons.apple", site.icons?.apple),
+      png192: asset("icons.png192", site.icons?.png192),
+      png512: asset("icons.png512", site.icons?.png512),
+    },
+    themeColor: site.themeColor ?? theme?.primary ?? null,
+    headerTheme: site.headerTheme === "dark" ? "dark" : "light",
+    theme,
+    fonts: {
+      body: site.fonts?.body?.family ?? null,
+      heading: site.fonts?.heading?.family ?? null,
+    },
+    hero: resolveHero(site.hero, { title: site.title, description }, {
+      primaryScope: config.scope,
+      hasDocs: context.hasDocs,
+    }),
+    links: site.links ?? [],
+    embedDesigns: site.embedDesigns === true,
+    design:
+      site.design === undefined
+        ? null
+        : designLink(site.design, config.scope, "Design system"),
+  };
+}
+
+/**
+ * src/generated/theme.css — every MD3 colour role for both schemes, from
+ * `site.theme` (or the older `primaryColor`). With neither configured the file
+ * is empty and the token sheet's own palette stands. The root layout imports
+ * it after the sheet, so cascade order does the theming.
+ */
+function writeTheme(seeds: ThemeSeeds | null): void {
+  const css = seeds
+    ? themeCss(
+        buildTheme(seeds),
+        `GENERATED by scripts/generate-catalog.ts from registry.config.json#site.theme (primary ${seeds.primary}, scheme ${seeds.scheme ?? "tonalspot"}) — do not edit.`,
+      )
+    : "/* No site.theme in registry.config.json: the token sheet's own palette stands. */\n";
+  fs.writeFileSync(path.join(OUT_DIR, "theme.css"), css);
+}
+
+/** src/generated/fonts.ts — see fontsModule(); problems fail the build with a readable list. */
+function writeFonts(fonts: FontsConfig | undefined): void {
+  const problems = fontProblems(fonts, repoFileExists);
+  if (problems.length > 0) {
+    throw new Error(`registry.config.json#site.fonts:\n  - ${problems.join("\n  - ")}`);
+  }
+  fs.writeFileSync(path.join(OUT_DIR, "fonts.ts"), fontsModule(fonts));
 }
 
 // ---------------------------------------------------------------------------
@@ -713,15 +847,24 @@ async function main() {
   // page; with none, the page and its nav link are hidden.
   const tokensScope = scopes.find((s) => s.tokensPath);
   const tokens = tokensScope
-    ? extractTokens(readText(path.join(REPO_ROOT, tokensScope.tokensPath!)))
+    ? {
+        path: tokensScope.tokensPath!,
+        packageName: packageAbove(path.join(REPO_ROOT, tokensScope.tokensPath!)),
+        ...extractTokens(readText(path.join(REPO_ROOT, tokensScope.tokensPath!))),
+      }
     : null;
+
+  const docs: DocsIndex = { pages: collectDocs() };
+  syncBranding();
+  const site = siteFromConfig(config, { hasDocs: docs.pages.length > 0 }, warnings);
 
   const catalog: Catalog = {
     generatedAt: new Date().toISOString(),
     primaryScope: config.scope,
     npmRegistry: config.npmRegistry,
     privateRegistry: config.privateRegistry ?? null,
-    site: siteFromConfig(config),
+    site,
+    docs: docsConfig(config),
     categories: CATEGORIES,
     scopes,
     components,
@@ -733,12 +876,12 @@ async function main() {
     path.join(OUT_DIR, "catalog.json"),
     `${JSON.stringify(catalog, null, 2)}\n`,
   );
-
-  const docs: DocsIndex = { pages: collectDocs() };
   fs.writeFileSync(
     path.join(OUT_DIR, "docs.json"),
     `${JSON.stringify(docs, null, 2)}\n`,
   );
+  writeTheme(site.theme);
+  writeFonts(config.site.fonts);
 
   // A real module with static imports, not a runtime `import()` by name: the
   // bundler has to see every import to include the package and its CSS.

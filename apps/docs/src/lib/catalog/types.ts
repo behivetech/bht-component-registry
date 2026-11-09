@@ -1,3 +1,6 @@
+import type { ResolvedHero } from "../branding";
+import type { ThemeSeeds } from "../theme/scheme";
+
 /**
  * The shape of `src/generated/catalog.json`, produced at build time by
  * scripts/generate-catalog.ts from the registry's folder tree.
@@ -135,6 +138,10 @@ export interface CatalogComponent {
 }
 
 export interface CatalogTokens {
+  /** Repo-relative path of the sheet the scope declared. */
+  path: string;
+  /** The npm package the sheet ships in (the nearest package.json above it), for install instructions; null outside a package. */
+  packageName: string | null;
   colorRoles: { role: string; light: string; dark: string }[];
   typescale: {
     name: string;
@@ -159,8 +166,22 @@ export interface CatalogDesignLink {
 export interface CatalogSite {
   title: string;
   description: string | null;
+  /** Header logo URL (from branding/, an absolute URL, or the legacy public/ path); null shows the title as text. */
   logo: string | null;
-  primaryColor: string | null;
+  /** A logo for dark surfaces; falls back to `logo`. */
+  logoDark: string | null;
+  /** `<link rel="icon">`; null keeps the app's default /favicon.ico. */
+  favicon: string | null;
+  icons: { apple: string | null; png192: string | null; png512: string | null };
+  /** `<meta name="theme-color">`; defaults to the theme's primary seed. */
+  themeColor: string | null;
+  /** "dark" renders the header on the dark scheme's surface in both colour schemes (for a light wordmark). */
+  headerTheme: "light" | "dark";
+  /** The seeds src/generated/theme.css was built from; null when the token sheet's palette stands. */
+  theme: ThemeSeeds | null;
+  /** Configured font families per slot, for display; the faces themselves load through src/generated/fonts.ts. */
+  fonts: { body: string | null; heading: string | null };
+  hero: ResolvedHero;
   links: { label: string; href: string }[];
   /** Show Figma links as embedded frames (a third-party iframe; the file must be visible to the viewer). Off by default. */
   embedDesigns: boolean;
@@ -193,6 +214,17 @@ export interface DocsIndex {
   pages: DocPage[];
 }
 
+/** Docs-site behaviour from registry.config.json#docs, with defaults applied. */
+export interface CatalogDocsConfig {
+  history: {
+    enabled: boolean;
+    /** How many snapshots per component the site keeps: every one, the last N, or one per older major. */
+    keep: "all" | "majors" | number;
+  };
+  /** Whether the /theme builder page and its header link are built. */
+  themeBuilder: boolean;
+}
+
 export interface Catalog {
   generatedAt: string;
   /** The primary scope from registry.config.json. */
@@ -202,6 +234,7 @@ export interface Catalog {
   /** Where private packages publish, from registry.config.json; null when the registry has none. */
   privateRegistry: string | null;
   site: CatalogSite;
+  docs: CatalogDocsConfig;
   categories: { key: string; label: string }[];
   scopes: CatalogScope[];
   components: CatalogComponent[];

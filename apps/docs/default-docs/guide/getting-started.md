@@ -75,11 +75,13 @@ my-registry/
 ├─ apps/docs/                 the docs site (Next.js, static export to apps/docs/out)
 │  ├─ default-docs/           the template's guide pages (a same-path file under docs/ overrides one)
 │  ├─ scripts/generate-catalog.ts   builds the catalog before dev and build
-│  ├─ src/app/(site)/         home, [scope], [scope]/[category]/[name]/<tab>, tokens, not-found
+│  ├─ src/app/                home, [scope], [scope]/[category]/[name]/<tab> (and /v/<version>), tokens, theme, docs, not-found
 │  ├─ src/components/docs/    live examples, markdown, props table, catalog cards
 │  ├─ src/lib/catalog/        typed access to the generated catalog, README/CHANGELOG parsing
 │  └─ e2e/                    Playwright specs against the static build
+├─ branding/                  your logo, icons and fonts (never touched by update; see Branding)
 ├─ docs/                      your pages for the site's Docs section (never touched by update)
+├─ docs-history/              docs snapshots per released component version, written by pnpm version-packages
 ├─ packages/
 │  ├─ env/                    shared tsup config and the bht-registry-docgen bin
 │  ├─ class-names/            getClassName() used by the component template
@@ -94,7 +96,7 @@ my-registry/
 ├─ generators/                your own generators; update never touches them
 ├─ .changeset/                Changesets config and pending changesets
 ├─ .github/workflows/         ci.yml (verify + e2e), release.yml (changesets publish)
-├─ registry.config.json       scope, npmRegistry, templateVersion, site branding
+├─ registry.config.json       scope, npmRegistry, templateVersion, site branding, docs options
 ├─ template.manifest.json     the paths `update` is allowed to replace
 ├─ Dockerfile, nginx.conf     serve apps/docs/out from a container
 └─ pnpm-workspace.yaml, package.json, vitest.config.ts
