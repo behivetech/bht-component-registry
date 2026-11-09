@@ -45,7 +45,7 @@ Made with Bruce over a long planning session; the full plan is in
 - **Everything public is `bht`-prefixed**: `create-bht-component-registry`,
   `bht-registry-docgen`; workspace-only packages are `@bht-component-registry/*`; anything
   published later under Behive's name is `@behivetech/bht-*`.
-- **Branding without code**: `registry.config.json#site` (title, description, logo,
+- **Branding without code**: `registry.config.json#site` plus the owner's `branding/` folder (title, description, logo,
   primaryColor, links). Status and tags live in each package's `registry` field.
 - **CI is one deletable file** (`.github/workflows/ci.yml`); testing in CI is the client's
   choice. The template repo itself keeps it green.
@@ -148,10 +148,13 @@ Verified locally on 2026-10-07:
    `git push --follow-tags`.
 4. **Platform repo (round two)**: pages `/docs`, `/services`, `/expanded` on
    platform.behivetech.com; this repo's README and footer already link to them.
-5. **Round three**: per-version docs with live examples. With self-describing tarballs, old
-   versions come from the registry (versions + tarballs); serve each version's `dist` as
-   ESM and pin React with an import map. Then extract the docs engine into
-   `@behivetech/bht-registry-docs` so both repos consume it (today it is a copy; see drift).
+5. **Round three, done as snapshots (2026-11)**: per-version docs come from `docs-history/`,
+   written by `pnpm version-packages` (see `guide/versioned-docs.md`), not from the registry's
+   tarballs: no token, no network, works on a shallow clone. Old versions show static
+   examples; live examples for old versions (each version's `dist` as ESM, React pinned with
+   an import map) remain a possible later step. Extracting the docs engine into
+   `@behivetech/bht-registry-docs` so both repos consume it is still open (today it is a
+   copy; see drift).
 6. **Later**: `pnpm component:remove <pkg>`; the hosted reader (per-scope read token,
    release-workflow notify to `/api/published`, waitlist + billing) lives in the
    platform repo.

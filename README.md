@@ -37,6 +37,7 @@ Then set `scope` in `registry.config.json`, rename `registry/example` to your sc
 - `*.example.tsx` exports become live, editable examples and the catalog thumbnails.
 - A props table built by react-docgen-typescript from the TypeScript interface and its JSDoc.
 - The Changelog tab is the package's `CHANGELOG.md`, written by Changesets.
+- Docs for every released version: `pnpm version-packages` snapshots each bumped component's README, props, examples and source into `docs-history/`, and the component page gets a version switcher with a permalink per version.
 - Status (`stable`, `beta`, `draft`, `deprecated`) and tags per component, from `package.json`.
 - An optional design tokens page from a scope's `tokens.scss`, and a theme builder at `/theme`: pick seed colours, every Material Design 3 role regenerates for light and dark, edit roles by hand, download the CSS.
 - Branding from `registry.config.json` and a `branding/` folder: logo, icons, colours (seeds, not a palette to maintain), self-hosted fonts, a dark header, the home-page hero. Nothing of it is template-owned.
@@ -49,7 +50,7 @@ Then set `scope` in `registry.config.json`, rename `registry/example` to your sc
 - The folder tree is the registry: `registry/<scope>/<category>/<name>` is the npm package `@<scope>/<category>.<name>`.
 - Before every `dev` and `build`, `apps/docs/scripts/generate-catalog.ts` reads every package (README, examples, source, CHANGELOG, `package.json`) and writes a catalog the pages are generated from.
 - Each component's build runs `tsup` and then `bht-registry-docgen`, which writes `docs.json` into the package, so a published tarball describes itself.
-- Changesets owns versions: `pnpm changeset`, `pnpm version-packages`, `pnpm release`.
+- Changesets owns versions: `pnpm changeset`, `pnpm version-packages`, `pnpm release`. Versioning also writes the docs snapshot for each bumped component, so a version's docs land in the same commit as its bump.
 - `registry.config.json` holds the scope, the npm registry, the site branding and the docs options. It is committed and contains no secrets. Brand files live in `branding/`.
 
 ## Guides
@@ -59,6 +60,7 @@ Then set `scope` in `registry.config.json`, rename `registry/example` to your sc
 - [Branding](apps/docs/default-docs/guide/branding.md): logo, icons, colours, fonts and the hero from `registry.config.json` and `branding/`.
 - [Scopes](apps/docs/default-docs/guide/scopes.md): the one-scope rule, `registry.config.json` key by key, `scope.json`, creating the npm org, multiple scopes.
 - [Publishing](apps/docs/default-docs/guide/publishing.md): the Changesets flow, npmjs, GitHub Packages and private registries, what a tarball contains, the release workflow.
+- [Versioned docs](apps/docs/default-docs/guide/versioned-docs.md): a docs page per released version, how snapshots are written, seeding an existing registry, the keep policy.
 - [Deploy](apps/docs/default-docs/guide/deploy.md): Vercel, Netlify, Cloudflare Pages, any static host, Docker and nginx.
 - [Updating](apps/docs/default-docs/guide/updating.md): `npx create-bht-component-registry update`, what it touches and never touches.
 - [Adopting](apps/docs/default-docs/guide/adopting.md): add the registry to a monorepo you already have: what to copy, the build order, what `create` and `update` do not cover.

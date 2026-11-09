@@ -37,7 +37,9 @@
     "docs-history/**"
   ],
   "templateOnly": [
-    "packages/create-bht-component-registry/**"
+    "packages/create-bht-component-registry/**",
+    "docs-history/example/**",
+    "apps/docs/e2e/history.spec.ts"
   ],
   "readmeMarker": "<!-- your notes below this line are kept by update -->",
   "rewriteScope": [

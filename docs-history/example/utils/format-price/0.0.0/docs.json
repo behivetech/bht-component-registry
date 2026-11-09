@@ -1,0 +1,34 @@
+{
+  "$schema": "https://github.com/behivetech/bht-component-registry/docs.schema.json",
+  "version": 2,
+  "generatedAt": "2026-11-09T17:49:48.861Z",
+  "docs": [],
+  "functions": [
+    {
+      "name": "formatPrice",
+      "kind": "function",
+      "description": "TODO: Describe the function in one or two sentences. This JSDoc, the\n`@param`, `@returns` and `@example` tags, and the TypeScript signature are\nwhat the docs site shows for it — nothing is written by hand elsewhere.",
+      "signatures": [
+        {
+          "text": "formatPrice(value: string): string",
+          "params": [
+            {
+              "name": "value",
+              "type": "string",
+              "optional": false,
+              "defaultValue": null,
+              "description": "The input to transform."
+            }
+          ],
+          "returns": {
+            "type": "string",
+            "description": "The input, transformed."
+          }
+        }
+      ],
+      "examples": [
+        "formatPrice('hello'); // → 'Hello'"
+      ]
+    }
+  ]
+}

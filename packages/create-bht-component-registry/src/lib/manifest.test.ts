@@ -35,6 +35,14 @@ describe("globToRegExp", () => {
 });
 
 describe("isTemplateOwned", () => {
+  it("never owns the owner's branding or docs history, and keeps the example history template-only", () => {
+    expect(isTemplateOwned("branding/logo.svg", DEFAULT_MANIFEST)).toBe(false);
+    expect(isTemplateOwned("docs-history/acme/atoms/button/1.2.0/README.md", DEFAULT_MANIFEST)).toBe(false);
+    expect(isTemplateOnly("docs-history/example/atoms/price-tag/0.0.0/README.md", DEFAULT_MANIFEST)).toBe(true);
+    expect(isTemplateOnly("apps/docs/e2e/history.spec.ts", DEFAULT_MANIFEST)).toBe(true);
+    expect(isTemplateOnly("apps/docs/e2e/public.spec.ts", DEFAULT_MANIFEST)).toBe(false);
+  });
+
   it("owns the docs app and the shared packages", () => {
     expect(isTemplateOwned("apps/docs/src/app/page.tsx", DEFAULT_MANIFEST)).toBe(true);
     expect(isTemplateOwned("packages/scope/src/index.ts", DEFAULT_MANIFEST)).toBe(true);

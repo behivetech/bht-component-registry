@@ -139,6 +139,10 @@ Component packages run `vitest run` with no config of their own. Vitest walks up
 - **CI.** `pnpm verify` or your runner's equivalent. The build command hosts need stays `pnpm build` (or `pnpm --filter "docs..." run build`) with the output directory `apps/docs/out`. See [Deploy](deploy.md).
 - **Docker.** The shipped `Dockerfile` copies the whole repo into the build stage, which is fine; only `apps/docs/out` reaches the runtime image.
 
+## Docs for the versions you already released
+
+The site keeps a docs page per released version from the first `pnpm version-packages` after adopting on. Versions released before that have no snapshot; `pnpm snapshot-docs --all` starts the history at the current versions. See [Versioned docs](versioned-docs.md).
+
 ## What `create` and `update` do not cover here
 
 `create` only scaffolds a whole repo. `update` replaces every path in `template.manifest.json#owned`, which includes the root `package.json`, `pnpm-workspace.yaml`, `.gitignore`, `CLAUDE.md`, the Dockerfile and the workflows. In a shared root that is destructive, so do not run it.

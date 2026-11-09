@@ -26,6 +26,14 @@ pnpm test:e2e
 
 If you change how the site or the tooling behaves, update the matching guide page in `apps/docs/default-docs/guide/` in the same pull request. (`docs/` at the root belongs to the owner of a created registry; the template keeps nothing there.)
 
+## The example scope's docs history
+
+`docs-history/example/**` is the template's own e2e fixture for versioned docs (`apps/docs/e2e/history.spec.ts` reads it); both are `templateOnly` in `template.manifest.json`, so a created registry starts with no history. When the example packages change, regenerate it:
+
+```bash
+pnpm snapshot-docs --all --include-private --force
+```
+
 ## Commits
 
 Conventional subject lines: `feat(docs): …`, `fix(gen): …`, `docs: …`, `chore: …`, `test(e2e): …`. Short imperative subject, body only when the why is not obvious.

@@ -133,6 +133,8 @@ export interface CatalogComponent {
   visibility: "public" | "private";
   /** Repo-relative folder, e.g. "registry/acme/atoms/price-tag". */
   sourcePath: string;
+  /** Versions with a docs snapshot under docs-history/, newest first; each has a page at /v/<version>. */
+  versions: string[];
   /** Workspace packages this one depends on, by package name. */
   dependencies: string[];
 }
@@ -213,6 +215,31 @@ export interface DocPage {
 export interface DocsIndex {
   pages: DocPage[];
 }
+
+/**
+ * One component at one released version: what docs-history/<…>/<version>/
+ * holds, parsed the same way as the live component. No live examples (only
+ * the current build exists), no export names, no sandbox.
+ */
+export interface HistoryEntry {
+  version: string;
+  /** ISO date the snapshot was written. */
+  date: string;
+  title: string;
+  summary: string;
+  readme: string;
+  status: CatalogStatus;
+  tags: string[];
+  docs: CatalogDocComponent[];
+  functions: CatalogDocFunction[];
+  examples: CatalogExample[];
+  files: CatalogSourceFile[];
+  /** The live CHANGELOG sliced at this version. */
+  releases: CatalogRelease[];
+}
+
+/** src/generated/history.json: package name → its snapshots, newest first. */
+export type HistoryIndex = Record<string, HistoryEntry[]>;
 
 /** Docs-site behaviour from registry.config.json#docs, with defaults applied. */
 export interface CatalogDocsConfig {

@@ -1,0 +1,41 @@
+.VersionSwitcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--md-sys-color-on-surface-variant);
+
+  // No snapshots: the plain version label the header always had.
+  &--static {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    padding: 0.125rem 0.5rem;
+    border-radius: 999px;
+    background: var(--md-sys-color-surface-container-high);
+  }
+
+  &__label {
+    font-size: 0.8125rem;
+  }
+
+  &__select {
+    font: inherit;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.875rem;
+    color: var(--md-sys-color-on-surface);
+    background: var(--md-sys-color-surface-container-high);
+    border: 1px solid transparent;
+    border-radius: 999px;
+    padding: 0.25rem 0.75rem;
+    min-height: 2rem;
+    cursor: pointer;
+
+    &:hover {
+      border-color: var(--md-sys-color-outline-variant);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--md-sys-color-primary);
+      outline-offset: 2px;
+    }
+  }
+}

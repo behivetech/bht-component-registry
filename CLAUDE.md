@@ -22,13 +22,19 @@ replaced by `npx create-bht-component-registry update`.
 - `registry/<scope>/` — `scope.json` plus one package per component. `registry/example` is the shipped example; deleting it must not break the build.
 - `plopfile.ts` + `scripts/generators/<name>/{index.ts,templates/}` — `pnpm gen` is plop, launched as its docs say for TypeScript (`NODE_OPTIONS="--import tsx" plop --plopfile=plopfile.ts`): `component`, `hook`, `util`, `doc`, `generator`; shared prompts/helpers in `scripts/generators/shared.ts`. The owner's own generators go in `generators/<name>/` (never template-owned); both folders are auto-loaded. Stay within plop's documented API (plopjs.com) — no hand-rolled rendering.
 - `branding/` — the owner's logo, icons and fonts, named from `registry.config.json#site`; never template-owned.
+- `docs-history/<scope>/<category>/<name>/<version>/` — the docs snapshot of each released version (README, source, examples,
+  `docs.json`, `snapshot.json`), written by `apps/docs/scripts/snapshot-docs.ts` as the last step of `pnpm version-packages`
+  and read by the generator into `src/generated/history.json`; the pages live at `src/app/[scope]/[category]/[name]/**/v/[version]/`
+  (the version is the last URL segment, dots as underscores). Never template-owned; `docs-history/example/**` is the template's
+  own e2e fixture and `templateOnly`.
 - `registry.config.json` — scope, `npmRegistry`, `templateVersion`, `site` branding, `docs` options. Committed, non-secret, validated by `registry.config.schema.json`. A new `site.*` or `docs.*` key is added to the schema (with a description) and to the table in `guide/scopes.md` in the same commit.
 
 ## Commands (root package scripts; a plain pnpm workspace, no task runner)
 
 `pnpm dev` · `pnpm build` · `pnpm serve` · `pnpm verify` (build, then lint+types+unit)
 · `pnpm test:e2e` (Playwright against the static build) · `pnpm gen [component <scope> <category> <name>]`
-· `pnpm changeset` / `pnpm version-packages` / `pnpm release`.
+· `pnpm changeset` / `pnpm version-packages` (bumps, changelogs, then `pnpm snapshot-docs`) / `pnpm release`
+· `pnpm snapshot-docs [--all] [--force] [--include-private] [--dry-run]`.
 
 ## Rules
 

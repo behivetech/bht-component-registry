@@ -39,7 +39,11 @@ import type {
   CatalogStatus,
   DocPage,
   DocsIndex,
+  HistoryEntry,
+  HistoryIndex,
 } from "../src/lib/catalog/types";
+import { releasesUpTo, sortVersionsDesc, VERSION } from "../src/lib/catalog/history";
+import { SNAPSHOT_META_FILE, historyDir, type SnapshotMeta } from "./lib/registry-entries";
 import {
   fontProblems,
   fontsModule,
@@ -510,6 +514,7 @@ function sourceFiles(dir: string): CatalogSourceFile[] {
     "CHANGELOG.md",
     "README.md",
     "docs.json",
+    SNAPSHOT_META_FILE,
   ]);
   return fs
     .readdirSync(dir)
@@ -538,6 +543,80 @@ function sourceFiles(dir: string): CatalogSourceFile[] {
       language: LANGUAGE[path.extname(f)]!,
       content: fs.readFileSync(path.join(dir, f), "utf8"),
     }));
+}
+
+// ---------------------------------------------------------------------------
+// docs-history/<scope>/<category>/<name>/<version>/ — docs per released version
+// ---------------------------------------------------------------------------
+
+const HISTORY_DIR = path.join(REPO_ROOT, "docs-history");
+
+/**
+ * The snapshots of one component, newest first, each parsed like the live
+ * package (README, examples, source files, docs.json) with the live CHANGELOG
+ * sliced at its version. Written by scripts/snapshot-docs.ts; see the
+ * Versioned docs guide.
+ */
+function readHistory(
+  component: Pick<CatalogComponent, "scope" | "category" | "name" | "releases" | "packageName">,
+  warnings: string[],
+): HistoryEntry[] {
+  const dir = historyDir(REPO_ROOT, component);
+  if (!fs.existsSync(dir)) return [];
+  const versions = fs.readdirSync(dir).filter((v) => VERSION.test(v) && fs.statSync(path.join(dir, v)).isDirectory());
+  return sortVersionsDesc(versions).flatMap((version) => {
+    const snapshotDir = path.join(dir, version);
+    const metaFile = path.join(snapshotDir, SNAPSHOT_META_FILE);
+    if (!fs.existsSync(metaFile)) {
+      warnings.push(`${path.relative(REPO_ROOT, snapshotDir)}: no ${SNAPSHOT_META_FILE}; not a snapshot — skipped`);
+      return [];
+    }
+    const meta = readJson(metaFile) as SnapshotMeta;
+    const readme = readText(path.join(snapshotDir, "README.md"));
+    const docsFile = path.join(snapshotDir, "docs.json");
+    const docsJson = fs.existsSync(docsFile)
+      ? (readJson(docsFile) as { docs?: HistoryEntry["docs"]; functions?: HistoryEntry["functions"] })
+      : {};
+    const examples = fs
+      .readdirSync(snapshotDir)
+      .filter((f) => f.endsWith(".example.tsx"))
+      .flatMap((f) => extractExamples(path.join(snapshotDir, f)));
+    const upper = String(meta.status ?? "stable").toUpperCase() as CatalogStatus;
+    return [
+      {
+        version,
+        date: meta.date,
+        title: humanizeTitle(readmeTitle(readme) ?? toTitle(component.name)),
+        summary: readmeSummary(readme) || docsJson.docs?.[0]?.description || "",
+        readme: stripTitle(readme),
+        status: STATUSES.has(upper) ? upper : "STABLE",
+        tags: Array.isArray(meta.tags) ? meta.tags : [],
+        docs: docsJson.docs ?? [],
+        functions: docsJson.functions ?? [],
+        examples,
+        files: sourceFiles(snapshotDir),
+        releases: releasesUpTo(component.releases, version),
+      },
+    ];
+  });
+}
+
+/** Snapshot folders whose component no longer exists: harmless, but worth a line. */
+function orphanHistory(components: CatalogComponent[], warnings: string[]): void {
+  if (!fs.existsSync(HISTORY_DIR)) return;
+  const known = new Set(components.map((c) => `${c.scope}/${c.category}/${c.name}`));
+  for (const scope of fs.readdirSync(HISTORY_DIR)) {
+    const scopeDir = path.join(HISTORY_DIR, scope);
+    if (!fs.statSync(scopeDir).isDirectory()) continue;
+    for (const category of fs.readdirSync(scopeDir)) {
+      const categoryDir = path.join(scopeDir, category);
+      if (!fs.statSync(categoryDir).isDirectory()) continue;
+      for (const name of fs.readdirSync(categoryDir)) {
+        if (!known.has(`${scope}/${category}/${name}`))
+          warnings.push(`docs-history/${scope}/${category}/${name}: no such component in registry/ any more; delete the folder or restore the package`);
+      }
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -798,6 +877,7 @@ async function main() {
       functions,
       examples,
       files: sourceFiles(dir),
+      versions: [],
       releases: parseChangelog(readText(path.join(dir, "CHANGELOG.md"))),
       exportNames,
       hasStyles,
@@ -854,6 +934,19 @@ async function main() {
       }
     : null;
 
+  // Per-version docs: a HistoryEntry per snapshot folder, and the version list
+  // on the component so pages and the switcher know what exists.
+  const docsOptions = docsConfig(config);
+  const history: HistoryIndex = {};
+  if (docsOptions.history.enabled) {
+    for (const component of components) {
+      const entries = readHistory(component, warnings);
+      if (entries.length > 0) history[component.packageName] = entries;
+      component.versions = entries.map((e) => e.version);
+    }
+    orphanHistory(components, warnings);
+  }
+
   const docs: DocsIndex = { pages: collectDocs() };
   syncBranding();
   const site = siteFromConfig(config, { hasDocs: docs.pages.length > 0 }, warnings);
@@ -864,7 +957,7 @@ async function main() {
     npmRegistry: config.npmRegistry,
     privateRegistry: config.privateRegistry ?? null,
     site,
-    docs: docsConfig(config),
+    docs: docsOptions,
     categories: CATEGORIES,
     scopes,
     components,
@@ -879,6 +972,10 @@ async function main() {
   fs.writeFileSync(
     path.join(OUT_DIR, "docs.json"),
     `${JSON.stringify(docs, null, 2)}\n`,
+  );
+  fs.writeFileSync(
+    path.join(OUT_DIR, "history.json"),
+    `${JSON.stringify(history, null, 2)}\n`,
   );
   writeTheme(site.theme);
   writeFonts(config.site.fonts);
@@ -902,7 +999,7 @@ async function main() {
 
   const exampleCount = components.reduce((n, c) => n + c.examples.length, 0);
   console.log(
-    `catalog: ${scopes.length} scope(s), ${components.length} component(s), ${exampleCount} live example(s)${tokens ? ", tokens" : ""} — ${Date.now() - started}ms`,
+    `catalog: ${scopes.length} scope(s), ${components.length} component(s), ${exampleCount} live example(s), ${Object.values(history).reduce((n, h) => n + h.length, 0)} version snapshot(s)${tokens ? ", tokens" : ""} — ${Date.now() - started}ms`,
   );
   for (const warning of warnings) console.warn(`  ! ${warning}`);
   for (const failure of failures) console.warn(`  ! ${failure}`);

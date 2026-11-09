@@ -83,7 +83,15 @@ export const DEFAULT_MANIFEST: TemplateManifest = {
     "branding/**",
     "docs-history/**",
   ],
-  templateOnly: ["packages/create-bht-component-registry/**", ".github/ISSUE_TEMPLATE/**", ".github/PULL_REQUEST_TEMPLATE.md"],
+  // The example scope's docs-history and the e2e spec that reads it are the
+  // template's own test fixture: a created registry starts with no history.
+  templateOnly: [
+    "packages/create-bht-component-registry/**",
+    ".github/ISSUE_TEMPLATE/**",
+    ".github/PULL_REQUEST_TEMPLATE.md",
+    "docs-history/example/**",
+    "apps/docs/e2e/history.spec.ts",
+  ],
   readmeMarker: DEFAULT_README_MARKER,
   rewriteScope: ["apps/docs/e2e/public.spec.ts", "apps/docs/package.json", "docs/using-this-registry.md"],
 };

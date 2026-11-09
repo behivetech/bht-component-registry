@@ -68,9 +68,17 @@ The docs app imports every registry package so the Playground has them in scope.
 
 Yes; it is one value in `registry.config.json`. See [Publishing](publishing.md).
 
+## Can visitors read the docs of an older version?
+
+Yes. `pnpm version-packages` snapshots each bumped component's docs into `docs-history/`, and the site builds a page per version with a switcher in the component header. Run `pnpm snapshot-docs --all` once to start the history at the versions you have now. See [Versioned docs](versioned-docs.md).
+
+## Can I generate a colour theme for my own app from the registry?
+
+Yes. The `/theme` page runs the same Material Design 3 generator the site uses for its own colours: pick seeds, adjust roles, download `theme.css`. See [Design tokens](design-tokens.md).
+
 ## Does deleting a component delete its published versions?
 
-No. The folder is gone and the docs site no longer shows it, but published versions stay on the registry so existing consumers keep installing. Run `npm deprecate` if you want them warned. See [Components](components.md).
+No. The folder is gone and the docs site no longer shows it, but published versions stay on the registry so existing consumers keep installing. Run `npm deprecate` if you want them warned. See [Components](components.md). Its `docs-history/` folder stays too, until you delete it; the build only warns.
 
 ## How do I update to a newer template?
 

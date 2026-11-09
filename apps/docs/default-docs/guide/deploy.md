@@ -59,7 +59,7 @@ Upload `apps/docs/out` to the host or bucket. Then map not-found responses to `4
 - **GitHub Pages**: it serves a root `404.html` as the not-found page by default. Set the Pages source to a branch or an Actions upload of `apps/docs/out`.
 - **nginx or Apache on your own server**: see the `nginx.conf` at the repo root; the Apache equivalent is `ErrorDocument 404 /404.html`.
 
-Routes are extensionless (`/acme/atoms/button`) and the export writes `button.html`, so the host must try `$uri.html` as well. Most static hosts do this by default; for nginx the `try_files` line below does it.
+Routes are extensionless (`/acme/atoms/button`) and the export writes `button.html`, so the host must try `$uri.html` as well. Most static hosts do this by default; for nginx the `try_files` line below does it. The pages of past versions (`/acme/atoms/button/v/1_2_0`, see [Versioned docs](versioned-docs.md)) are ordinary pages of this kind: the version is written without dots so no host mistakes it for a file extension.
 
 ## Docker
 
