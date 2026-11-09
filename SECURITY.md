@@ -6,7 +6,7 @@ Please report security issues privately through GitHub's private vulnerability r
 
 Include what you found, how to reproduce it and which version or commit you tested. You will get an acknowledgement within a few days and a fix or a plan as soon as we have one. We will credit you in the advisory unless you ask us not to.
 
-If you cannot use GitHub, contact Behive Tech through https://platform.behivetech.com.
+If you cannot use GitHub, contact BEhive Tech through https://platform.behivetech.com.
 
 ## What this project does and does not handle
 

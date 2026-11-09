@@ -1,4 +1,6 @@
-# Every pull request needs an approving review from a code owner before it
-# merges; the branch ruleset on main requires it. Behive Tech members work on
-# branches here, everyone else forks and opens a pull request (CONTRIBUTING.md).
-*  @behivetech/maintainers
+# Every pull request needs an approving review from the code owner before it
+# merges; the branch ruleset on main requires it. The repository lives under a
+# personal account, which has no teams, so the owner account is named.
+# Collaborators work on branches here, everyone else forks and opens a pull
+# request (CONTRIBUTING.md).
+*  @behivetech

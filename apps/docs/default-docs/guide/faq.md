@@ -112,11 +112,11 @@ Your repo stays the source and your npm registry stays the publish target; stand
 
 ## I found a bug in the template itself. Where does the fix go?
 
-In the template repository, https://github.com/behivetech/bht-component-registry: fork it, branch on the fork, open a pull request against `main`. CI runs on fork pull requests without any secrets, and a code owner reviews before it merges. [CONTRIBUTING.md](https://github.com/behivetech/bht-component-registry/blob/main/CONTRIBUTING.md) there has the setup and the conventions. Your registry picks the fix up with `npx create-bht-component-registry update` once it is released.
+In the template repository, https://github.com/behivetech/bht-component-registry: fork it, branch on the fork, open a pull request against `main`. CI runs on fork pull requests without any secrets, and the code owner reviews before it merges. [CONTRIBUTING.md](https://github.com/behivetech/bht-component-registry/blob/main/CONTRIBUTING.md) there has the setup and the conventions. Your registry picks the fix up with `npx create-bht-component-registry update` once it is released.
 
 ## Can someone build this for us?
 
-Behive Tech offers consulting on component libraries, design systems and this registry: https://platform.behivetech.com/services.
+BEhive Tech offers consulting on component libraries, design systems and this registry: https://platform.behivetech.com/services.
 
 ## Related
 

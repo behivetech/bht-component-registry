@@ -5,7 +5,7 @@ A component registry that stays in git. One npm package per component, docs gene
 [![CI](https://github.com/behivetech/bht-component-registry/actions/workflows/ci.yml/badge.svg)](https://github.com/behivetech/bht-component-registry/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Made by [Behive Tech](https://platform.behivetech.com). This repo is the open version; the guide is in [the guide](apps/docs/default-docs/guide/getting-started.md) and on every registry's own site under `/docs`. An [expanded version](apps/docs/default-docs/guide/expanded.md) with a dashboard, roles and an audit log is available through consulting.
+Made by [BEhive Tech](https://platform.behivetech.com). This repo is the open version; the guide is in [the guide](apps/docs/default-docs/guide/getting-started.md) and on every registry's own site under `/docs`. An [expanded version](apps/docs/default-docs/guide/expanded.md) with a dashboard, roles and an audit log is available through consulting.
 
 ## Quick start
 
@@ -76,13 +76,13 @@ The same registry with a workspace for the team on top: a dashboard, status/tags
 
 ## Consulting
 
-Behive Tech builds and runs component libraries and design systems for teams: https://platform.behivetech.com.
+BEhive Tech builds and runs component libraries and design systems for teams: https://platform.behivetech.com.
 
 ## Contributing, security, licence, terms
 
-- [CONTRIBUTING.md](CONTRIBUTING.md) for how a change gets in (outside Behive Tech: fork and open a pull request; every pull request needs green CI and a code-owner review), setup, `pnpm verify`, commit and changeset conventions.
+- [CONTRIBUTING.md](CONTRIBUTING.md) for how a change gets in (not a collaborator: fork and open a pull request; every pull request needs green CI and the code owner's review), setup, `pnpm verify`, commit and changeset conventions.
 - [SECURITY.md](SECURITY.md) for reporting a vulnerability.
-- [MIT](LICENSE), copyright 2026 Behive Tech. Provided as is, without warranty — see [TERMS.md](TERMS.md).
+- [MIT](LICENSE), copyright 2026 BEhive Tech. Provided as is, without warranty — see [TERMS.md](TERMS.md).
 
 <!-- your notes below this line are kept by update -->
 

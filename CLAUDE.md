@@ -3,7 +3,7 @@
 A component registry that stays in git: one npm package per component at
 `registry/<scope>/<category>/<name>` (`@<scope>/<category>.<name>`), docs generated from source,
 a static Next.js export in `apps/docs/out` that deploys anywhere. No auth, no database, no required
-env vars. Public template by Behive Tech (https://platform.behivetech.com); MIT.
+env vars. Public template by BEhive Tech (https://platform.behivetech.com); MIT.
 
 Read `README.md` for the map and `apps/docs/default-docs/guide/*.md` for the guides. This file is template-owned and
 replaced by `npx create-bht-component-registry update`.

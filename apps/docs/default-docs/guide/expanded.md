@@ -27,6 +27,6 @@ The expanded version is a layer, not a replacement:
 
 ## Getting it
 
-The expanded version is set up and configured for your team by Behive Tech as a consulting engagement: installation on your infrastructure, SSO wired to your provider, your existing components and metadata carried over, and a session for the people who will maintain it. Ask at [behivetech.com](https://platform.behivetech.com).
+The expanded version is set up and configured for your team by BEhive Tech as a consulting engagement: installation on your infrastructure, SSO wired to your provider, your existing components and metadata carried over, and a session for the people who will maintain it. Ask at [behivetech.com](https://platform.behivetech.com).
 
 Engagements, support and updates for the expanded version are governed by a separate written agreement; nothing on this page or in this repository is an offer of them. See [Terms](terms.md).
