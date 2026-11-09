@@ -22,11 +22,10 @@
       var(--site-body-face, var(--font-inter))
     ),
     system-ui, sans-serif;
+  // The sheet derives every per-size font token from these two: body, label
+  // and title from `body-font`; headline and display from `heading-font`.
   --md-sys-typescale-body-font: var(--site-font-body);
-  --md-sys-typescale-label-font: var(--site-font-body);
-  --md-sys-typescale-title-font: var(--site-font-body);
-  --md-sys-typescale-headline-font: var(--site-font-heading);
-  --md-sys-typescale-display-font: var(--site-font-heading);
+  --md-sys-typescale-heading-font: var(--site-font-heading);
 }
 
 // The live-preview frame (/sandbox) is a bare document: the embedding page
@@ -48,7 +47,7 @@ h3 {
   margin: 0 0 0.5rem;
   line-height: 1.2;
   color: var(--md-sys-color-on-surface);
-  font-family: var(--md-sys-typescale-headline-font);
+  font-family: var(--md-sys-typescale-heading-font);
 }
 
 p {
