@@ -2,6 +2,14 @@
 
 Thanks for helping with bht-component-registry. This file covers the template repo itself (the docs app, the tooling packages, the generator and the create CLI). If you are working in your own registry created from it, the [guides](apps/docs/default-docs/guide/getting-started.md) are what you want.
 
+## How a change gets in
+
+- **Members of the Behive Tech organisation** work on a branch in this repository and open a pull request against `main`.
+- **Everyone else forks the repository**, branches on the fork, and opens a pull request against `main` from there. That is the only way in: nobody pushes to this repository directly, and `main` takes no direct pushes from anyone.
+- Every pull request needs the CI checks green and an approving review from a code owner (`.github/CODEOWNERS`) before a maintainer squash-merges it. Review comments are conversations, not gates you can tick yourself.
+- CI needs no secrets, so it runs in full on a pull request from a fork. The release workflow runs only on `main` and never from a fork.
+- Keep a pull request to one change. A fix for the generator and a new guide page are two pull requests.
+
 ## Setup
 
 You need Node 22 or newer and pnpm (`corepack enable`).

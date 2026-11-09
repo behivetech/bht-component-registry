@@ -1,6 +1,6 @@
 ## What this changes
 
-<!-- One or two sentences. Link the issue if there is one. -->
+<!-- One or two sentences. Link the issue if there is one. Not a Behive Tech member? This should come from a fork; see CONTRIBUTING.md. -->
 
 ## Why
 

@@ -29,7 +29,7 @@ rather than working around it.
 The site's own buttons, cards, badges, tables, text fields, empty states and hero come from the
 published `@behivetech` components (pinned in `apps/docs/package.json`), with `@behivetech/cms.base-styles`
 as the token sheet. Do not copy a component into `apps/docs` or style a package's classes from the app;
-change the package. `globals.scss` holds only site-level theming (the configured primary colour).
+change the package. `globals.scss` holds only the site-level font wiring; the colours come from `src/generated/theme.css`, generated from `registry.config.json#site.theme`, and the owner's brand files live in `branding/` at the root (never under `apps/docs/public`).
 
 ## Class names are BEM through `getClassName`
 

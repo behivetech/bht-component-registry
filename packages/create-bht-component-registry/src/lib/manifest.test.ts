@@ -40,6 +40,7 @@ describe("isTemplateOwned", () => {
     expect(isTemplateOwned("docs-history/acme/atoms/button/1.2.0/README.md", DEFAULT_MANIFEST)).toBe(false);
     expect(isTemplateOnly("docs-history/example/atoms/price-tag/0.0.0/README.md", DEFAULT_MANIFEST)).toBe(true);
     expect(isTemplateOnly("apps/docs/e2e/history.spec.ts", DEFAULT_MANIFEST)).toBe(true);
+    expect(isTemplateOnly(".github/CODEOWNERS", DEFAULT_MANIFEST)).toBe(true);
     expect(isTemplateOnly("apps/docs/e2e/public.spec.ts", DEFAULT_MANIFEST)).toBe(false);
   });
 

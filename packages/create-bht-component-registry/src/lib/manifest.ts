@@ -85,10 +85,12 @@ export const DEFAULT_MANIFEST: TemplateManifest = {
   ],
   // The example scope's docs-history and the e2e spec that reads it are the
   // template's own test fixture: a created registry starts with no history.
+  // CODEOWNERS names the template's maintainers, like the issue and PR templates.
   templateOnly: [
     "packages/create-bht-component-registry/**",
     ".github/ISSUE_TEMPLATE/**",
     ".github/PULL_REQUEST_TEMPLATE.md",
+    ".github/CODEOWNERS",
     "docs-history/example/**",
     "apps/docs/e2e/history.spec.ts",
   ],

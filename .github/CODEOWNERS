@@ -1,0 +1,4 @@
+# Every pull request needs an approving review from a code owner before it
+# merges; the branch ruleset on main requires it. Behive Tech members work on
+# branches here, everyone else forks and opens a pull request (CONTRIBUTING.md).
+*  @behivetech/maintainers

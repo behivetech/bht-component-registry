@@ -80,7 +80,7 @@ Behive Tech builds and runs component libraries and design systems for teams: ht
 
 ## Contributing, security, licence, terms
 
-- [CONTRIBUTING.md](CONTRIBUTING.md) for setup, `pnpm verify`, commit and changeset conventions.
+- [CONTRIBUTING.md](CONTRIBUTING.md) for how a change gets in (outside Behive Tech: fork and open a pull request; every pull request needs green CI and a code-owner review), setup, `pnpm verify`, commit and changeset conventions.
 - [SECURITY.md](SECURITY.md) for reporting a vulnerability.
 - [MIT](LICENSE), copyright 2026 Behive Tech. Provided as is, without warranty — see [TERMS.md](TERMS.md).
 
