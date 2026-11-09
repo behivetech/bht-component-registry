@@ -34,10 +34,10 @@ Positional answers go through the same validation as typed ones. An invalid answ
 pnpm gen component acme atoms badge public none       # every answer given; nothing asked
 pnpm gen component acme _ badge                       # scope and name given; the rest asked
 pnpm gen doc -- --section=guide --pageTitle="Contributing" --preset=contributing
-pnpm gen doc . "Read me first" "" 1 blank             # "." = a top-level page; "" = no description
+pnpm gen doc . "Read me first" - 1 blank              # "." = a top-level page; "-" = no description
 ```
 
-Named answers you leave out are asked interactively, and an empty named value (`--description=`) counts as left out — pass `""` positionally when you mean "none". (Prompt names avoid Node's own flags — `--title` is one — because plop re-launches Node with any it finds.)
+Named answers you leave out are asked interactively, and an empty named value (`--description=`) counts as left out. An empty positional argument (`""`) does not reach plop at all (pnpm drops it), so an optional text answer takes `-` to mean "none". (Prompt names avoid Node's own flags — `--title` is one — because plop re-launches Node with any it finds.)
 
 ## Shipped generators
 
@@ -46,7 +46,7 @@ Named answers you leave out are asked interactively, and an empty named value (`
 | `component` | `registry/<scope>/<category>/<name>/` — a publishable package | scope, category, name, visibility (public, or private when `registry.config.json#privateRegistry` is set — permanent after the first release), design link (a Figma URL, or `none`) |
 | `hook` | `registry/<scope>/hooks/<name>/` — a React hook package, documented from its signature and JSDoc, with a live example from its `*.example.tsx` | scope, name (`use-…`), visibility |
 | `util` | `registry/<scope>/utils/<name>/` — a plain TypeScript function package, documented from its signature and JSDoc | scope, name, visibility |
-| `doc` | `docs/<section>/<slug>.md` — a Markdown page in your own folder (`update` never touches `docs/`), from a preset (`blank`, `contributing`, `standards`) | section, title, description, order, preset |
+| `doc` | `docs/<section>/<slug>.md` — a Markdown page in your own folder (`update` never touches `docs/`), from a preset: `blank`, `contributing`, `standards`, or `override` (your copy of a default guide page) and `hide` (a stub that removes one). See [Writing docs](writing-docs.md) | section, title, description (`-` for none), order, preset |
 | `generator` | `generators/<name>/` — a working skeleton to build your own from | name, description |
 
 ## Your own generator in a minute

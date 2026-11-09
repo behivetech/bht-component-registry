@@ -33,6 +33,7 @@ Then set `scope` in `registry.config.json`, rename `registry/example` to your sc
 ## What you get
 
 - A docs site per component with tabs as routes: Overview, Examples, Code, Playground, Changelog.
+- A Docs section for your own pages (`docs/`), on top of a default guide you can replace page by page or hide, written with `pnpm gen doc`.
 - The Overview is the component's `README.md`; its ```` ```jsx ```` and ```` ```tsx ```` blocks run live.
 - `*.example.tsx` exports become live, editable examples and the catalog thumbnails.
 - A props table built by react-docgen-typescript from the TypeScript interface and its JSDoc.
@@ -57,6 +58,7 @@ Then set `scope` in `registry.config.json`, rename `registry/example` to your sc
 
 - [Getting started](apps/docs/default-docs/guide/getting-started.md): create or clone, prerequisites, a tour of the repo.
 - [Components](apps/docs/default-docs/guide/components.md): the anatomy of a component folder, `pnpm gen`, README and example conventions, the props table, status and tags, removing a component.
+- [Writing docs](apps/docs/default-docs/guide/writing-docs.md): your pages under `docs/`, the default guide, replacing or hiding a default page, `pnpm gen doc`.
 - [Branding](apps/docs/default-docs/guide/branding.md): logo, icons, colours, fonts and the hero from `registry.config.json` and `branding/`.
 - [Scopes](apps/docs/default-docs/guide/scopes.md): the one-scope rule, `registry.config.json` key by key, `scope.json`, creating the npm org, multiple scopes.
 - [Publishing](apps/docs/default-docs/guide/publishing.md): the Changesets flow, npmjs, GitHub Packages and private registries, what a tarball contains, the release workflow.

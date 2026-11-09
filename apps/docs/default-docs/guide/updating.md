@@ -65,7 +65,7 @@ The pages you are reading ship under `apps/docs/default-docs/guide/` and are rep
 | `apps/docs/default-docs/guide/publishing.md` | the template's page; updated for you |
 | `docs/guide/publishing.md` | your copy; shown instead, never touched |
 
-So to make a guide page your own, copy it across and edit the copy. The default keeps updating underneath, so a later `git diff` between the two shows you what the template changed. To drop a default page from your site, override it with a page whose frontmatter says `hidden: true`. Pages with no default — your own, at any path under `docs/` — are simply yours.
+So to make a guide page your own, copy it across and edit the copy (`pnpm gen doc guide <page> - <order> override` does the copy). The default keeps updating underneath, so a later `git diff` between the two shows you what the template changed. To drop a default page from your site, override it with a page whose frontmatter says `hidden: true` (`pnpm gen doc guide <page> - <order> hide`). Pages with no default — your own, at any path under `docs/` — are simply yours. [Writing docs](writing-docs.md) has the whole picture: sections, frontmatter, links, the generator.
 
 Registries created from a template older than 0.3.0 kept the guide under `docs/*.md`. After the first update those files are plain pages of yours at the top level of the Docs section, next to the new defaults; delete them, or move the ones you edited to `docs/guide/<name>.md` so they override the matching default.
 

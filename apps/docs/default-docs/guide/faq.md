@@ -80,6 +80,10 @@ Yes. The `/theme` page runs the same Material Design 3 generator the site uses f
 
 No. The folder is gone and the docs site no longer shows it, but published versions stay on the registry so existing consumers keep installing. Run `npm deprecate` if you want them warned. See [Components](components.md). Its `docs-history/` folder stays too, until you delete it; the build only warns.
 
+## Can I add my own documentation pages, or change the guide?
+
+Yes. Pages under `docs/` at the repo root are yours and appear in the site's Docs section; a page at the same path as one of these default pages replaces it, and `hidden: true` removes one. `pnpm gen doc` writes them. See [Writing docs](writing-docs.md).
+
 ## How do I update to a newer template?
 
 ```bash

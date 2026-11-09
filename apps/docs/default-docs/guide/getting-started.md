@@ -73,7 +73,7 @@ pnpm dev
 ```
 my-registry/
 ├─ apps/docs/                 the docs site (Next.js, static export to apps/docs/out)
-│  ├─ default-docs/           the template's guide pages (a same-path file under docs/ overrides one)
+│  ├─ default-docs/           the template's guide pages (a same-path file under docs/ overrides one; see Writing docs)
 │  ├─ scripts/generate-catalog.ts   builds the catalog before dev and build
 │  ├─ src/app/                home, [scope], [scope]/[category]/[name]/<tab> (and /v/<version>), tokens, theme, docs, not-found
 │  ├─ src/components/docs/    live examples, markdown, props table, catalog cards

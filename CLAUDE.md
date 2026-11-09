@@ -62,7 +62,7 @@ replaced by `npx create-bht-component-registry update`.
   `scope.json#tokens`. Nothing is hardcoded to a scope name.
 - The component template (`package.json.hbs`) takes `publishConfig.registry` from `registry.config.json`,
   builds with `tsup && bht-registry-docgen`, and ships `dist`, `README.md`, `*.example.tsx`, `*.tsx`, `*.scss`, `docs.json`.
-- Keep the guide (`apps/docs/default-docs/guide/`) in step with behaviour: a change to commands, config keys, conventions or the CLI edits the matching page in the same commit. `docs/` at the root is the owner's folder: `update` never touches it, and a file there at the same relative path replaces the default page.
+- Keep the guide (`apps/docs/default-docs/guide/`) in step with behaviour: a change to commands, config keys, conventions or the CLI edits the matching page in the same commit. `docs/` at the root is the owner's folder: `update` never touches it, a file there at the same relative path replaces the default page, and `hidden: true` removes one (`pnpm gen doc … override|hide` writes both; the rule is documented once, in `guide/writing-docs.md`).
 - `update` must never touch `registry/**`, `registry.config.json` (except `templateVersion`), `.changeset/*.md`,
   or `README.md` below `<!-- your notes below this line are kept by update -->`.
 - `check-types` and `test` need upstream `dist/`: `pnpm verify` builds first; on a fresh clone run `pnpm build` before

@@ -14,7 +14,7 @@ pnpm gen                                   # the list, with a description of eac
 pnpm gen component <scope> <category> <name>
 pnpm gen hook <scope> <name>               # registry/<scope>/hooks/<name>, a React hook package
 pnpm gen util <scope> <name>               # registry/<scope>/utils/<name>, a plain function package
-pnpm gen doc <section> "<Page title>" "<description>" <order> <preset>
+pnpm gen doc <section> "<Page title>" <description|-> <order> <blank|contributing|standards|override|hide>
 pnpm gen generator <name>                  # a skeleton for a generator of your own
 ```
 
