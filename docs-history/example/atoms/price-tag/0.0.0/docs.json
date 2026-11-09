@@ -1,0 +1,56 @@
+{
+  "$schema": "https://github.com/behivetech/bht-component-registry/docs.schema.json",
+  "version": 2,
+  "docs": [
+    {
+      "displayName": "PriceTag",
+      "description": "A formatted price, with an optional \"was\" price and the percentage saved.\n\nFormatting goes through `Intl.NumberFormat`, so currency symbols, decimal\nrules and grouping follow the locale rather than being hand-rolled — 1 999 €\nin French, $1,999.00 in US English, ¥1,999 with no decimals in Japanese.",
+      "extendsNative": true,
+      "props": [
+        {
+          "name": "amount",
+          "type": "number",
+          "required": true,
+          "defaultValue": null,
+          "description": "The price to show, in major units (e.g. 19.99)"
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Additional class names to merge with the component root element"
+        },
+        {
+          "name": "compareAt",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "The previous price, when `amount` is a discount — rendered struck through with the saving"
+        },
+        {
+          "name": "currency",
+          "type": "string",
+          "required": false,
+          "defaultValue": "USD",
+          "description": "ISO 4217 currency code; defaults to USD"
+        },
+        {
+          "name": "locale",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "BCP 47 locale used for formatting; defaults to the browser's, then en-US"
+        },
+        {
+          "name": "size",
+          "type": "\"sm\" | \"md\" | \"lg\"",
+          "required": false,
+          "defaultValue": "md",
+          "description": "Controls the type size; defaults to md"
+        }
+      ]
+    }
+  ],
+  "functions": []
+}

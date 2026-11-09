@@ -70,8 +70,30 @@ export const DEFAULT_MANIFEST: TemplateManifest = {
   ],
   // docs/ is the owner's: their pages, and their copies of the template's
   // guide (which ships under apps/docs/default-docs/ and is owned with the app).
-  never: ["registry/**", "generators/**", "docs/**", "registry.config.json", ".changeset/*.md", "apps/docs/src/generated/**"],
-  templateOnly: ["packages/create-bht-component-registry/**", ".github/ISSUE_TEMPLATE/**", ".github/PULL_REQUEST_TEMPLATE.md"],
+  // branding/ holds the owner's logo, icons and fonts; docs-history/ the
+  // per-version docs snapshots `pnpm version-packages` writes. Both are data
+  // the site reads, never template code.
+  never: [
+    "registry/**",
+    "generators/**",
+    "docs/**",
+    "registry.config.json",
+    ".changeset/*.md",
+    "apps/docs/src/generated/**",
+    "branding/**",
+    "docs-history/**",
+  ],
+  // The example scope's docs-history and the e2e spec that reads it are the
+  // template's own test fixture: a created registry starts with no history.
+  // CODEOWNERS names the template's maintainers, like the issue and PR templates.
+  templateOnly: [
+    "packages/create-bht-component-registry/**",
+    ".github/ISSUE_TEMPLATE/**",
+    ".github/PULL_REQUEST_TEMPLATE.md",
+    ".github/CODEOWNERS",
+    "docs-history/example/**",
+    "apps/docs/e2e/history.spec.ts",
+  ],
   readmeMarker: DEFAULT_README_MARKER,
   rewriteScope: ["apps/docs/e2e/public.spec.ts", "apps/docs/package.json", "docs/using-this-registry.md"],
 };

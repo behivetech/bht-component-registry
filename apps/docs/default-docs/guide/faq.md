@@ -1,7 +1,7 @@
 ---
 title: FAQ
 description: Why no database, why a static export, and why git and npm rather than a vendor.
-order: 14
+order: 17
 ---
 
 # FAQ
@@ -46,9 +46,9 @@ Yes. Any folder under `registry/` is a scope. `registry.config.json#scope` names
 
 Set `"visibility": "private"` in its `scope.json`. It stays reachable at `/<scope>` but is not listed on the home page. A static site cannot restrict access; use it for in-progress scopes, not secrets.
 
-## How do I change the site's title, logo or colour?
+## How do I change the site's title, logo, icons, colours or fonts?
 
-Edit `registry.config.json#site`. No code changes are needed, and `update` leaves the file alone. See [Scopes](scopes.md).
+Edit `registry.config.json#site` and put the files it names (logo, favicon, fonts) in a `branding/` folder at the repo root. No code changes are needed, and `update` touches neither. Colours are seeds: the build generates the whole Material Design 3 palette from `site.theme`, and the `/theme` page lets you try seeds and download the result. See [Branding](branding.md).
 
 ## How do I set a component to beta or deprecated, or tag it?
 
@@ -68,9 +68,21 @@ The docs app imports every registry package so the Playground has them in scope.
 
 Yes; it is one value in `registry.config.json`. See [Publishing](publishing.md).
 
+## Can visitors read the docs of an older version?
+
+Yes. `pnpm version-packages` snapshots each bumped component's docs into `docs-history/`, and the site builds a page per version with a switcher in the component header. Run `pnpm snapshot-docs --all` once to start the history at the versions you have now. See [Versioned docs](versioned-docs.md).
+
+## Can I generate a colour theme for my own app from the registry?
+
+Yes. The `/theme` page runs the same Material Design 3 generator the site uses for its own colours: pick seeds, adjust roles, download `theme.css`. See [Design tokens](design-tokens.md).
+
 ## Does deleting a component delete its published versions?
 
-No. The folder is gone and the docs site no longer shows it, but published versions stay on the registry so existing consumers keep installing. Run `npm deprecate` if you want them warned. See [Components](components.md).
+No. The folder is gone and the docs site no longer shows it, but published versions stay on the registry so existing consumers keep installing. Run `npm deprecate` if you want them warned. See [Components](components.md). Its `docs-history/` folder stays too, until you delete it; the build only warns.
+
+## Can I add my own documentation pages, or change the guide?
+
+Yes. Pages under `docs/` at the repo root are yours and appear in the site's Docs section; a page at the same path as one of these default pages replaces it, and `hidden: true` removes one. `pnpm gen doc` writes them. See [Writing docs](writing-docs.md).
 
 ## How do I update to a newer template?
 
@@ -98,9 +110,13 @@ The same registry with a workspace for the team on top, running on your infrastr
 
 Your repo stays the source and your npm registry stays the publish target; standard keeps working unchanged underneath. If you stop using it, nothing in your repo changes. See [The expanded version](expanded.md).
 
+## I found a bug in the template itself. Where does the fix go?
+
+In the template repository, https://github.com/behivetech/bht-component-registry: fork it, branch on the fork, open a pull request against `main`. CI runs on fork pull requests without any secrets, and the code owner reviews before it merges. [CONTRIBUTING.md](https://github.com/behivetech/bht-component-registry/blob/main/CONTRIBUTING.md) there has the setup and the conventions. Your registry picks the fix up with `npx create-bht-component-registry update` once it is released.
+
 ## Can someone build this for us?
 
-Behive Tech offers consulting on component libraries, design systems and this registry: https://platform.behivetech.com/services.
+BEhive Tech offers consulting on component libraries, design systems and this registry: https://platform.behivetech.com/services.
 
 ## Related
 

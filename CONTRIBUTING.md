@@ -2,6 +2,14 @@
 
 Thanks for helping with bht-component-registry. This file covers the template repo itself (the docs app, the tooling packages, the generator and the create CLI). If you are working in your own registry created from it, the [guides](apps/docs/default-docs/guide/getting-started.md) are what you want.
 
+## How a change gets in
+
+- **Collaborators on this repository** work on a branch here and open a pull request against `main`.
+- **Everyone else forks the repository**, branches on the fork, and opens a pull request against `main` from there. That is the only way in: nobody pushes to this repository directly, and `main` takes no direct pushes from anyone.
+- Every pull request needs the CI checks green and an approving review from the code owner (`.github/CODEOWNERS`; the repository lives under a personal account, so it names the owner rather than a team) before a maintainer squash-merges it. Review comments are conversations, not gates you can tick yourself.
+- CI needs no secrets, so it runs in full on a pull request from a fork. The release workflow runs only on `main` and never from a fork.
+- Keep a pull request to one change. A fix for the generator and a new guide page are two pull requests.
+
 ## Setup
 
 You need Node 22 or newer and pnpm (`corepack enable`).
@@ -25,6 +33,14 @@ pnpm test:e2e
 `pnpm verify` runs build, lint, type checks and unit tests for every package. `pnpm test:e2e` builds the static export and runs Playwright against it (first time: `pnpm exec playwright install chromium`). Both run in CI as well; see [the testing guide](apps/docs/default-docs/guide/testing-and-ci.md).
 
 If you change how the site or the tooling behaves, update the matching guide page in `apps/docs/default-docs/guide/` in the same pull request. (`docs/` at the root belongs to the owner of a created registry; the template keeps nothing there.)
+
+## The example scope's docs history
+
+`docs-history/example/**` is the template's own e2e fixture for versioned docs (`apps/docs/e2e/history.spec.ts` reads it); both are `templateOnly` in `template.manifest.json`, so a created registry starts with no history. When the example packages change, regenerate it:
+
+```bash
+pnpm snapshot-docs --all --include-private --force
+```
 
 ## Commits
 

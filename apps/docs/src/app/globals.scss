@@ -2,40 +2,30 @@
 // components and every one of them reads `--md-sys-*` custom properties, so
 // the whole site re-themes by overriding a handful of roles. The sheet is the
 // one those components are built against.
+//
+// Colour is not set here: src/generated/theme.css (imported by the root layout
+// right after this file) carries every colour role for both schemes, generated
+// from registry.config.json#site.theme. With no theme configured that file is
+// empty and the sheet's own palette stands.
 @use "@behivetech/cms.base-styles/tokens.scss";
 
 :root {
-  // next/font loads Inter and exposes it on this variable; the tokens file
-  // names "Inter" directly, which would only work if the font were installed.
-  --md-sys-typescale-body-font: var(--font-inter), system-ui, sans-serif;
-  --md-sys-typescale-headline-font: var(--font-inter), system-ui, sans-serif;
-  --md-sys-typescale-title-font: var(--font-inter), system-ui, sans-serif;
-  --md-sys-typescale-label-font: var(--font-inter), system-ui, sans-serif;
-  --md-sys-typescale-display-font: var(--font-inter), system-ui, sans-serif;
-
-  // Configurable primary. The root layout sets `--site-primary` inline on
-  // <html> when registry.config.json names a `primaryColor`; without it the
-  // sheet's own primary (#64558f) stands. The container tint is derived from
-  // whichever primary is in effect so a brand color re-themes both at once.
-  --md-sys-color-primary: var(--site-primary, #64558f);
-  --md-sys-color-primary-container: color-mix(
-    in srgb,
-    var(--md-sys-color-primary) 22%,
-    white
-  );
-  --md-sys-color-on-primary-container: color-mix(
-    in srgb,
-    var(--md-sys-color-primary) 75%,
-    black
-  );
-
-  // The dark scheme needs a lighter primary (MD3 tone 80) under a dark label
-  // (tone 20). A configured colour is the light scheme's tone 40, far too dark
-  // to carry the dark scheme's label, so both are derived from it here in
-  // OKLCH, which keeps the hue. Without a configured colour these two are
-  // invalid and the dark blocks below fall back to the sheet's own pair.
-  --site-primary-dark: color-mix(in oklch, var(--site-primary) 50%, white);
-  --site-on-primary-dark: color-mix(in oklch, var(--site-primary) 60%, black);
+  // Fonts come in as CSS variables from src/generated/fonts.ts:
+  // `--site-body-face` and `--site-heading-face` when
+  // registry.config.json#site.fonts names faces, `--font-inter` (the
+  // template's default, self-hosted by next/font) always. The tokens file
+  // names "Inter" directly, which would only work installed. (The sheet's own
+  // `--font-body` is an alias of the body token, hence the distinct names.)
+  --site-font-body: var(--site-body-face, var(--font-inter)), system-ui, sans-serif;
+  --site-font-heading: var(
+      --site-heading-face,
+      var(--site-body-face, var(--font-inter))
+    ),
+    system-ui, sans-serif;
+  // The sheet derives every per-size font token from these two: body, label
+  // and title from `body-font`; headline and display from `heading-font`.
+  --md-sys-typescale-body-font: var(--site-font-body);
+  --md-sys-typescale-heading-font: var(--site-font-heading);
 }
 
 // The live-preview frame (/sandbox) is a bare document: the embedding page
@@ -45,42 +35,6 @@
 :root[data-sandbox] body {
   margin: 0;
   background: transparent;
-}
-
-// Dark scheme: the primary is the derived lighter tone (or the sheet's own
-// #cebdfe), its label the derived dark one, and the container roles are
-// re-derived toward black. These two blocks mirror the sheet's
-// own pair (OS preference unless forced light; or forced dark).
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --md-sys-color-primary: var(--site-primary-dark, #cebdfe);
-    --md-sys-color-on-primary: var(--site-on-primary-dark, #35275d);
-    --md-sys-color-primary-container: color-mix(
-      in srgb,
-      var(--md-sys-color-primary) 35%,
-      black
-    );
-    --md-sys-color-on-primary-container: color-mix(
-      in srgb,
-      var(--md-sys-color-primary) 30%,
-      white
-    );
-  }
-}
-
-:root[data-theme="dark"] {
-  --md-sys-color-primary: var(--site-primary-dark, #cebdfe);
-  --md-sys-color-on-primary: var(--site-on-primary-dark, #35275d);
-  --md-sys-color-primary-container: color-mix(
-    in srgb,
-    var(--md-sys-color-primary) 35%,
-    black
-  );
-  --md-sys-color-on-primary-container: color-mix(
-    in srgb,
-    var(--md-sys-color-primary) 30%,
-    white
-  );
 }
 
 a {
@@ -93,6 +47,7 @@ h3 {
   margin: 0 0 0.5rem;
   line-height: 1.2;
   color: var(--md-sys-color-on-surface);
+  font-family: var(--md-sys-typescale-heading-font);
 }
 
 p {

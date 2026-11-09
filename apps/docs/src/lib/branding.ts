@@ -1,0 +1,229 @@
+/**
+ * Branding helpers shared by the catalog generator (build time) and the
+ * site. Pure functions over `registry.config.json#site`, so they are unit
+ * tested here and the generator stays a thin loop.
+ *
+ * The owner's brand assets live in `branding/` at the repo root — a folder
+ * `update` never touches — and the generator copies that folder to
+ * `apps/docs/public/branding/` (gitignored) so the static export serves it
+ * at `/branding/<file>`.
+ */
+
+/** Where a resolved asset URL came from. */
+export type AssetSource = "branding" | "public" | "external";
+
+export interface ResolvedAsset {
+  url: string;
+  source: AssetSource;
+  /** A problem worth printing at build time; the URL is still returned. */
+  warning: string | null;
+}
+
+/**
+ * The URL for a `site.*` asset value:
+ * - `http(s)://…` or `data:` is used as is;
+ * - a leading `/` keeps the pre-0.7 meaning, a file under `apps/docs/public`
+ *   (warned about: `update` replaces that folder);
+ * - anything else is a file under `branding/`, served at `/branding/<path>`.
+ * `exists` answers whether a repo-relative path is a file, so a typo is
+ * reported at build time rather than as a broken image. A path that climbs
+ * out of branding/ (`..`) gets a warning and no URL.
+ */
+export function resolveAsset(
+  key: string,
+  value: string | null | undefined,
+  exists: (repoRelativePath: string) => boolean,
+): ResolvedAsset | null {
+  const text = typeof value === "string" ? value.trim() : "";
+  if (!text) return null;
+  if (/^(https?:)?\/\/|^data:/.test(text)) {
+    return { url: text, source: "external", warning: null };
+  }
+  if (text.startsWith("/")) {
+    return {
+      url: text,
+      source: "public",
+      warning: `${key}: "${text}" is served from apps/docs/public, which \`update\` replaces. Move the file to branding/ and set ${key} to "${text.slice(1)}".`,
+    };
+  }
+  const clean = text.replace(/^\.?\//, "");
+  if (clean.split("/").includes("..")) {
+    return {
+      url: "",
+      source: "branding",
+      warning: `${key}: "${text}" leaves the branding/ folder; only files inside it are served.`,
+    };
+  }
+  const repoPath = `branding/${clean}`;
+  return {
+    url: `/branding/${clean}`,
+    source: "branding",
+    warning: exists(repoPath)
+      ? null
+      : `${key}: "${text}" was not found at ${repoPath}; the site will link to a missing file.`,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Fonts — self-hosted files under branding/fonts, loaded with next/font/local
+// through a generated module, because next/font needs literal arguments.
+// ---------------------------------------------------------------------------
+
+export interface FontFile {
+  /** Path under branding/, e.g. "fonts/ubuntu-latin-400.woff2". */
+  path: string;
+  /** CSS font-weight, e.g. "400" or "100 900" for a variable font. */
+  weight?: string;
+  style?: "normal" | "italic";
+}
+
+export interface FontFace {
+  /** The family name, used as the CSS fallback-stack head and in the tokens page. */
+  family: string;
+  files: FontFile[];
+}
+
+export interface FontsConfig {
+  body?: FontFace | null;
+  heading?: FontFace | null;
+}
+
+const FONT_SLOTS = ["body", "heading"] as const;
+export type FontSlot = (typeof FONT_SLOTS)[number];
+
+/** Validation problems in `site.fonts` that would otherwise surface as a cryptic next/font error. */
+export function fontProblems(
+  fonts: FontsConfig | null | undefined,
+  exists: (repoRelativePath: string) => boolean,
+): string[] {
+  const problems: string[] = [];
+  if (!fonts) return problems;
+  for (const slot of FONT_SLOTS) {
+    const face = fonts[slot];
+    if (face == null) continue;
+    if (!face.family?.trim()) problems.push(`site.fonts.${slot}.family is required.`);
+    if (!Array.isArray(face.files) || face.files.length === 0) {
+      problems.push(`site.fonts.${slot}.files must list at least one font file under branding/.`);
+      continue;
+    }
+    for (const file of face.files) {
+      if (!file?.path || /^(\/|https?:)/.test(file.path)) {
+        problems.push(`site.fonts.${slot}: "${file?.path}" must be a path under branding/, e.g. "fonts/${slot}-400.woff2".`);
+      } else if (!exists(`branding/${file.path}`)) {
+        problems.push(`site.fonts.${slot}: branding/${file.path} does not exist.`);
+      }
+    }
+  }
+  return problems;
+}
+
+/**
+ * The source of `src/generated/fonts.ts`. With no configured fonts it
+ * re-exports the app's Inter module; with them it loads each face with
+ * `next/font/local` and exposes one CSS variable per slot (`--site-body-face`,
+ * `--site-heading-face`) that globals.scss puts on the MD3 typescale roles.
+ * (Not `--font-body`: the token sheet already defines that as an alias of the
+ * body typescale token, and reusing the name would make a cycle.)
+ * `fontClassName` is what the root layout puts on <html>.
+ */
+export function fontsModule(fonts: FontsConfig | null | undefined): string {
+  const lines = [
+    "// GENERATED by scripts/generate-catalog.ts from registry.config.json#site.fonts — do not edit.",
+  ];
+  const faces = FONT_SLOTS.filter((slot) => fonts?.[slot]);
+  lines.push('import { inter } from "@/app/fonts";');
+  if (faces.length > 0) lines.push('import localFont from "next/font/local";');
+  lines.push("");
+  const names: string[] = ["inter"];
+  const used = new Set(names);
+  for (const slot of faces) {
+    const face = fonts![slot]!;
+    // next/font names the @font-face and the CSS variable's value after the
+    // identifier the call is assigned to (a `font-family` declaration would
+    // rename the face only and break the match), so the identifier is the
+    // configured family: "Ubuntu" → Ubuntu, "Bricolage Grotesque" → Bricolage_Grotesque.
+    let ident = face.family.trim().replace(/[^A-Za-z0-9_$]/g, "_").replace(/^(\d)/, "_$1") || slot;
+    if (used.has(ident)) ident = `${ident}_${slot}`;
+    used.add(ident);
+    const src = face.files
+      .map((file) => {
+        const parts = [`path: ${JSON.stringify(`../../public/branding/${file.path}`)}`];
+        if (file.weight) parts.push(`weight: ${JSON.stringify(file.weight)}`);
+        if (file.style) parts.push(`style: ${JSON.stringify(file.style)}`);
+        return `    { ${parts.join(", ")} },`;
+      })
+      .join("\n");
+    lines.push(
+      `/** ${face.family.replace(/\*\//g, "* /")} (the ${slot} face), from branding/ (self-hosted: no request leaves the page). */`,
+      `export const ${ident} = localFont({`,
+      `  src: [`,
+      src,
+      `  ],`,
+      `  variable: ${JSON.stringify(`--site-${slot}-face`)},`,
+      `  display: "swap",`,
+      `});`,
+      "",
+    );
+    names.push(ident);
+  }
+
+  lines.push(
+    `/** Class names that expose every font variable; the root layout puts them on <html>. */`,
+    `export const fontClassName = [${names.map((n) => `${n}.variable`).join(", ")}].join(" ");`,
+    "",
+  );
+  return lines.join("\n");
+}
+
+// ---------------------------------------------------------------------------
+// Home page hero — configurable actions, with defaults a registry can live with.
+// ---------------------------------------------------------------------------
+
+export interface HeroAction {
+  label: string;
+  href: string;
+  variant?: "primary" | "secondary";
+}
+
+export interface HeroConfig {
+  headline?: string;
+  subtext?: string;
+  actions?: HeroAction[];
+}
+
+export interface ResolvedHero {
+  headline: string;
+  subtext: string;
+  actions: HeroAction[];
+}
+
+/**
+ * The hero's text and buttons. Defaults: the site title and description,
+ * "Browse components" into the primary scope and, when the Docs section has
+ * pages, "Docs". A configured `actions` list replaces the defaults entirely.
+ */
+export function resolveHero(
+  hero: HeroConfig | null | undefined,
+  site: { title: string; description: string | null },
+  context: { primaryScope: string; hasDocs: boolean },
+): ResolvedHero {
+  const defaults: HeroAction[] = [
+    { label: "Browse components", href: `/${context.primaryScope}`, variant: "primary" },
+  ];
+  if (context.hasDocs) defaults.push({ label: "Docs", href: "/docs", variant: "secondary" });
+  const actions = (hero?.actions ?? defaults)
+    .filter((a) => a && a.label?.trim() && a.href?.trim())
+    .map((a, i) => ({
+      label: a.label.trim(),
+      href: a.href.trim(),
+      variant: a.variant ?? (i === 0 ? "primary" : "secondary"),
+    }));
+  return {
+    headline: hero?.headline?.trim() || site.title,
+    subtext:
+      hero?.subtext?.trim() ||
+      site.description ||
+      "A component registry that stays in git.",
+    actions,
+  };
+}

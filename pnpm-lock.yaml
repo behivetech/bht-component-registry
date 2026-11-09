@@ -134,6 +134,9 @@ importers:
       '@example/utils.format-price':
         specifier: workspace:*
         version: link:../../registry/example/utils/format-price
+      '@material/material-color-utilities':
+        specifier: 0.4.0
+        version: 0.4.0
       gray-matter:
         specifier: ^4.0.3
         version: 4.0.3
@@ -1297,6 +1300,9 @@ packages:
 
   '@manypkg/get-packages@1.1.3':
     resolution: {integrity: sha512-fo+QhuU3qE/2TQMQmbVMqaQ6EWbMhi4ABWP+O4AM1NqPBuy0OrApV5LO6BrrgnhtAHS2NH6RrVk9OL181tTi8A==}
+
+  '@material/material-color-utilities@0.4.0':
+    resolution: {integrity: sha512-dlq6VExJReb8dhjj3a/yTigr3ncNwoFmL5Iy2ENtbDX03EmNeOEdZ+vsaGrj7RTuO+mB7L58II4LCsl4NpM8uw==}
 
   '@napi-rs/lzma-linux-x64-gnu@1.5.1':
     resolution: {integrity: sha512-oTXEIha4SsuXdTA4Iyskj0kpdx2yVXdhd75c2v3xGrHFfVMsbhTPZU/nMPL4sWKo4pBHm3aucLaqGlF696dTyQ==}
@@ -5806,6 +5812,8 @@ snapshots:
       fs-extra: 8.1.0
       globby: 11.1.0
       read-yaml-file: 1.1.0
+
+  '@material/material-color-utilities@0.4.0': {}
 
   '@napi-rs/lzma-linux-x64-gnu@1.5.1':
     optional: true

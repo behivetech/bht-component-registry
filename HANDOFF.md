@@ -6,7 +6,7 @@ before relying on it. The sibling private repo `../bht-platform` has its own HAN
 
 ## What this is, in one paragraph
 
-The public, docs-only version of Behive Tech's component registry. A registry that stays
+The public, docs-only version of BEhive Tech's component registry. A registry that stays
 in git: one npm package per component at `registry/<scope>/<category>/<name>`
 (`@<scope>/<category>.<name>`), docs generated from source (README snippets run live,
 `*.example.tsx` exports are live editable examples, react-docgen builds the props table,
@@ -30,7 +30,7 @@ Made with Bruce over a long planning session; the full plan is in
   git tags (the CLI's `create-bht-component-registry@<version>` tag is also the template
   release; `version-packages` keeps `registry.config.json#templateVersion` equal to it); publishing is `changeset publish` to the registry in `registry.config.json`;
   deleting a component is deleting a folder. The hosted expanded version, when it comes, is a
-  *reader* over registries clients already use (npmjs default), never a store Behive runs.
+  *reader* over registries clients already use (npmjs default), never a store BEhive Tech runs.
 - **Self-describing tarballs.** Every component's build runs `tsup && bht-registry-docgen`
   and `files` ships `dist`, `README.md`, `index.ts`, the source `.tsx`/`.scss`,
   `*.example.tsx` and `docs.json`. A published version can be documented from the
@@ -39,13 +39,13 @@ Made with Bruce over a long planning session; the full plan is in
   `packages/scope` (lowercase, DNS-label-like, not reserved); the generator and the create CLI
   refuse anything else. npmjs is the default registry; GitHub Packages or private registries
   are a one-line change.
-- **The app's chrome is internal** (`apps/docs/src/ui/*`, copied from the Behive atoms), so a
+- **The app's chrome is internal** (`apps/docs/src/ui/*`, copied from the BEhive Tech atoms), so a
   client can delete the example scope without breaking the site, and nothing depends on a
   private registry. CI fails if `pnpm-lock.yaml` ever mentions `npm.pkg.github.com`.
 - **Everything public is `bht`-prefixed**: `create-bht-component-registry`,
   `bht-registry-docgen`; workspace-only packages are `@bht-component-registry/*`; anything
-  published later under Behive's name is `@behivetech/bht-*`.
-- **Branding without code**: `registry.config.json#site` (title, description, logo,
+  published later under BEhive Tech's name is `@behivetech/bht-*`.
+- **Branding without code**: `registry.config.json#site` plus the owner's `branding/` folder (title, description, logo,
   primaryColor, links). Status and tags live in each package's `registry` field.
 - **CI is one deletable file** (`.github/workflows/ci.yml`); testing in CI is the client's
   choice. The template repo itself keeps it green.
@@ -148,10 +148,13 @@ Verified locally on 2026-10-07:
    `git push --follow-tags`.
 4. **Platform repo (round two)**: pages `/docs`, `/services`, `/expanded` on
    platform.behivetech.com; this repo's README and footer already link to them.
-5. **Round three**: per-version docs with live examples. With self-describing tarballs, old
-   versions come from the registry (versions + tarballs); serve each version's `dist` as
-   ESM and pin React with an import map. Then extract the docs engine into
-   `@behivetech/bht-registry-docs` so both repos consume it (today it is a copy; see drift).
+5. **Round three, done as snapshots (2026-11)**: per-version docs come from `docs-history/`,
+   written by `pnpm version-packages` (see `guide/versioned-docs.md`), not from the registry's
+   tarballs: no token, no network, works on a shallow clone. Old versions show static
+   examples; live examples for old versions (each version's `dist` as ESM, React pinned with
+   an import map) remain a possible later step. Extracting the docs engine into
+   `@behivetech/bht-registry-docs` so both repos consume it is still open (today it is a
+   copy; see drift).
 6. **Later**: `pnpm component:remove <pkg>`; the hosted reader (per-scope read token,
    release-workflow notify to `/api/published`, waitlist + billing) lives in the
    platform repo.

@@ -1,7 +1,7 @@
 ---
 title: Hooks and utilities
 description: Packages that are functions rather than components — how they are generated, documented and shown.
-order: 4
+order: 6
 ---
 
 # Hooks and utilities

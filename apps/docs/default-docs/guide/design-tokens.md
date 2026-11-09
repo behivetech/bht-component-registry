@@ -1,7 +1,7 @@
 ---
 title: Design tokens
-description: The optional design-tokens page and how a theme reaches every component.
-order: 8
+description: The optional design-tokens page, the theme builder, and how a theme reaches every component.
+order: 11
 ---
 
 # Design tokens
@@ -67,9 +67,21 @@ A minimal sheet:
 }
 ```
 
+## The theme builder
+
+The site also has a `/theme` page (linked from the header as "Theme" and from the tokens page) that runs the same Material Design 3 generator the build uses for the site's own colours, in the browser:
+
+1. Pick a primary seed, and optionally a secondary, tertiary and neutral seed, a scheme variant and a contrast level. Every `--md-sys-color-*` role for the light and the dark scheme regenerates as you type, with a live preview of real components and a contrast report (any text role under 4.5:1 is flagged).
+2. Click any swatch to set that role by hand; × puts the generated value back. Hand edits are kept as `overrides`, per scheme.
+3. Download `theme.css`, copy it, or copy the `site.theme` block for `registry.config.json`. The page explains the three ways to use the result: in this registry (paste the block, rebuild), in your own app (import the token sheet, then `theme.css`), and how `data-theme` forces a scheme.
+
+The theme is the URL: `/theme#p=2c1760&s=43b505&v=vibrant` is a shareable link to that palette, and "Preview on this site" applies it to the whole docs site until you untick it. Nothing is stored anywhere.
+
+Turn the page off with `"docs": { "themeBuilder": false }` in `registry.config.json`; the header link goes with it. The generator itself keeps running at build time for `site.theme` — see [Branding](branding.md).
+
 ## Using the tokens in components
 
-The component template styles with CSS custom properties, so a component reads `var(--md-sys-color-primary)` and picks up whichever theme the host page sets. The docs site's own chrome uses the same MD3 token names in `apps/docs/src/app/globals.scss`, with `registry.config.json#site.primaryColor` as the primary role, so your components look at home on the docs pages without importing the site's styles.
+The component template styles with CSS custom properties, so a component reads `var(--md-sys-color-primary)` and picks up whichever theme the host page sets. The docs site's own chrome uses the same MD3 token names: `apps/docs/src/generated/theme.css`, generated from `registry.config.json#site.theme`, sets every colour role for both schemes, so your components look at home on the docs pages without importing the site's styles.
 
 If your tokens are not MD3-named, the page shows only what matches. You can keep your own names in the sheet and add MD3 aliases for the roles you want on the page, or skip the page by leaving `tokens` out of `scope.json`.
 

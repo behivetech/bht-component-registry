@@ -1,7 +1,7 @@
 ---
 title: Design links
 description: Point a component at its design — a Figma frame or any URL — and show it on a Design tab.
-order: 9
+order: 12
 ---
 
 # Design links

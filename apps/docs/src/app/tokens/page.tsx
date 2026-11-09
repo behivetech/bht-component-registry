@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Table, type TableColumn } from "@behivetech/atoms.table";
 import { catalog, type CatalogTokens } from "@/lib/catalog";
@@ -95,6 +96,13 @@ export default function TokensPage() {
           properties. Override a handful of roles on any element and everything
           inside re-themes.
         </p>
+        {catalog.docs.themeBuilder && (
+          <p className={getChildClass("lead")}>
+            Want your own palette? The <Link href="/theme">theme builder</Link>{" "}
+            generates every colour role from your seed colours and exports the
+            CSS.
+          </p>
+        )}
         {catalog.site.design && (
           <p className={getChildClass("lead")}>
             <a href={catalog.site.design.url} target="_blank" rel="noreferrer">

@@ -1,0 +1,42 @@
+.ThemePreview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  &__panels {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  }
+
+  &__panel {
+    // The panel is its own little page: the roles set inline on it are the
+    // whole theme for everything inside.
+    background: var(--md-sys-color-background);
+    color: var(--md-sys-color-on-background);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-large, 16px);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  &__caption {
+    margin: 0;
+    font-size: 0.8125rem;
+    text-transform: capitalize;
+    color: var(--md-sys-color-on-surface-variant);
+  }
+
+  &__body {
+    color: var(--md-sys-color-on-surface);
+  }
+
+  &__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0.75rem 0;
+  }
+}

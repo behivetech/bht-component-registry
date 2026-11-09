@@ -34,6 +34,7 @@ const base: CatalogComponent = {
   visibility: "public",
   sourcePath: "registry/example/atoms/price-tag",
   dependencies: [],
+  versions: [],
 };
 
 describe("toCardModel", () => {

@@ -7,6 +7,7 @@
   "homepage": "https://platform.behivetech.com",
   "scripts": {
     "generate": "tsx scripts/generate-catalog.ts",
+    "snapshot": "tsx scripts/snapshot-docs.ts",
     "predev": "pnpm generate",
     "dev": "next dev --port 3000",
     "prebuild": "pnpm generate",
@@ -35,6 +36,7 @@
     "@example/atoms.rating-stars": "workspace:*",
     "@example/hooks.use-toggle": "workspace:*",
     "@example/utils.format-price": "workspace:*",
+    "@material/material-color-utilities": "0.4.0",
     "gray-matter": "^4.0.3",
     "next": "16.3.7",
     "prism-react-renderer": "^2.4.1",

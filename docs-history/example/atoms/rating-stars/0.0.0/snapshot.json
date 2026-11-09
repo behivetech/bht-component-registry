@@ -1,0 +1,11 @@
+{
+  "version": "0.0.0",
+  "packageName": "@example/atoms.rating-stars",
+  "date": "2026-11-09",
+  "status": "beta",
+  "tags": [
+    "feedback",
+    "commerce"
+  ],
+  "templateVersion": "0.6.0"
+}

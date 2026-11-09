@@ -1,7 +1,7 @@
 ---
 title: Publishing
 description: The Changesets flow, npmjs and GitHub Packages, and the Changelog tab.
-order: 7
+order: 9
 ---
 
 # Publishing
@@ -27,7 +27,7 @@ Every component is its own npm package with its own semver. Changesets records w
    pnpm version-packages
    ```
 
-   This bumps each affected `package.json#version`, prepends a release section to each `CHANGELOG.md` and deletes the consumed changeset files. Commit the result (the release workflow does this for you as a pull request; see below).
+   This bumps each affected `package.json#version`, prepends a release section to each `CHANGELOG.md`, deletes the consumed changeset files, and snapshots the docs of every component whose new version has no snapshot yet (the bumped ones) into `docs-history/` so the site keeps a page for that version (see [Versioned docs](versioned-docs.md); build first for exact props tables). Commit the result (the release workflow does this for you as a pull request; see below).
 
 4. Publish:
 
@@ -45,7 +45,7 @@ Every component is its own npm package with its own semver. Changesets records w
 
    The release workflow does steps 3 to 5 for you (see below); these are the manual equivalent.
 
-The Changelog tab on the docs site is the package's `CHANGELOG.md`, so releases show up in the docs as soon as the site is rebuilt.
+The Changelog tab on the docs site is the package's `CHANGELOG.md`, so releases show up in the docs as soon as the site is rebuilt, and each release keeps its own docs page (see [Versioned docs](versioned-docs.md)).
 
 ## npmjs (default)
 
@@ -141,7 +141,7 @@ tar -tzf acme-atoms.button-*.tgz
 
 `.github/workflows/release.yml` runs on pushes to `main` and uses `changesets/action`:
 
-- With pending changesets, it opens (or updates) a "Version Packages" pull request that runs `pnpm version-packages` for you. Merge it to release. For that the repository must allow it: Settings, Actions, General, Workflow permissions, tick "Allow GitHub Actions to create and approve pull requests" (an organization can also restrict this at its level). Without it the run fails with "GitHub Actions is not permitted to create or approve pull requests".
+- With pending changesets, it opens (or updates) a "Version Packages" pull request that runs `pnpm version-packages` for you: the version bumps, the changelogs and the docs snapshots under `docs-history/`. Merge it to release. For that the repository must allow it: Settings, Actions, General, Workflow permissions, tick "Allow GitHub Actions to create and approve pull requests" (an organization can also restrict this at its level). Without it the run fails with "GitHub Actions is not permitted to create or approve pull requests".
 - With no pending changesets and unpublished versions, it runs `pnpm release`.
 
 How it authenticates, in order of preference:
@@ -179,6 +179,7 @@ React 19 is a peer dependency.
 ## Related
 
 - [Components](components.md)
+- [Versioned docs](versioned-docs.md)
 - [Scopes](scopes.md)
 - [Testing and CI](testing-and-ci.md)
 - [Deploy](deploy.md)

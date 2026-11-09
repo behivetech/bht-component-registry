@@ -1,0 +1,49 @@
+{
+  "$schema": "https://github.com/behivetech/bht-component-registry/docs.schema.json",
+  "version": 2,
+  "docs": [
+    {
+      "displayName": "RatingStars",
+      "description": "A read-only star rating.\n\nFractional values are drawn with a clipped fill rather than rounded to a\nhalf, so 4.3 and 4.7 look different. The stars are decorative; the value is\nannounced once through the root's `aria-label`.",
+      "extendsNative": true,
+      "props": [
+        {
+          "name": "value",
+          "type": "number",
+          "required": true,
+          "defaultValue": null,
+          "description": "The rating to show, from 0 to `max`; fractions render as partially filled stars"
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "required": false,
+          "defaultValue": null,
+          "description": "Additional class names to merge with the component root element"
+        },
+        {
+          "name": "count",
+          "type": "number",
+          "required": false,
+          "defaultValue": null,
+          "description": "Optional review count shown after the stars, e.g. \"(128)\""
+        },
+        {
+          "name": "max",
+          "type": "number",
+          "required": false,
+          "defaultValue": "5",
+          "description": "Number of stars; defaults to 5"
+        },
+        {
+          "name": "size",
+          "type": "\"sm\" | \"md\" | \"lg\"",
+          "required": false,
+          "defaultValue": "md",
+          "description": "Controls the star size; defaults to md"
+        }
+      ]
+    }
+  ],
+  "functions": []
+}

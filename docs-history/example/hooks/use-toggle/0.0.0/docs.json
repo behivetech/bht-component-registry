@@ -1,0 +1,33 @@
+{
+  "$schema": "https://github.com/behivetech/bht-component-registry/docs.schema.json",
+  "version": 2,
+  "docs": [],
+  "functions": [
+    {
+      "name": "useToggle",
+      "kind": "hook",
+      "description": "TODO: Describe the hook in one or two sentences. This JSDoc, the `@param`,\n`@returns` and `@example` tags, and the TypeScript signature are what the\ndocs site shows for it — nothing is written by hand elsewhere.",
+      "signatures": [
+        {
+          "text": "useToggle(initial?: boolean): [boolean, () => void]",
+          "params": [
+            {
+              "name": "initial",
+              "type": "boolean",
+              "optional": true,
+              "defaultValue": "false",
+              "description": "The starting value."
+            }
+          ],
+          "returns": {
+            "type": "[boolean, () => void]",
+            "description": "The current value and a function that flips it."
+          }
+        }
+      ],
+      "examples": [
+        "const [on, toggle] = useToggle(false);\n<button type=\"button\" onClick={toggle}>{on ? 'On' : 'Off'}</button>"
+      ]
+    }
+  ]
+}

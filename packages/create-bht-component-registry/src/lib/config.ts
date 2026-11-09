@@ -10,12 +10,41 @@ export interface SiteLink {
   href: string;
 }
 
+/**
+ * The keys the CLI knows about; everything else in `site` passes through.
+ * The full list, with meanings, is registry.config.schema.json.
+ */
 export interface SiteConfig {
   title: string;
+  url?: string;
   description?: string;
   logo?: string;
+  logoDark?: string;
+  favicon?: string;
+  icons?: { apple?: string; png192?: string; png512?: string };
+  themeColor?: string;
+  headerTheme?: "light" | "dark";
+  /** Older alias of `theme.primary`. */
   primaryColor?: string;
+  theme?: {
+    primary: string;
+    secondary?: string;
+    tertiary?: string;
+    neutral?: string;
+    scheme?: string;
+    contrast?: string;
+  };
+  fonts?: Record<string, unknown>;
+  hero?: Record<string, unknown>;
   links?: SiteLink[];
+  embedDesigns?: boolean;
+  design?: unknown;
+}
+
+/** Docs-site behaviour; see registry.config.schema.json#docs. */
+export interface DocsConfig {
+  history?: { enabled?: boolean; keep?: "all" | "majors" | number };
+  themeBuilder?: boolean;
 }
 
 /** Mirrors registry.config.schema.json; the schema stays the source of truth. */
@@ -25,6 +54,7 @@ export interface RegistryConfig {
   npmRegistry: string;
   templateVersion: string;
   site: SiteConfig;
+  docs?: DocsConfig;
 }
 
 const VERSION_PATTERN = /^\d+\.\d+\.\d+$/;

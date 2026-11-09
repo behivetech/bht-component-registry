@@ -32,10 +32,17 @@
     "docs/**",
     "registry.config.json",
     ".changeset/*.md",
-    "apps/docs/src/generated/**"
+    "apps/docs/src/generated/**",
+    "branding/**",
+    "docs-history/**"
   ],
   "templateOnly": [
-    "packages/create-bht-component-registry/**"
+    "packages/create-bht-component-registry/**",
+    ".github/ISSUE_TEMPLATE/**",
+    ".github/PULL_REQUEST_TEMPLATE.md",
+    ".github/CODEOWNERS",
+    "docs-history/example/**",
+    "apps/docs/e2e/history.spec.ts"
   ],
   "readmeMarker": "<!-- your notes below this line are kept by update -->",
   "rewriteScope": [

@@ -1,7 +1,7 @@
 ---
 title: Adopting the registry into a monorepo you already have
 description: Adding the registry to a monorepo you already have.
-order: 13
+order: 16
 ---
 
 # Adopting the registry into a monorepo you already have
@@ -138,6 +138,10 @@ Component packages run `vitest run` with no config of their own. Vitest walks up
 - **Changesets.** If the rest of your monorepo is not versioned with Changesets, list those packages under `ignore` in `.changeset/config.json` so `changeset version` and `changeset publish` only see the registry. The `release` script above builds only the registry packages and the CLI; drop the CLI filter, since you will not have it.
 - **CI.** `pnpm verify` or your runner's equivalent. The build command hosts need stays `pnpm build` (or `pnpm --filter "docs..." run build`) with the output directory `apps/docs/out`. See [Deploy](deploy.md).
 - **Docker.** The shipped `Dockerfile` copies the whole repo into the build stage, which is fine; only `apps/docs/out` reaches the runtime image.
+
+## Docs for the versions you already released
+
+The site keeps a docs page per released version from the first `pnpm version-packages` after adopting on. Versions released before that have no snapshot; `pnpm snapshot-docs --all` starts the history at the current versions. See [Versioned docs](versioned-docs.md).
 
 ## What `create` and `update` do not cover here
 

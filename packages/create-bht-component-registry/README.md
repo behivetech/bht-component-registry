@@ -62,6 +62,9 @@ generators, workflows, root config, …). It never touches:
 
 - `docs/**` — your pages, and your copies of guide pages (a same-path copy replaces the default)
 - `registry/**` — your components
+- `branding/**` — your logo, icons and fonts
+- `docs-history/**` — the per-version docs snapshots `pnpm version-packages` writes
+- `generators/**` — your own generators
 - `registry.config.json` — your settings (only `templateVersion` is bumped)
 - `.changeset/*.md` — your pending changesets
 - `README.md` below the line `<!-- your notes below this line are kept by update -->`; the part

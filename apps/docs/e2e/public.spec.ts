@@ -45,6 +45,21 @@ test("home lists the public scopes and shows the site title from registry.config
   await expect(
     page.getByRole("heading", { name: "Scopes", exact: true }),
   ).toBeVisible();
+  // The hero's default actions: into the primary scope, and the Docs section.
+  await expect(page.getByRole("link", { name: "Browse components" })).toHaveAttribute("href", "/example");
+  await expect(page.getByRole("link", { name: "Docs", exact: true }).first()).toHaveAttribute("href", "/docs");
+  // Nothing on the visitor-facing home tells people how to add a component; that is in the guide.
+  await expect(page.getByText("Add a component to your scope")).toHaveCount(0);
+});
+
+test("the head carries the default favicon and the theme colour", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect(page.locator('link[rel="icon"][href="/favicon.ico"]')).toHaveCount(1);
+  await expect(page.locator('meta[name="theme-color"]')).toHaveCount(1);
+  const response = await page.request.get("/favicon.ico");
+  expect(response.status()).toBe(200);
 });
 
 test("a scope page groups its components and searches them client-side", async ({
@@ -424,14 +439,14 @@ test.describe("theme", () => {
   };
 
   for (const scheme of ["light", "dark"] as const) {
-    test(`the configured primaryColor keeps the filled button legible in the ${scheme} scheme`, async ({
+    test(`the configured theme keeps the filled button legible in the ${scheme} scheme`, async ({
       page,
     }) => {
       await page.emulateMedia({ colorScheme: scheme });
       await page.goto("/");
       // The hero's first action is a filled (primary) button: the configured
       // colour is its background and the scheme's on-primary its label.
-      const filled = page.getByRole("link", { name: "Browse @example" });
+      const filled = page.getByRole("link", { name: "Browse components" });
       const colors = await filled.evaluate((el, resolve) => {
         const toRgb = new Function("color", `return (${resolve})(color)`) as (
           c: string,
@@ -462,18 +477,22 @@ test.describe("theme", () => {
     });
   }
 
-  test("without a configured primaryColor the dark scheme falls back to the sheet's own pair", async ({
+  test("the generated theme sets every MD3 colour role for both schemes", async ({
     page,
   }) => {
-    await page.emulateMedia({ colorScheme: "dark" });
     await page.goto("/");
-    await page.evaluate(() => document.documentElement.style.removeProperty("--site-primary"));
-    const filled = page.getByRole("link", { name: "Browse @example" });
-    const colors = await filled.evaluate((el) => {
-      const s = getComputedStyle(el);
-      return { fg: s.color, bg: s.backgroundColor };
+    const roles = await page.evaluate(() => {
+      const s = getComputedStyle(document.documentElement);
+      return ["primary", "on-primary", "surface-container-highest", "inverse-primary"].map((role) =>
+        s.getPropertyValue(`--md-sys-color-${role}`).trim(),
+      );
     });
-    expect(colors.bg).toBe("rgb(206, 189, 254)"); // #cebdfe
-    expect(colors.fg).toBe("rgb(53, 39, 93)"); // #35275d
+    // Either the generated six-digit hex or a shorthand the token sheet uses.
+    for (const value of roles) expect(value).toMatch(/^#([0-9a-f]{3}|[0-9a-f]{6})$/);
+    // The dark-header values are fixed per theme, available in both schemes.
+    const darkSurface = await page.evaluate(() =>
+      getComputedStyle(document.documentElement).getPropertyValue("--site-dark-surface").trim(),
+    );
+    expect(darkSurface).toMatch(/^#[0-9a-f]{6}$/);
   });
 });

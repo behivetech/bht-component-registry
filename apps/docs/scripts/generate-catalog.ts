@@ -32,13 +32,34 @@ import type {
   CatalogComponent,
   CatalogDesignLink,
   CatalogExample,
+  CatalogDocsConfig,
   CatalogScope,
   CatalogSite,
   CatalogSourceFile,
   CatalogStatus,
   DocPage,
   DocsIndex,
+  HistoryEntry,
+  HistoryIndex,
 } from "../src/lib/catalog/types";
+import { releasesUpTo, sortVersionsDesc, VERSION } from "../src/lib/catalog/history";
+import {
+  SNAPSHOT_META_FILE,
+  SOURCE_LANGUAGES,
+  historyDir,
+  registryEntries,
+  sourceFileNames,
+  type SnapshotMeta,
+} from "./lib/registry-entries";
+import {
+  fontProblems,
+  fontsModule,
+  resolveAsset,
+  resolveHero,
+  type FontsConfig,
+  type HeroConfig,
+} from "../src/lib/branding";
+import { buildTheme, themeCss, type ThemeSeeds } from "../src/lib/theme/scheme";
 import {
   extractTokens,
   humanizeTitle,
@@ -88,11 +109,79 @@ interface RegistryConfig {
   site: {
     title: string;
     description?: string;
+    /** Brand assets: a file under branding/, an absolute URL, or (legacy) a path under apps/docs/public. */
     logo?: string;
+    logoDark?: string;
+    favicon?: string;
+    icons?: { apple?: string; png192?: string; png512?: string };
+    themeColor?: string;
+    headerTheme?: "light" | "dark";
+    /** Alias for theme.primary, kept from earlier templates. */
     primaryColor?: string;
+    theme?: ThemeSeeds;
+    fonts?: FontsConfig;
+    hero?: HeroConfig;
     links?: { label: string; href: string }[];
     embedDesigns?: boolean;
     design?: string | { label?: string; url: string };
+  };
+  /** Docs-site behaviour (as opposed to `site`, which is branding). */
+  docs?: {
+    history?: { enabled?: boolean; keep?: "all" | "majors" | number };
+    themeBuilder?: boolean;
+  };
+}
+
+/** The owner's brand assets; copied to apps/docs/public/branding at build. */
+const BRANDING_DIR = path.join(REPO_ROOT, "branding");
+const PUBLIC_BRANDING_DIR = path.join(APP_DIR, "public", "branding");
+
+const repoFileExists = (repoRelative: string) => {
+  const file = path.join(REPO_ROOT, repoRelative);
+  return fs.existsSync(file) && fs.statSync(file).isFile();
+};
+
+/**
+ * Mirrors branding/ into apps/docs/public/branding/ so the static export
+ * serves the owner's files. The copy is gitignored and rebuilt every run, so a
+ * removed file disappears from the site too.
+ */
+function syncBranding(): void {
+  fs.rmSync(PUBLIC_BRANDING_DIR, { recursive: true, force: true });
+  if (!fs.existsSync(BRANDING_DIR)) return;
+  fs.mkdirSync(path.dirname(PUBLIC_BRANDING_DIR), { recursive: true });
+  fs.cpSync(BRANDING_DIR, PUBLIC_BRANDING_DIR, { recursive: true });
+}
+
+/** `site.theme`, or the `primaryColor` alias wrapped as one; null when the sheet's defaults stand. */
+function themeSeeds(site: RegistryConfig["site"]): ThemeSeeds | null {
+  if (site.theme?.primary) return { ...site.theme, primary: site.theme.primary };
+  if (site.primaryColor) return { primary: site.primaryColor };
+  return null;
+}
+
+/** The name in the nearest package.json above `file` inside the repo, or null. */
+function packageAbove(file: string): string | null {
+  let dir = path.dirname(file);
+  while (dir.startsWith(REPO_ROOT) && dir !== REPO_ROOT) {
+    const pkgFile = path.join(dir, "package.json");
+    if (fs.existsSync(pkgFile)) {
+      const name = (readJson(pkgFile) as { name?: string }).name;
+      return typeof name === "string" ? name : null;
+    }
+    dir = path.dirname(dir);
+  }
+  return null;
+}
+
+function docsConfig(config: RegistryConfig): CatalogDocsConfig {
+  const history = config.docs?.history ?? {};
+  return {
+    history: {
+      enabled: history.enabled !== false,
+      keep: history.keep ?? "all",
+    },
+    themeBuilder: config.docs?.themeBuilder !== false,
   };
 }
 
@@ -179,19 +268,75 @@ function designLinks(
   return links;
 }
 
-function siteFromConfig(config: RegistryConfig): CatalogSite {
-  return {
-    title: config.site.title,
-    description: config.site.description ?? null,
-    logo: config.site.logo ?? null,
-    primaryColor: config.site.primaryColor ?? null,
-    links: config.site.links ?? [],
-    embedDesigns: config.site.embedDesigns === true,
-    design:
-      config.site.design === undefined
-        ? null
-        : designLink(config.site.design, config.scope, "Design system"),
+function siteFromConfig(
+  config: RegistryConfig,
+  context: { hasDocs: boolean },
+  warnings: string[],
+): CatalogSite {
+  const { site } = config;
+  const asset = (key: string, value: string | undefined) => {
+    const resolved = resolveAsset(`site.${key}`, value, repoFileExists);
+    if (resolved?.warning) warnings.push(resolved.warning);
+    return resolved?.url || null;
   };
+  const description = site.description ?? null;
+  const theme = themeSeeds(site);
+  if (site.theme?.primary && site.primaryColor)
+    warnings.push("site.primaryColor is ignored because site.theme.primary is set; remove one.");
+  return {
+    title: site.title,
+    description,
+    logo: asset("logo", site.logo),
+    logoDark: asset("logoDark", site.logoDark),
+    favicon: asset("favicon", site.favicon),
+    icons: {
+      apple: asset("icons.apple", site.icons?.apple),
+      png192: asset("icons.png192", site.icons?.png192),
+      png512: asset("icons.png512", site.icons?.png512),
+    },
+    themeColor: site.themeColor ?? theme?.primary ?? null,
+    headerTheme: site.headerTheme === "dark" ? "dark" : "light",
+    theme,
+    fonts: {
+      body: site.fonts?.body?.family ?? null,
+      heading: site.fonts?.heading?.family ?? null,
+    },
+    hero: resolveHero(site.hero, { title: site.title, description }, {
+      primaryScope: config.scope,
+      hasDocs: context.hasDocs,
+    }),
+    links: site.links ?? [],
+    embedDesigns: site.embedDesigns === true,
+    design:
+      site.design === undefined
+        ? null
+        : designLink(site.design, config.scope, "Design system"),
+  };
+}
+
+/**
+ * src/generated/theme.css — every MD3 colour role for both schemes, from
+ * `site.theme` (or the older `primaryColor`). With neither configured the file
+ * is empty and the token sheet's own palette stands. The root layout imports
+ * it after the sheet, so cascade order does the theming.
+ */
+function writeTheme(seeds: ThemeSeeds | null): void {
+  const css = seeds
+    ? themeCss(
+        buildTheme(seeds),
+        `GENERATED by scripts/generate-catalog.ts from registry.config.json#site.theme (primary ${seeds.primary}, scheme ${seeds.scheme ?? "tonalspot"}) — do not edit.`,
+      )
+    : "/* No site.theme in registry.config.json: the token sheet's own palette stands. */\n";
+  fs.writeFileSync(path.join(OUT_DIR, "theme.css"), css);
+}
+
+/** src/generated/fonts.ts — see fontsModule(); problems fail the build with a readable list. */
+function writeFonts(fonts: FontsConfig | undefined): void {
+  const problems = fontProblems(fonts, repoFileExists);
+  if (problems.length > 0) {
+    throw new Error(`registry.config.json#site.fonts:\n  - ${problems.join("\n  - ")}`);
+  }
+  fs.writeFileSync(path.join(OUT_DIR, "fonts.ts"), fontsModule(fonts));
 }
 
 // ---------------------------------------------------------------------------
@@ -357,34 +502,9 @@ function extractExamples(file: string): CatalogExample[] {
 
 // ---------------------------------------------------------------------------
 
-const LANGUAGE: Record<string, CatalogSourceFile["language"]> = {
-  ".tsx": "tsx",
-  ".ts": "ts",
-  ".scss": "scss",
-  ".json": "json",
-  ".md": "markdown",
-};
-
-/** The files worth showing on the Code tab — the component's own source, not its tooling. */
+/** The files worth showing on the Code tab — the component's own source, not its tooling (one rule with the snapshot script: scripts/lib/registry-entries.ts). */
 function sourceFiles(dir: string): CatalogSourceFile[] {
-  const skip = new Set([
-    "package.json",
-    "tsconfig.json",
-    "tsup.config.ts",
-    "eslint.config.mjs",
-    "global.d.ts",
-    "CHANGELOG.md",
-    "README.md",
-    "docs.json",
-  ]);
-  return fs
-    .readdirSync(dir)
-    .filter(
-      (f) =>
-        !skip.has(f) &&
-        LANGUAGE[path.extname(f)] &&
-        fs.statSync(path.join(dir, f)).isFile(),
-    )
+  return sourceFileNames(dir)
     .sort((a, b) => {
       // The component itself first, then its styles, then everything else.
       const rank = (f: string) =>
@@ -401,9 +521,83 @@ function sourceFiles(dir: string): CatalogSourceFile[] {
     })
     .map((f) => ({
       path: f,
-      language: LANGUAGE[path.extname(f)]!,
+      language: SOURCE_LANGUAGES[path.extname(f) as keyof typeof SOURCE_LANGUAGES],
       content: fs.readFileSync(path.join(dir, f), "utf8"),
     }));
+}
+
+// ---------------------------------------------------------------------------
+// docs-history/<scope>/<category>/<name>/<version>/ — docs per released version
+// ---------------------------------------------------------------------------
+
+const HISTORY_DIR = path.join(REPO_ROOT, "docs-history");
+
+/**
+ * The snapshots of one component, newest first, each parsed like the live
+ * package (README, examples, source files, docs.json) with the live CHANGELOG
+ * sliced at its version. Written by scripts/snapshot-docs.ts; see the
+ * Versioned docs guide.
+ */
+function readHistory(
+  component: Pick<CatalogComponent, "scope" | "category" | "name" | "releases" | "packageName">,
+  warnings: string[],
+): HistoryEntry[] {
+  const dir = historyDir(REPO_ROOT, component);
+  if (!fs.existsSync(dir)) return [];
+  const versions = fs.readdirSync(dir).filter((v) => VERSION.test(v) && fs.statSync(path.join(dir, v)).isDirectory());
+  return sortVersionsDesc(versions).flatMap((version) => {
+    const snapshotDir = path.join(dir, version);
+    const metaFile = path.join(snapshotDir, SNAPSHOT_META_FILE);
+    if (!fs.existsSync(metaFile)) {
+      warnings.push(`${path.relative(REPO_ROOT, snapshotDir)}: no ${SNAPSHOT_META_FILE}; not a snapshot — skipped`);
+      return [];
+    }
+    const meta = readJson(metaFile) as SnapshotMeta;
+    const readme = readText(path.join(snapshotDir, "README.md"));
+    const docsFile = path.join(snapshotDir, "docs.json");
+    const docsJson = fs.existsSync(docsFile)
+      ? (readJson(docsFile) as { docs?: HistoryEntry["docs"]; functions?: HistoryEntry["functions"] })
+      : {};
+    const examples = fs
+      .readdirSync(snapshotDir)
+      .filter((f) => f.endsWith(".example.tsx"))
+      .flatMap((f) => extractExamples(path.join(snapshotDir, f)));
+    const upper = String(meta.status ?? "stable").toUpperCase() as CatalogStatus;
+    return [
+      {
+        version,
+        date: meta.date,
+        title: humanizeTitle(readmeTitle(readme) ?? toTitle(component.name)),
+        summary: readmeSummary(readme) || docsJson.docs?.[0]?.description || "",
+        readme: stripTitle(readme),
+        status: STATUSES.has(upper) ? upper : "STABLE",
+        tags: Array.isArray(meta.tags) ? meta.tags : [],
+        docs: docsJson.docs ?? [],
+        functions: docsJson.functions ?? [],
+        examples,
+        files: sourceFiles(snapshotDir),
+        releases: releasesUpTo(component.releases, version),
+      },
+    ];
+  });
+}
+
+/** Snapshot folders whose component no longer exists: harmless, but worth a line. */
+function orphanHistory(components: CatalogComponent[], warnings: string[]): void {
+  if (!fs.existsSync(HISTORY_DIR)) return;
+  const known = new Set(components.map((c) => `${c.scope}/${c.category}/${c.name}`));
+  for (const scope of fs.readdirSync(HISTORY_DIR)) {
+    const scopeDir = path.join(HISTORY_DIR, scope);
+    if (!fs.statSync(scopeDir).isDirectory()) continue;
+    for (const category of fs.readdirSync(scopeDir)) {
+      const categoryDir = path.join(scopeDir, category);
+      if (!fs.statSync(categoryDir).isDirectory()) continue;
+      for (const name of fs.readdirSync(categoryDir)) {
+        if (!known.has(`${scope}/${category}/${name}`))
+          warnings.push(`docs-history/${scope}/${category}/${name}: no such component in registry/ any more; delete the folder or restore the package`);
+      }
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -518,34 +712,13 @@ async function main() {
   const started = Date.now();
   const config = readConfig();
   const warnings: string[] = [];
-  const entries: {
-    scope: string;
-    category: string;
-    name: string;
-    dir: string;
-    pkg: Record<string, unknown>;
-  }[] = [];
-
   if (!fs.existsSync(REGISTRY_DIR)) {
     throw new Error(
       "No registry/ folder. Create one with `pnpm gen` — see the Components guide (apps/docs/default-docs/guide/components.md).",
     );
   }
-
-  for (const scope of fs.readdirSync(REGISTRY_DIR).sort()) {
-    const scopeDir = path.join(REGISTRY_DIR, scope);
-    if (!fs.statSync(scopeDir).isDirectory() || scope.startsWith(".")) continue;
-    for (const category of fs.readdirSync(scopeDir).sort()) {
-      const categoryDir = path.join(scopeDir, category);
-      if (!fs.statSync(categoryDir).isDirectory()) continue;
-      for (const name of fs.readdirSync(categoryDir).sort()) {
-        const dir = path.join(categoryDir, name);
-        const pkgFile = path.join(dir, "package.json");
-        if (!fs.existsSync(pkgFile)) continue;
-        entries.push({ scope, category, name, dir, pkg: readJson(pkgFile) });
-      }
-    }
-  }
+  // The same walk the snapshot script starts from.
+  const entries = registryEntries(REPO_ROOT);
 
   // ONE parser (one TypeScript program) for every source file in the registry.
   const parsed = createDocgen().parse(
@@ -664,6 +837,7 @@ async function main() {
       functions,
       examples,
       files: sourceFiles(dir),
+      versions: [],
       releases: parseChangelog(readText(path.join(dir, "CHANGELOG.md"))),
       exportNames,
       hasStyles,
@@ -713,15 +887,37 @@ async function main() {
   // page; with none, the page and its nav link are hidden.
   const tokensScope = scopes.find((s) => s.tokensPath);
   const tokens = tokensScope
-    ? extractTokens(readText(path.join(REPO_ROOT, tokensScope.tokensPath!)))
+    ? {
+        path: tokensScope.tokensPath!,
+        packageName: packageAbove(path.join(REPO_ROOT, tokensScope.tokensPath!)),
+        ...extractTokens(readText(path.join(REPO_ROOT, tokensScope.tokensPath!))),
+      }
     : null;
+
+  // Per-version docs: a HistoryEntry per snapshot folder, and the version list
+  // on the component so pages and the switcher know what exists.
+  const docsOptions = docsConfig(config);
+  const history: HistoryIndex = {};
+  if (docsOptions.history.enabled) {
+    for (const component of components) {
+      const entries = readHistory(component, warnings);
+      if (entries.length > 0) history[component.packageName] = entries;
+      component.versions = entries.map((e) => e.version);
+    }
+    orphanHistory(components, warnings);
+  }
+
+  const docs: DocsIndex = { pages: collectDocs() };
+  syncBranding();
+  const site = siteFromConfig(config, { hasDocs: docs.pages.length > 0 }, warnings);
 
   const catalog: Catalog = {
     generatedAt: new Date().toISOString(),
     primaryScope: config.scope,
     npmRegistry: config.npmRegistry,
     privateRegistry: config.privateRegistry ?? null,
-    site: siteFromConfig(config),
+    site,
+    docs: docsOptions,
     categories: CATEGORIES,
     scopes,
     components,
@@ -733,12 +929,16 @@ async function main() {
     path.join(OUT_DIR, "catalog.json"),
     `${JSON.stringify(catalog, null, 2)}\n`,
   );
-
-  const docs: DocsIndex = { pages: collectDocs() };
   fs.writeFileSync(
     path.join(OUT_DIR, "docs.json"),
     `${JSON.stringify(docs, null, 2)}\n`,
   );
+  fs.writeFileSync(
+    path.join(OUT_DIR, "history.json"),
+    `${JSON.stringify(history, null, 2)}\n`,
+  );
+  writeTheme(site.theme);
+  writeFonts(config.site.fonts);
 
   // A real module with static imports, not a runtime `import()` by name: the
   // bundler has to see every import to include the package and its CSS.
@@ -759,7 +959,7 @@ async function main() {
 
   const exampleCount = components.reduce((n, c) => n + c.examples.length, 0);
   console.log(
-    `catalog: ${scopes.length} scope(s), ${components.length} component(s), ${exampleCount} live example(s)${tokens ? ", tokens" : ""} — ${Date.now() - started}ms`,
+    `catalog: ${scopes.length} scope(s), ${components.length} component(s), ${exampleCount} live example(s), ${Object.values(history).reduce((n, h) => n + h.length, 0)} version snapshot(s)${tokens ? ", tokens" : ""} — ${Date.now() - started}ms`,
   );
   for (const warning of warnings) console.warn(`  ! ${warning}`);
   for (const failure of failures) console.warn(`  ! ${failure}`);

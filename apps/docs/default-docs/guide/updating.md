@@ -1,7 +1,7 @@
 ---
 title: Updating
 description: What npx create-bht-component-registry update touches, what it never touches, and how guide pages are kept current.
-order: 12
+order: 15
 ---
 
 # Updating
@@ -50,6 +50,8 @@ Only paths listed in `template.manifest.json` at the repo root. The rule is data
 - `registry/**`: your scopes and components.
 - `docs/**`: your pages, and your copies of guide pages — see the next section.
 - `generators/**`: your own generators.
+- `branding/**`: your logo, icons and fonts (see [Branding](branding.md)).
+- `docs-history/**`: the per-version docs snapshots `pnpm version-packages` writes (see [Versioned docs](versioned-docs.md)).
 - `registry.config.json`: your scope, registry URL and branding. Only `templateVersion` is bumped.
 - `.changeset/*.md`: pending changesets.
 - `README.md` below the line `<!-- your notes below this line are kept by update -->`. Everything above it is template text and is replaced; everything below it is yours. If your README has no marker line, `update` leaves the whole file alone and warns.
@@ -63,7 +65,7 @@ The pages you are reading ship under `apps/docs/default-docs/guide/` and are rep
 | `apps/docs/default-docs/guide/publishing.md` | the template's page; updated for you |
 | `docs/guide/publishing.md` | your copy; shown instead, never touched |
 
-So to make a guide page your own, copy it across and edit the copy. The default keeps updating underneath, so a later `git diff` between the two shows you what the template changed. To drop a default page from your site, override it with a page whose frontmatter says `hidden: true`. Pages with no default — your own, at any path under `docs/` — are simply yours.
+So to make a guide page your own, copy it across and edit the copy (`pnpm gen doc guide <page> - <order> override` does the copy). The default keeps updating underneath, so a later `git diff` between the two shows you what the template changed. To drop a default page from your site, override it with a page whose frontmatter says `hidden: true` (`pnpm gen doc guide <page> - <order> hide`). Pages with no default — your own, at any path under `docs/` — are simply yours. [Writing docs](writing-docs.md) has the whole picture: sections, frontmatter, links, the generator.
 
 Registries created from a template older than 0.3.0 kept the guide under `docs/*.md`. After the first update those files are plain pages of yours at the top level of the Docs section, next to the new defaults; delete them, or move the ones you edited to `docs/guide/<name>.md` so they override the matching default.
 
@@ -78,7 +80,7 @@ A few paths exist only in the template repository itself and are listed under `t
 If you have edited a template-owned file (a style in `apps/docs/src/app/globals.scss`, the Playwright config, the Dockerfile), the update overwrites it. Two ways to live with that:
 
 - **Re-apply from the diff.** Your change is in git history; after the update, `git diff HEAD~1 -- <file>` shows what the template changed and you cherry-pick your edit back. This is the normal case for small tweaks.
-- **Move the change out of template-owned paths.** Branding belongs in `registry.config.json#site`; design tokens belong in your scope's `tokens.scss`; the e2e spec that names your components is the exception, and the update will remind you to re-check `apps/docs/e2e/public.spec.ts`.
+- **Move the change out of template-owned paths.** Branding belongs in `registry.config.json#site` and the files in `branding/` (never in `apps/docs/public`, which is replaced); design tokens belong in your scope's `tokens.scss`; the e2e spec that names your components is the exception, and the update will remind you to re-check `apps/docs/e2e/public.spec.ts`.
 
 If the update's diff is bigger than you expected, `git checkout -- .` undoes it entirely; the clean-tree check exists so that this is always possible.
 

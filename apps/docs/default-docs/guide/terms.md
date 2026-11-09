@@ -1,7 +1,7 @@
 ---
 title: Terms
 description: The licence the template, the tool and this site are provided under, and what it means here.
-order: 16
+order: 19
 ---
 
 # Terms
@@ -14,7 +14,7 @@ Everything here is open source under the [MIT License](https://github.com/behive
 
 ## What is yours
 
-Code generated for you — components, pages, configuration — is yours. Behive Tech claims no rights in it, and you choose the licence for your own packages (`license` in each `package.json`; the generator writes `MIT`, change it as you like).
+Code generated for you — components, pages, configuration — is yours. BEhive Tech claims no rights in it, and you choose the licence for your own packages (`license` in each `package.json`; the generator writes `MIT`, change it as you like).
 
 ## What you run is yours to run
 

@@ -12,6 +12,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { Badge } from "@behivetech/atoms.badge";
 import { ComponentTabs } from "@/components/docs/component-tabs";
 import { StatusBadge } from "@/components/docs/status-badge";
+import { VersionSwitcher } from "@/components/docs/version-switcher";
 import { getClassName } from "@bht-component-registry/class-names";
 import styles from "./layout.module.scss";
 
@@ -43,10 +44,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 /**
- * The frame around every tab of a component page: the component header
- * (name, package, version, status, tags, install snippet) and the
- * tab bar. Status and tags come from the component's package.json
- * (`registry.status`, `registry.tags`) by way of the catalog.
+ * The frame around every tab of a component page, at the current version and
+ * at any snapshotted one (/v/<version>, a nested layout): the component
+ * header (name, package, version switcher, status, tags, install snippet) and
+ * the tab bar. Status and tags come from the component's package.json
+ * (`registry.status`, `registry.tags`) by way of the catalog; the versions
+ * from docs-history/.
  */
 export default async function ComponentLayout({ params, children }: Props) {
   const { scope: slug, category, name } = await params;
@@ -71,9 +74,11 @@ export default async function ComponentLayout({ params, children }: Props) {
         <header className={getChildClass("header")}>
           <div className={getChildClass("headline")}>
             <h1 className={getChildClass("title")}>{component.title}</h1>
-            <span className={getChildClass("version")}>
-              v{component.version}
-            </span>
+            <VersionSwitcher
+              base={`/${slug}/${category}/${name}`}
+              current={component.version}
+              versions={component.versions}
+            />
             <StatusBadge status={component.status} />
             {component.visibility === "private" && (
               <Badge

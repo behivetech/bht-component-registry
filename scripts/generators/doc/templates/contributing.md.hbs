@@ -1,6 +1,6 @@
 ---
 title: {{ pageTitle }}
-{{#if description}}description: {{ description }}
+{{#if (docDescription description)}}description: {{ docDescription description }}
 {{/if}}{{#if (docSection section)}}section: {{ docSection section }}
 {{/if}}order: {{ order }}
 ---

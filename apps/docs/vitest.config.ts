@@ -19,5 +19,13 @@ export default defineConfig({
       // Real class names from *.module.scss, so assertions can target them.
       modules: { classNameStrategy: "non-scoped" },
     },
+    server: {
+      deps: {
+        // Google's colour library ships a few extensionless relative imports,
+        // which Node's ESM loader refuses; inlined, Vite resolves them the way
+        // Next's bundler does in the real build.
+        inline: [/@material\/material-color-utilities/],
+      },
+    },
   },
 });

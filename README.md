@@ -5,7 +5,7 @@ A component registry that stays in git. One npm package per component, docs gene
 [![CI](https://github.com/behivetech/bht-component-registry/actions/workflows/ci.yml/badge.svg)](https://github.com/behivetech/bht-component-registry/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Made by [Behive Tech](https://platform.behivetech.com). This repo is the open version; the guide is in [the guide](apps/docs/default-docs/guide/getting-started.md) and on every registry's own site under `/docs`. An [expanded version](apps/docs/default-docs/guide/expanded.md) with a dashboard, roles and an audit log is available through consulting.
+Made by [BEhive Tech](https://platform.behivetech.com). This repo is the open version; the guide is in [the guide](apps/docs/default-docs/guide/getting-started.md) and on every registry's own site under `/docs`. An [expanded version](apps/docs/default-docs/guide/expanded.md) with a dashboard, roles and an audit log is available through consulting.
 
 ## Quick start
 
@@ -33,12 +33,15 @@ Then set `scope` in `registry.config.json`, rename `registry/example` to your sc
 ## What you get
 
 - A docs site per component with tabs as routes: Overview, Examples, Code, Playground, Changelog.
+- A Docs section for your own pages (`docs/`), on top of a default guide you can replace page by page or hide, written with `pnpm gen doc`.
 - The Overview is the component's `README.md`; its ```` ```jsx ```` and ```` ```tsx ```` blocks run live.
 - `*.example.tsx` exports become live, editable examples and the catalog thumbnails.
 - A props table built by react-docgen-typescript from the TypeScript interface and its JSDoc.
 - The Changelog tab is the package's `CHANGELOG.md`, written by Changesets.
+- Docs for every released version: `pnpm version-packages` snapshots the README, props, examples and source of each component at its new version into `docs-history/`, and the component page gets a version switcher with a permalink per version.
 - Status (`stable`, `beta`, `draft`, `deprecated`) and tags per component, from `package.json`.
-- An optional design tokens page from a scope's `tokens.scss`.
+- An optional design tokens page from a scope's `tokens.scss`, and a theme builder at `/theme`: pick seed colours, every Material Design 3 role regenerates for light and dark, edit roles by hand, download the CSS.
+- Branding from `registry.config.json` and a `branding/` folder: logo, icons, colours (seeds, not a palette to maintain), self-hosted fonts, a dark header, the home-page hero. Nothing of it is template-owned.
 - Publishing to npmjs, GitHub Packages or a private registry with `pnpm release`.
 - A static export (`apps/docs/out`) that deploys to Vercel, Netlify, Cloudflare Pages, S3, or a Docker image.
 - No auth, no database, no required environment variables.
@@ -48,20 +51,23 @@ Then set `scope` in `registry.config.json`, rename `registry/example` to your sc
 - The folder tree is the registry: `registry/<scope>/<category>/<name>` is the npm package `@<scope>/<category>.<name>`.
 - Before every `dev` and `build`, `apps/docs/scripts/generate-catalog.ts` reads every package (README, examples, source, CHANGELOG, `package.json`) and writes a catalog the pages are generated from.
 - Each component's build runs `tsup` and then `bht-registry-docgen`, which writes `docs.json` into the package, so a published tarball describes itself.
-- Changesets owns versions: `pnpm changeset`, `pnpm version-packages`, `pnpm release`.
-- `registry.config.json` holds the scope, the npm registry and the site branding. It is committed and contains no secrets.
+- Changesets owns versions: `pnpm changeset`, `pnpm version-packages`, `pnpm release`. Versioning also writes the docs snapshot for each bumped component, so a version's docs land in the same commit as its bump.
+- `registry.config.json` holds the scope, the npm registry, the site branding and the docs options. It is committed and contains no secrets. Brand files live in `branding/`.
 
 ## Guides
 
 - [Getting started](apps/docs/default-docs/guide/getting-started.md): create or clone, prerequisites, a tour of the repo.
 - [Components](apps/docs/default-docs/guide/components.md): the anatomy of a component folder, `pnpm gen`, README and example conventions, the props table, status and tags, removing a component.
-- [Scopes](apps/docs/default-docs/guide/scopes.md): the one-scope rule, `registry.config.json`, `scope.json`, creating the npm org, multiple scopes.
+- [Writing docs](apps/docs/default-docs/guide/writing-docs.md): your pages under `docs/`, the default guide, replacing or hiding a default page, `pnpm gen doc`.
+- [Branding](apps/docs/default-docs/guide/branding.md): logo, icons, colours, fonts and the hero from `registry.config.json` and `branding/`.
+- [Scopes](apps/docs/default-docs/guide/scopes.md): the one-scope rule, `registry.config.json` key by key, `scope.json`, creating the npm org, multiple scopes.
 - [Publishing](apps/docs/default-docs/guide/publishing.md): the Changesets flow, npmjs, GitHub Packages and private registries, what a tarball contains, the release workflow.
+- [Versioned docs](apps/docs/default-docs/guide/versioned-docs.md): a docs page per released version, how snapshots are written, seeding an existing registry, the keep policy.
 - [Deploy](apps/docs/default-docs/guide/deploy.md): Vercel, Netlify, Cloudflare Pages, any static host, Docker and nginx.
 - [Updating](apps/docs/default-docs/guide/updating.md): `npx create-bht-component-registry update`, what it touches and never touches.
 - [Adopting](apps/docs/default-docs/guide/adopting.md): add the registry to a monorepo you already have: what to copy, the build order, what `create` and `update` do not cover.
 - [Testing and CI](apps/docs/default-docs/guide/testing-and-ci.md): unit tests, Playwright against the static build, the one CI file.
-- [Design tokens](apps/docs/default-docs/guide/design-tokens.md): the optional tokens page.
+- [Design tokens](apps/docs/default-docs/guide/design-tokens.md): the optional tokens page and the theme builder.
 - [FAQ](apps/docs/default-docs/guide/faq.md): why no database, why a static export, why git and npm rather than a hosted component platform, what the expanded version adds.
 
 ## Expanded version
@@ -70,13 +76,13 @@ The same registry with a workspace for the team on top: a dashboard, status/tags
 
 ## Consulting
 
-Behive Tech builds and runs component libraries and design systems for teams: https://platform.behivetech.com.
+BEhive Tech builds and runs component libraries and design systems for teams: https://platform.behivetech.com.
 
 ## Contributing, security, licence, terms
 
-- [CONTRIBUTING.md](CONTRIBUTING.md) for setup, `pnpm verify`, commit and changeset conventions.
+- [CONTRIBUTING.md](CONTRIBUTING.md) for how a change gets in (not a collaborator: fork and open a pull request; every pull request needs green CI and the code owner's review), setup, `pnpm verify`, commit and changeset conventions.
 - [SECURITY.md](SECURITY.md) for reporting a vulnerability.
-- [MIT](LICENSE), copyright 2026 Behive Tech. Provided as is, without warranty — see [TERMS.md](TERMS.md).
+- [MIT](LICENSE), copyright 2026 BEhive Tech. Provided as is, without warranty — see [TERMS.md](TERMS.md).
 
 <!-- your notes below this line are kept by update -->
 
