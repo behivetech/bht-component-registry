@@ -62,7 +62,7 @@ A wordmark that is white or very light needs `headerTheme: "dark"`; a wordmark t
 
 ## Colours
 
-The site is themed with Material Design 3 roles (`--md-sys-color-*`), and every component in the registry reads the same roles. You give the build seed colours; it generates every role for the light and the dark scheme with Google's own algorithm (the one behind the Material Theme Builder):
+The site is themed with Material Design 3 roles (`--md-sys-color-*`), and every component in the registry reads the same roles. You give the build seed colours; it generates every role for the light and the dark scheme with Google's own Material Design 3 colour algorithm (`@material/material-color-utilities`):
 
 ```json
 {

@@ -1,7 +1,6 @@
 .VersionSwitcher {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
+  position: relative;
+  display: inline-block;
   font-size: 0.875rem;
   color: var(--md-sys-color-on-surface-variant);
 
@@ -13,21 +12,28 @@
     background: var(--md-sys-color-surface-container-high);
   }
 
-  &__label {
-    font-size: 0.8125rem;
-  }
-
-  &__select {
-    font: inherit;
+  &__summary {
+    list-style: none;
+    cursor: pointer;
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.875rem;
     color: var(--md-sys-color-on-surface);
     background: var(--md-sys-color-surface-container-high);
     border: 1px solid transparent;
     border-radius: 999px;
     padding: 0.25rem 0.75rem;
     min-height: 2rem;
-    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &::after {
+      content: "▾";
+      font-size: 0.75em;
+    }
 
     &:hover {
       border-color: var(--md-sys-color-outline-variant);
@@ -36,6 +42,40 @@
     &:focus-visible {
       outline: 2px solid var(--md-sys-color-primary);
       outline-offset: 2px;
+    }
+  }
+
+  &__list {
+    position: absolute;
+    z-index: 2;
+    top: calc(100% + 0.25rem);
+    left: 0;
+    min-width: 14rem;
+    margin: 0;
+    padding: 0.25rem;
+    list-style: none;
+    background: var(--md-sys-color-surface-container);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-medium, 12px);
+    box-shadow: 0 4px 16px rgb(0 0 0 / 12%);
+  }
+
+  &__option {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--md-sys-shape-corner-small, 8px);
+    text-decoration: none;
+    color: var(--md-sys-color-on-surface);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    &:hover {
+      background: var(--md-sys-color-surface-container-highest);
+    }
+
+    // The option that is open now: styled from aria-current, one source of truth.
+    &[aria-current="page"] {
+      color: var(--md-sys-color-primary);
+      font-weight: 600;
     }
   }
 }

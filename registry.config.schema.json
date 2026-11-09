@@ -113,7 +113,7 @@
           "required": [
             "primary"
           ],
-          "description": "Seed colours for the site's Material Design 3 theme. The build generates every colour role for the light and dark schemes from them with Google's material-color-utilities (the same algorithm as the Material Theme Builder) into src/generated/theme.css. The /theme page lets you pick these interactively and download the same CSS for your own app.",
+          "description": "Seed colours for the site's Material Design 3 theme. The build generates every colour role for the light and dark schemes from them with Google's material-color-utilities, the reference implementation of Material Design 3 dynamic colour, into src/generated/theme.css. The /theme page lets you pick these interactively and download the same CSS for your own app.",
           "properties": {
             "primary": {
               "type": "string",

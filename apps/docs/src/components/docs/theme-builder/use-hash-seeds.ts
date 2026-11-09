@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useSyncExternalStore } from "react";
+import { useCallback, useMemo, useSyncExternalStore } from "react";
 import type { ThemeSeeds } from "@/lib/theme/scheme";
 import { parseTheme, serializeTheme } from "@/lib/theme/url-state";
 
@@ -29,7 +29,8 @@ export function useHashSeeds(
   fallback: ThemeSeeds,
 ): [ThemeSeeds, (update: (prev: ThemeSeeds) => ThemeSeeds) => void] {
   const hash = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  const seeds = parseTheme(hash) ?? fallback;
+  // One seeds object per fragment, so the theme is rebuilt when the URL changes, not on every render.
+  const seeds = useMemo(() => parseTheme(hash) ?? fallback, [hash, fallback]);
   const setSeeds = useCallback(
     (update: (prev: ThemeSeeds) => ThemeSeeds) => {
       const current = parseTheme(window.location.hash) ?? fallback;

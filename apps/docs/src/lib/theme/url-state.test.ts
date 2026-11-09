@@ -31,6 +31,7 @@ describe("theme url state", () => {
       contrast: "standard",
       overrides: null,
     });
+    expect(parseTheme("#p=6750a4&c=constructor")!.contrast).toBe("standard");
     expect(parseTheme("#s=43b505")).toBeNull();
     expect(parseTheme("")).toBeNull();
   });

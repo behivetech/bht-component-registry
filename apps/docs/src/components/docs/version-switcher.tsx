@@ -1,21 +1,27 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { getClassName } from "@bht-component-registry/class-names";
-import { currentTab, switcherOptions, versionFromSlug, versionSlugInPath } from "@/lib/catalog/history";
+import {
+  currentTab,
+  switcherOptions,
+  versionFromSlug,
+  versionSlugInPath,
+  versionsIndexPath,
+} from "@/lib/catalog/history";
 import styles from "./version-switcher.module.scss";
 
 /**
- * The version switcher in a component's header: the live page ("latest") and
- * every snapshot under docs-history/, newest first. Choosing one navigates to
- * the same tab at that version (a tab a snapshot lacks lands on its overview).
- * With no snapshots it is just the version label the header always had, so a
- * registry that has never released looks as before.
- *
- * A native <select>: it is a navigation control, it reads correctly to
- * assistive technology, and it needs no state of its own — the URL is the
- * state. A registry whose chrome has a Select component can swap it in behind
- * the same props.
+ * The version switcher in a component's header: a disclosure that opens a
+ * list of links — the live page ("latest") and every snapshot under
+ * docs-history/, newest first — each to the same tab at that version (a tab a
+ * snapshot lacks lands on its overview). Links rather than a <select> that
+ * navigates on change: arrowing through a closed native select fires change
+ * on every step in some browsers, which would load a page per keystroke. With
+ * no snapshots it is the plain version label the header always had. A
+ * registry whose chrome has a menu component can swap it in behind the same
+ * props.
  */
 export function VersionSwitcher({
   base,
@@ -29,7 +35,6 @@ export function VersionSwitcher({
   /** Snapshot versions; an empty list renders a plain label. */
   versions: string[];
 }) {
-  const router = useRouter();
   const pathname = usePathname();
   const [rootClass, getChildClass] = getClassName({
     rootClass: "VersionSwitcher",
@@ -45,24 +50,33 @@ export function VersionSwitcher({
   const selected = (slug && versionFromSlug(slug, versions)) ?? "latest";
   const options = switcherOptions(base, current, versions);
   const tab = currentTab(pathname, base);
+  const label = selected === "latest" ? `v${current} (latest)` : `v${selected}`;
 
   return (
-    <label className={rootClass}>
-      <span className={getChildClass("label")}>Version</span>
-      <select
-        className={getChildClass("select")}
-        value={selected}
-        onChange={(event) => {
-          const option = options.find((o) => o.value === event.target.value);
-          if (option) router.push(option.path(tab));
-        }}
-      >
+    // Keyed on the pathname so the disclosure remounts closed after a
+    // navigation; otherwise it would stay open on the next page.
+    <details key={pathname} className={rootClass}>
+      <summary className={getChildClass("summary")} aria-label={`Version ${label}, choose another`}>
+        {label}
+      </summary>
+      <ul className={getChildClass("list")}>
         {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
+          <li key={option.value}>
+            <Link
+              href={option.path(tab)}
+              className={getChildClass("option")}
+              aria-current={option.value === selected ? "page" : undefined}
+            >
+              {option.label}
+            </Link>
+          </li>
         ))}
-      </select>
-    </label>
+        <li>
+          <Link href={versionsIndexPath(base)} className={getChildClass("option")}>
+            All versions…
+          </Link>
+        </li>
+      </ul>
+    </details>
   );
 }

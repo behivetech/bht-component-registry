@@ -19,7 +19,7 @@ import {
  * theme builder page. One function, `buildScheme`, turns a handful of seed
  * colours into every `--md-sys-color-*` role for the light and the dark
  * scheme, using Google's own algorithm (`@material/material-color-utilities`,
- * the library the Material Theme Builder runs). The same module runs at build
+ * the reference implementation of MD3 dynamic colour). The same module runs at build
  * time (the catalog generator writes `src/generated/theme.css` from
  * `registry.config.json#site.theme`) and in the browser (the builder), so what
  * a visitor downloads is exactly what the docs site renders.

@@ -83,7 +83,7 @@ export function parseTheme(fragment: string): ThemeSeeds | null {
       ? (scheme as SchemeVariant)
       : "tonalspot",
     contrast:
-      contrast && contrast in CONTRAST_LEVELS ? (contrast as ContrastLevel) : "standard",
+      contrast && Object.hasOwn(CONTRAST_LEVELS, contrast) ? (contrast as ContrastLevel) : "standard",
     overrides: light || dark ? overrides : null,
   };
 }

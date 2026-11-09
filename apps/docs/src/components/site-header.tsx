@@ -33,9 +33,11 @@ export function SiteHeader() {
           <Link href="/" className={getChildClass("brand")}>
             {site.logo ? (
               // Plain <img>s: the static export has no image optimizer, and the
-              // logo may be an external URL.
+              // logo may be an external URL. When both logos are configured
+              // exactly one is displayed at a time (the stylesheet hides the
+              // other), so both carry the name the link needs.
               <>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
+                {/* eslint-disable-next-line @next/next/no-img-element -- static export, no optimizer */}
                 <img
                   src={dark ? (site.logoDark ?? site.logo) : site.logo}
                   alt={site.title}
@@ -43,11 +45,10 @@ export function SiteHeader() {
                   className={getChildClass("logo")}
                 />
                 {paired && (
-                  // eslint-disable-next-line @next/next/no-img-element
+                  // eslint-disable-next-line @next/next/no-img-element -- static export, no optimizer
                   <img
                     src={site.logoDark!}
-                    alt=""
-                    aria-hidden
+                    alt={site.title}
                     height={28}
                     className={getChildClass("logo-dark")}
                   />

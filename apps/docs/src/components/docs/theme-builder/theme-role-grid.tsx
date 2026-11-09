@@ -75,12 +75,15 @@ export function ThemeRoleGrid({
           ))}
         </tbody>
       </table>
-      <div className={getChildClass("contrast")} role="status">
-        {failing.length === 0 ? (
-          <p>Every text role reaches 4.5:1 on its background in both schemes.</p>
-        ) : (
+      <div className={getChildClass("contrast")}>
+        {/* Only the summary line is live, so a picker drag announces one sentence, not the list. */}
+        <p role="status">
+          {failing.length === 0
+            ? "Every text role reaches 4.5:1 on its background in both schemes."
+            : `${failing.length} pair${failing.length === 1 ? "" : "s"} below 4.5:1 (WCAG AA for text):`}
+        </p>
+        {failing.length > 0 && (
           <>
-            <p>Below 4.5:1 (WCAG AA for text):</p>
             <ul>
               {failing.map((entry) => (
                 <li key={`${entry.scheme}-${entry.text}`}>

@@ -138,7 +138,7 @@ export function fontsModule(fonts: FontsConfig | null | undefined): string {
       })
       .join("\n");
     lines.push(
-      `/** ${face.family}, from branding/ (self-hosted: no request leaves the page). */`,
+      `/** ${face.family.replace(/\*\//g, "* /")}, from branding/ (self-hosted: no request leaves the page). */`,
       `export const ${slot} = localFont({`,
       `  src: [`,
       src,

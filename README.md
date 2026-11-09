@@ -38,7 +38,7 @@ Then set `scope` in `registry.config.json`, rename `registry/example` to your sc
 - `*.example.tsx` exports become live, editable examples and the catalog thumbnails.
 - A props table built by react-docgen-typescript from the TypeScript interface and its JSDoc.
 - The Changelog tab is the package's `CHANGELOG.md`, written by Changesets.
-- Docs for every released version: `pnpm version-packages` snapshots each bumped component's README, props, examples and source into `docs-history/`, and the component page gets a version switcher with a permalink per version.
+- Docs for every released version: `pnpm version-packages` snapshots the README, props, examples and source of each component at its new version into `docs-history/`, and the component page gets a version switcher with a permalink per version.
 - Status (`stable`, `beta`, `draft`, `deprecated`) and tags per component, from `package.json`.
 - An optional design tokens page from a scope's `tokens.scss`, and a theme builder at `/theme`: pick seed colours, every Material Design 3 role regenerates for light and dark, edit roles by hand, download the CSS.
 - Branding from `registry.config.json` and a `branding/` folder: logo, icons, colours (seeds, not a palette to maintain), self-hosted fonts, a dark header, the home-page hero. Nothing of it is template-owned.

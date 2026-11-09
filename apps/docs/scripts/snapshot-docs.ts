@@ -28,6 +28,7 @@ import {
   SNAPSHOT_META_FILE,
   historyDir,
   registryEntries,
+  sourceFileNames,
   type RegistryEntry,
   type SnapshotMeta,
 } from "./lib/registry-entries";
@@ -35,19 +36,8 @@ import {
 const APP_DIR = path.resolve(import.meta.dirname, "..");
 const REPO_ROOT = path.resolve(APP_DIR, "../..");
 
-/** The files a snapshot copies: what the Code tab shows, minus tests and tooling. */
-const SNAPSHOT_EXTENSIONS = new Set([".tsx", ".ts", ".scss", ".json", ".md"]);
-const SNAPSHOT_SKIP = new Set([
-  "package.json",
-  "tsconfig.json",
-  "tsup.config.ts",
-  "eslint.config.mjs",
-  "global.d.ts",
-  "CHANGELOG.md",
-  "docs.json",
-  SNAPSHOT_META_FILE,
-]);
-const isTest = (file: string) => /\.(spec|test)\.[cm]?[jt]sx?$/.test(file);
+/** The files a snapshot copies: what the Code tab shows, minus tests. */
+const snapshotFiles = (dir: string) => sourceFileNames(dir, { includeTests: false });
 
 interface Options {
   all: boolean;
@@ -82,18 +72,6 @@ function readConfig(): Config {
   if (!fs.existsSync(file)) throw new Error("registry.config.json is missing at the repo root.");
   return JSON.parse(fs.readFileSync(file, "utf8")) as Config;
 }
-
-const snapshotFiles = (dir: string) =>
-  fs
-    .readdirSync(dir)
-    .filter(
-      (f) =>
-        !SNAPSHOT_SKIP.has(f) &&
-        !isTest(f) &&
-        SNAPSHOT_EXTENSIONS.has(path.extname(f)) &&
-        fs.statSync(path.join(dir, f)).isFile(),
-    )
-    .sort();
 
 function writeSnapshot(entry: RegistryEntry, version: string, templateVersion: string, dryRun: boolean): string[] {
   const target = path.join(historyDir(REPO_ROOT, entry), version);

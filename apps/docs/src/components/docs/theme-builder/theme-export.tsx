@@ -43,8 +43,14 @@ export function ThemeExport({
   }, [copied]);
 
   const copy = async (kind: "css" | "config") => {
-    await navigator.clipboard.writeText(kind === "css" ? css : snippet);
-    setCopied(kind);
+    try {
+      await navigator.clipboard.writeText(kind === "css" ? css : snippet);
+      setCopied(kind);
+    } catch {
+      // Clipboard access refused (insecure context, permission): the CSS is
+      // still readable in the details block below, and the download works.
+      setCopied(null);
+    }
   };
 
   const [rootClass, getChildClass] = getClassName({

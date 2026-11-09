@@ -43,7 +43,14 @@ import type {
   HistoryIndex,
 } from "../src/lib/catalog/types";
 import { releasesUpTo, sortVersionsDesc, VERSION } from "../src/lib/catalog/history";
-import { SNAPSHOT_META_FILE, historyDir, type SnapshotMeta } from "./lib/registry-entries";
+import {
+  SNAPSHOT_META_FILE,
+  SOURCE_LANGUAGES,
+  historyDir,
+  registryEntries,
+  sourceFileNames,
+  type SnapshotMeta,
+} from "./lib/registry-entries";
 import {
   fontProblems,
   fontsModule,
@@ -495,35 +502,9 @@ function extractExamples(file: string): CatalogExample[] {
 
 // ---------------------------------------------------------------------------
 
-const LANGUAGE: Record<string, CatalogSourceFile["language"]> = {
-  ".tsx": "tsx",
-  ".ts": "ts",
-  ".scss": "scss",
-  ".json": "json",
-  ".md": "markdown",
-};
-
-/** The files worth showing on the Code tab — the component's own source, not its tooling. */
+/** The files worth showing on the Code tab — the component's own source, not its tooling (one rule with the snapshot script: scripts/lib/registry-entries.ts). */
 function sourceFiles(dir: string): CatalogSourceFile[] {
-  const skip = new Set([
-    "package.json",
-    "tsconfig.json",
-    "tsup.config.ts",
-    "eslint.config.mjs",
-    "global.d.ts",
-    "CHANGELOG.md",
-    "README.md",
-    "docs.json",
-    SNAPSHOT_META_FILE,
-  ]);
-  return fs
-    .readdirSync(dir)
-    .filter(
-      (f) =>
-        !skip.has(f) &&
-        LANGUAGE[path.extname(f)] &&
-        fs.statSync(path.join(dir, f)).isFile(),
-    )
+  return sourceFileNames(dir)
     .sort((a, b) => {
       // The component itself first, then its styles, then everything else.
       const rank = (f: string) =>
@@ -540,7 +521,7 @@ function sourceFiles(dir: string): CatalogSourceFile[] {
     })
     .map((f) => ({
       path: f,
-      language: LANGUAGE[path.extname(f)]!,
+      language: SOURCE_LANGUAGES[path.extname(f) as keyof typeof SOURCE_LANGUAGES],
       content: fs.readFileSync(path.join(dir, f), "utf8"),
     }));
 }
@@ -731,34 +712,13 @@ async function main() {
   const started = Date.now();
   const config = readConfig();
   const warnings: string[] = [];
-  const entries: {
-    scope: string;
-    category: string;
-    name: string;
-    dir: string;
-    pkg: Record<string, unknown>;
-  }[] = [];
-
   if (!fs.existsSync(REGISTRY_DIR)) {
     throw new Error(
       "No registry/ folder. Create one with `pnpm gen` — see the Components guide (apps/docs/default-docs/guide/components.md).",
     );
   }
-
-  for (const scope of fs.readdirSync(REGISTRY_DIR).sort()) {
-    const scopeDir = path.join(REGISTRY_DIR, scope);
-    if (!fs.statSync(scopeDir).isDirectory() || scope.startsWith(".")) continue;
-    for (const category of fs.readdirSync(scopeDir).sort()) {
-      const categoryDir = path.join(scopeDir, category);
-      if (!fs.statSync(categoryDir).isDirectory()) continue;
-      for (const name of fs.readdirSync(categoryDir).sort()) {
-        const dir = path.join(categoryDir, name);
-        const pkgFile = path.join(dir, "package.json");
-        if (!fs.existsSync(pkgFile)) continue;
-        entries.push({ scope, category, name, dir, pkg: readJson(pkgFile) });
-      }
-    }
-  }
+  // The same walk the snapshot script starts from.
+  const entries = registryEntries(REPO_ROOT);
 
   // ONE parser (one TypeScript program) for every source file in the registry.
   const parsed = createDocgen().parse(

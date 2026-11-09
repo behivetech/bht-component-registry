@@ -10,6 +10,7 @@ export const metadata = {
   title: "Theme builder",
   description:
     "Pick seed colours, watch every Material Design 3 role update, edit roles, and download the CSS.",
+  ...(catalog.docs.themeBuilder ? {} : { robots: { index: false, follow: false } }),
 };
 
 /**
@@ -21,6 +22,9 @@ export const metadata = {
  * the 404 page and the header hides its link.
  */
 export default function ThemePage() {
+  // A static export cannot drop a route: with the builder off this renders the
+  // not-found page at /theme (served with a 200, like /tokens without tokens),
+  // the header shows no link to it, and the metadata asks crawlers to skip it.
   if (!catalog.docs.themeBuilder) notFound();
   const [rootClass, getChildClass] = getClassName({
     rootClass: "ThemePage",
@@ -35,9 +39,8 @@ export default function ThemePage() {
           Every component here reads Material Design 3 colour roles
           (<code>--md-sys-color-*</code>). Pick your brand colours and the
           whole palette is generated for the light and the dark scheme with
-          Google&apos;s algorithm, the one behind the Material Theme Builder.
-          Adjust any role by hand, then download the CSS or copy the config
-          for this registry.
+          Google&apos;s own Material Design 3 colour algorithm. Adjust any role
+          by hand, then download the CSS or copy the config for this registry.
         </p>
         <ThemeBuilder
           initial={catalog.site.theme}

@@ -27,7 +27,7 @@ Every component is its own npm package with its own semver. Changesets records w
    pnpm version-packages
    ```
 
-   This bumps each affected `package.json#version`, prepends a release section to each `CHANGELOG.md`, deletes the consumed changeset files, and snapshots each bumped component's docs into `docs-history/` so the site keeps a page for that version (see [Versioned docs](versioned-docs.md); build first for exact props tables). Commit the result (the release workflow does this for you as a pull request; see below).
+   This bumps each affected `package.json#version`, prepends a release section to each `CHANGELOG.md`, deletes the consumed changeset files, and snapshots the docs of every component whose new version has no snapshot yet (the bumped ones) into `docs-history/` so the site keeps a page for that version (see [Versioned docs](versioned-docs.md); build first for exact props tables). Commit the result (the release workflow does this for you as a pull request; see below).
 
 4. Publish:
 

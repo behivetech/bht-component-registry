@@ -46,6 +46,49 @@ export function registryEntries(repoRoot: string): RegistryEntry[] {
   return entries;
 }
 
+/** Source languages the Code tab shows, by extension. */
+export const SOURCE_LANGUAGES = {
+  ".tsx": "tsx",
+  ".ts": "ts",
+  ".scss": "scss",
+  ".json": "json",
+  ".md": "markdown",
+} as const;
+
+/** Tooling and metadata files that are never part of a component's shown source. */
+export const SOURCE_SKIP = new Set([
+  "package.json",
+  "tsconfig.json",
+  "tsup.config.ts",
+  "eslint.config.mjs",
+  "global.d.ts",
+  "CHANGELOG.md",
+  "README.md",
+  "docs.json",
+  "snapshot.json",
+]);
+
+export const isTestFile = (file: string) => /\.(spec|test)\.[cm]?[jt]sx?$/.test(file);
+
+/**
+ * The component's own source files in `dir`: what the Code tab shows, and —
+ * with `includeTests: false` — what a docs snapshot copies (a past version's
+ * tests are not documentation). One rule, used by the generator and the
+ * snapshot script, so the two can never drift.
+ */
+export function sourceFileNames(dir: string, { includeTests = true } = {}): string[] {
+  return fs
+    .readdirSync(dir)
+    .filter(
+      (f) =>
+        !SOURCE_SKIP.has(f) &&
+        (includeTests || !isTestFile(f)) &&
+        path.extname(f) in SOURCE_LANGUAGES &&
+        fs.statSync(path.join(dir, f)).isFile(),
+    )
+    .sort();
+}
+
 /** The folder a component's snapshots live in: docs-history/<scope>/<category>/<name>. */
 export const historyDir = (repoRoot: string, entry: Pick<RegistryEntry, "scope" | "category" | "name">) =>
   path.join(repoRoot, "docs-history", entry.scope, entry.category, entry.name);

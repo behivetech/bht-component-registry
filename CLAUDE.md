@@ -24,8 +24,8 @@ replaced by `npx create-bht-component-registry update`.
 - `branding/` — the owner's logo, icons and fonts, named from `registry.config.json#site`; never template-owned.
 - `docs-history/<scope>/<category>/<name>/<version>/` — the docs snapshot of each released version (README, source, examples,
   `docs.json`, `snapshot.json`), written by `apps/docs/scripts/snapshot-docs.ts` as the last step of `pnpm version-packages`
-  and read by the generator into `src/generated/history.json`; the pages live at `src/app/[scope]/[category]/[name]/**/v/[version]/`
-  (the version is the last URL segment, dots as underscores). Never template-owned; `docs-history/example/**` is the template's
+  and read by the generator into `src/generated/history.json`; the pages live at `src/app/[scope]/[category]/[name]/v/[[...version]]/`
+  (`/v` index, `/v/<token>`, `/v/<token>/<tab>`; dots as underscores). Never template-owned; `docs-history/example/**` is the template's
   own e2e fixture and `templateOnly`.
 - `registry.config.json` — scope, `npmRegistry`, `templateVersion`, `site` branding, `docs` options. Committed, non-secret, validated by `registry.config.schema.json`. A new `site.*` or `docs.*` key is added to the schema (with a description) and to the table in `guide/scopes.md` in the same commit.
 

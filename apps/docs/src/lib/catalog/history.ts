@@ -10,10 +10,14 @@ import type { CatalogRelease } from "./types";
 
 export const VERSION = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/;
 
-/** Semver-ish comparison good enough for ordering releases (prerelease tags sort below the release). */
+/** Semver precedence (§11): numeric core, then prerelease identifiers, numeric ones compared as numbers; a release outranks its prereleases. */
 export function compareVersions(a: string, b: string): number {
-  const [ca, pa = ""] = a.split("-", 2) as [string, string?];
-  const [cb, pb = ""] = b.split("-", 2) as [string, string?];
+  const split = (v: string): [string, string] => {
+    const i = v.indexOf("-");
+    return i === -1 ? [v, ""] : [v.slice(0, i), v.slice(i + 1)];
+  };
+  const [ca, pa] = split(a);
+  const [cb, pb] = split(b);
   const na = ca.split(".").map((n) => parseInt(n, 10) || 0);
   const nb = cb.split(".").map((n) => parseInt(n, 10) || 0);
   for (let i = 0; i < 3; i += 1) {
@@ -23,7 +27,25 @@ export function compareVersions(a: string, b: string): number {
   if (pa === pb) return 0;
   if (pa === "") return 1;
   if (pb === "") return -1;
-  return pa.localeCompare(pb);
+  const ia = pa.split(".");
+  const ib = pb.split(".");
+  for (let i = 0; i < Math.max(ia.length, ib.length); i += 1) {
+    const x = ia[i];
+    const y = ib[i];
+    if (x === undefined) return -1;
+    if (y === undefined) return 1;
+    const xn = /^\d+$/.test(x);
+    const yn = /^\d+$/.test(y);
+    if (xn && yn) {
+      const diff = Number(x) - Number(y);
+      if (diff !== 0) return diff;
+    } else if (xn !== yn) {
+      return xn ? -1 : 1;
+    } else if (x !== y) {
+      return x < y ? -1 : 1;
+    }
+  }
+  return 0;
 }
 
 /** Newest first. */
@@ -59,6 +81,7 @@ export const releasesUpTo = (releases: readonly CatalogRelease[], version: strin
 
 /** The tabs a snapshot has. Playground and Design need the current build, so they are not among them. */
 export const SNAPSHOT_TABS = ["", "/examples", "/code", "/changelog"] as const;
+export type SnapshotTab = (typeof SNAPSHOT_TABS)[number];
 
 /**
  * The URL token for a version: `1.2.0` → `1_2_0`, `1.2.0-beta.1` → `1_2_0-beta_1`.
@@ -75,17 +98,21 @@ export const versionFromSlug = (slug: string, versions: readonly string[]) =>
 
 /**
  * The URL for a component page at a version. `version` null means the live
- * page. The version is always the last segment (`/<base>/v/1_2_0`,
- * `/<base>/code/v/1_2_0`). A tab a snapshot does not have (playground,
- * design) lands on the snapshot's overview, so the switcher never produces a
- * 404.
+ * page. Snapshot pages live under one optional catch-all segment,
+ * `/<base>/v` (the versions index), `/<base>/v/1_2_0` (overview) and
+ * `/<base>/v/1_2_0/code` (a tab), with the version as a dotless token. A tab
+ * a snapshot does not have (playground, design) lands on the snapshot's
+ * overview, so the switcher never produces a 404.
  */
 export function versionedPath(base: string, version: string | null, tab = ""): string {
   const clean = base.replace(/\/$/, "");
   if (version === null) return `${clean}${tab}`;
   const kept = (SNAPSHOT_TABS as readonly string[]).includes(tab) ? tab : "";
-  return `${clean}${kept}/v/${versionSlug(version)}`;
+  return `${clean}/v/${versionSlug(version)}${kept}`;
 }
+
+/** The versions index of a component. */
+export const versionsIndexPath = (base: string) => `${base.replace(/\/$/, "")}/v`;
 
 export interface SwitcherOption {
   /** "latest" for the live page, else the version. */
@@ -112,13 +139,27 @@ export function switcherOptions(
   ];
 }
 
-/** The version token in a component pathname (`…/code/v/1_2_0` → "1_2_0"), or null on the live page. */
+/** The version token in a component pathname (`…/v/1_2_0/code` → "1_2_0"), or null on the live page and the versions index. */
 export function versionSlugInPath(pathname: string): string | null {
-  return /\/v\/([^/]+)\/?$/.exec(pathname)?.[1] ?? null;
+  return /\/v\/([^/]+)(?:\/|$)/.exec(pathname)?.[1] ?? null;
 }
 
-/** The tab part of a component path: "" for the overview, "/examples", with any "/v/<version>" stripped. */
+/** The tab part of a component path: "" for an overview, "/examples", … on the live page and on a snapshot alike. */
 export function currentTab(pathname: string, base: string): string {
   const rest = pathname.startsWith(base) ? pathname.slice(base.length) : "";
-  return rest.replace(/\/v\/[^/]+\/?$/, "").replace(/\/$/, "");
+  const snapshot = /^\/v(?:\/[^/]+)?(\/.*)?$/.exec(rest);
+  const tab = snapshot ? (snapshot[1] ?? "") : rest;
+  return tab.replace(/\/$/, "");
+}
+
+/** The parsed form of the optional catch-all: nothing (the index), a version token, or a token and a tab. */
+export function parseVersionSegments(
+  segments: readonly string[] | undefined,
+): { kind: "index" } | { kind: "page"; slug: string; tab: SnapshotTab } | { kind: "unknown" } {
+  if (!segments || segments.length === 0) return { kind: "index" };
+  const [slug, tab, ...rest] = segments;
+  if (!slug || rest.length > 0) return { kind: "unknown" };
+  const path = tab === undefined ? "" : `/${tab}`;
+  if (!(SNAPSHOT_TABS as readonly string[]).includes(path)) return { kind: "unknown" };
+  return { kind: "page", slug, tab: path as SnapshotTab };
 }

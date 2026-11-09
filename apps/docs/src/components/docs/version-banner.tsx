@@ -28,7 +28,7 @@ export function VersionBanner({
     modifiers: { outdated },
   });
   return (
-    <p className={rootClass} role="status">
+    <p className={rootClass}>
       {outdated ? (
         <>
           You are viewing <strong>{title} v{version}</strong>, snapshotted{" "}

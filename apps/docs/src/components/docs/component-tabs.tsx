@@ -19,8 +19,9 @@ const DESIGN_TAB = { path: "/design", label: "Design" };
 /**
  * Tabs are routes, so each one is linkable and prerendered. The Design tab
  * exists only for a component with design links. On a past version's page
- * (`…/v/<version>`, read from the URL's params) the tabs point at the same
- * version and drop Playground and Design, which need the current build.
+ * (`…/v/<version>[/<tab>]`, read from the URL's params) the tabs point at
+ * the same version and drop Playground and Design, which need the current
+ * build.
  */
 export function ComponentTabs({
   base: liveBase,
@@ -30,7 +31,9 @@ export function ComponentTabs({
   design?: boolean;
 }) {
   const pathname = usePathname();
-  const { version } = useParams<{ version?: string }>();
+  // Under `v/[[...version]]` the param is the catch-all's segments; the first is the version token.
+  const { version: segments } = useParams<{ version?: string[] }>();
+  const version = segments?.[0];
   const tabs = version
     ? TABS.filter((tab) => (SNAPSHOT_TABS as readonly string[]).includes(tab.path))
     : design
