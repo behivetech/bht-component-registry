@@ -20,7 +20,7 @@
     "verify": "pnpm check:publish && pnpm build && pnpm lint && pnpm check-types && pnpm test",
     "gen": "cross-env NODE_OPTIONS=\"--import tsx\" plop --plopfile=plopfile.ts",
     "changeset": "changeset",
-    "version-packages": "changeset version && node scripts/sync-template-version.mjs && pnpm --filter docs snapshot",
+    "version-packages": "changeset version && node scripts/sync-template-version.mjs && pnpm snapshot-docs",
     "snapshot-docs": "pnpm --filter docs snapshot",
     "release": "pnpm --filter \"{./registry/**}...\" --filter create-bht-component-registry run build && node scripts/prepare-publish.mjs && changeset publish; status=$?; node scripts/prepare-publish.mjs --restore; exit $status",
     "serve": "pnpm --filter docs serve"
