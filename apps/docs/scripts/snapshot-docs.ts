@@ -36,8 +36,11 @@ import {
 const APP_DIR = path.resolve(import.meta.dirname, "..");
 const REPO_ROOT = path.resolve(APP_DIR, "../..");
 
-/** The files a snapshot copies: what the Code tab shows, minus tests. */
-const snapshotFiles = (dir: string) => sourceFileNames(dir, { includeTests: false });
+/** The files a snapshot copies: the README, and what the Code tab shows minus tests. */
+const snapshotFiles = (dir: string) => [
+  ...(fs.existsSync(path.join(dir, "README.md")) ? ["README.md"] : []),
+  ...sourceFileNames(dir, { includeTests: false }),
+];
 
 interface Options {
   all: boolean;
@@ -87,7 +90,10 @@ function writeSnapshot(entry: RegistryEntry, version: string, templateVersion: s
   const docsJson = fs.existsSync(built)
     ? JSON.parse(fs.readFileSync(built, "utf8"))
     : docsJsonFor(entry.dir);
-  fs.writeFileSync(path.join(target, "docs.json"), `${JSON.stringify(docsJson, null, 2)}\n`);
+  // Without its timestamp, so a re-run that changes nothing changes nothing.
+  delete (docsJson as { generatedAt?: string }).generatedAt;
+  fs.writeFileSync(path.join(target, "docs.json"), `${JSON.stringify(docsJson, null, 2)}
+`);
   const registry = (entry.pkg.registry ?? {}) as { status?: unknown; tags?: unknown };
   const meta: SnapshotMeta = {
     version,

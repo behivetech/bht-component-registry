@@ -26,6 +26,7 @@ test("the component header offers the versions and a link opens a snapshot", asy
   await expect(page).toHaveURL(`${base}/v/0_0_0`);
   await expect(page.getByText("snapshot of v0.0.0")).toBeVisible();
   // The overview as it stood: README and the props table.
+  await expect(page.getByText("This version had no README.")).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "Properties" })).toBeVisible();
   await expect(page.getByRole("cell", { name: /^amount/ })).toBeVisible();
   // Back to latest lands on the live page.

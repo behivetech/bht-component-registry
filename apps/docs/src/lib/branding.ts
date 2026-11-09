@@ -127,8 +127,16 @@ export function fontsModule(fonts: FontsConfig | null | undefined): string {
   if (faces.length > 0) lines.push('import localFont from "next/font/local";');
   lines.push("");
   const names: string[] = ["inter"];
+  const used = new Set(names);
   for (const slot of faces) {
     const face = fonts![slot]!;
+    // next/font names the @font-face and the CSS variable's value after the
+    // identifier the call is assigned to (a `font-family` declaration would
+    // rename the face only and break the match), so the identifier is the
+    // configured family: "Ubuntu" → Ubuntu, "Bricolage Grotesque" → Bricolage_Grotesque.
+    let ident = face.family.trim().replace(/[^A-Za-z0-9_$]/g, "_").replace(/^(\d)/, "_$1") || slot;
+    if (used.has(ident)) ident = `${ident}_${slot}`;
+    used.add(ident);
     const src = face.files
       .map((file) => {
         const parts = [`path: ${JSON.stringify(`../../public/branding/${file.path}`)}`];
@@ -138,8 +146,8 @@ export function fontsModule(fonts: FontsConfig | null | undefined): string {
       })
       .join("\n");
     lines.push(
-      `/** ${face.family.replace(/\*\//g, "* /")}, from branding/ (self-hosted: no request leaves the page). */`,
-      `export const ${slot} = localFont({`,
+      `/** ${face.family.replace(/\*\//g, "* /")} (the ${slot} face), from branding/ (self-hosted: no request leaves the page). */`,
+      `export const ${ident} = localFont({`,
       `  src: [`,
       src,
       `  ],`,
@@ -148,8 +156,9 @@ export function fontsModule(fonts: FontsConfig | null | undefined): string {
       `});`,
       "",
     );
-    names.push(slot);
+    names.push(ident);
   }
+
   lines.push(
     `/** Class names that expose every font variable; the root layout puts them on <html>. */`,
     `export const fontClassName = [${names.map((n) => `${n}.variable`).join(", ")}].join(" ");`,

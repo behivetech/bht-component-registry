@@ -44,8 +44,10 @@ describe("fonts", () => {
     expect(source).toContain('import localFont from "next/font/local"');
     expect(source).toContain('path: "../../public/branding/fonts/body-400.woff2", weight: "400"');
     expect(source).toContain('variable: "--site-body-face"');
+    // The export is named after the family: next/font names the face and the variable's value after it.
+    expect(source).toContain("export const Ubuntu = localFont(");
+    expect(source).toContain("[inter.variable, Ubuntu.variable]");
     expect(source).not.toContain("--site-heading-face");
-    expect(source).toContain("[inter.variable, body.variable]");
   });
 
   it("reports missing files and bad paths before next/font does", () => {

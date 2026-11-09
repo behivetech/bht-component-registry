@@ -1,7 +1,6 @@
 {
   "$schema": "https://github.com/behivetech/bht-component-registry/docs.schema.json",
   "version": 2,
-  "generatedAt": "2026-11-09T17:49:48.736Z",
   "docs": [
     {
       "displayName": "PriceTag",
