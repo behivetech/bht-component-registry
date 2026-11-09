@@ -26,7 +26,8 @@ export interface ResolvedAsset {
  *   (warned about: `update` replaces that folder);
  * - anything else is a file under `branding/`, served at `/branding/<path>`.
  * `exists` answers whether a repo-relative path is a file, so a typo is
- * reported at build time rather than as a broken image.
+ * reported at build time rather than as a broken image. A path that climbs
+ * out of branding/ (`..`) gets a warning and no URL.
  */
 export function resolveAsset(
   key: string,
@@ -46,6 +47,13 @@ export function resolveAsset(
     };
   }
   const clean = text.replace(/^\.?\//, "");
+  if (clean.split("/").includes("..")) {
+    return {
+      url: "",
+      source: "branding",
+      warning: `${key}: "${text}" leaves the branding/ folder; only files inside it are served.`,
+    };
+  }
   const repoPath = `branding/${clean}`;
   return {
     url: `/branding/${clean}`,

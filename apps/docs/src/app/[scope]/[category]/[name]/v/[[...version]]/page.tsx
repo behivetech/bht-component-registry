@@ -254,7 +254,8 @@ function SnapshotChangelog({ snapshot, banner }: { snapshot: HistoryEntry; banne
             {snapshot.releases.map((release) => (
               <article key={release.version} className={getChildClass("release")}>
                 <h3>v{release.version}</h3>
-                <Markdown>{release.notes}</Markdown>
+                {/* Fences stay code on a snapshot, as on its overview. */}
+                <Markdown liveFences="opt-in">{release.notes}</Markdown>
               </article>
             ))}
           </div>

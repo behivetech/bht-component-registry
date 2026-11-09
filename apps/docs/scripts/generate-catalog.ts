@@ -277,7 +277,7 @@ function siteFromConfig(
   const asset = (key: string, value: string | undefined) => {
     const resolved = resolveAsset(`site.${key}`, value, repoFileExists);
     if (resolved?.warning) warnings.push(resolved.warning);
-    return resolved?.url ?? null;
+    return resolved?.url || null;
   };
   const description = site.description ?? null;
   const theme = themeSeeds(site);

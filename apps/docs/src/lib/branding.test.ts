@@ -14,6 +14,9 @@ describe("resolveAsset", () => {
     });
     expect(resolveAsset("site.logo", "./logo.svg", exists)?.url).toBe("/branding/logo.svg");
     expect(resolveAsset("site.favicon", "mark.svg", exists)?.warning).toMatch(/branding\/mark\.svg/);
+    const escaped = resolveAsset("site.logo", "../apps/docs/public/favicon.ico", exists);
+    expect(escaped?.url).toBe("");
+    expect(escaped?.warning).toMatch(/leaves the branding\/ folder/);
   });
 
   it("keeps the legacy public/ path with a warning, and external URLs as is", () => {
