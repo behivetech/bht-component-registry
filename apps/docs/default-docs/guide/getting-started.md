@@ -126,7 +126,7 @@ All run from the repo root.
 | `pnpm dev` | Regenerates the catalog, then Next dev on :3000 |
 | `pnpm build` | Builds every package, then the static export to `apps/docs/out` |
 | `pnpm serve` | Serves `apps/docs/out` on :3000 the way a static host would |
-| `pnpm verify` | build, then lint + types + unit tests for every package |
+| `pnpm verify` | publish-config check and script tests, then build, then lint + types + unit tests for every package |
 | `pnpm test:e2e` | Playwright against the static build (builds first) |
 | `pnpm gen` | Pick a generator; `pnpm gen component <scope> <category> <name>` skips the prompts. See [Generators](generators.md) |
 | `pnpm changeset` | Record a change for the next release |

@@ -26,7 +26,7 @@ pnpm --filter docs test:watch               # the docs app, watching
 pnpm verify
 ```
 
-Runs `build`, then `lint`, `check-types` and `test`, each as `pnpm -r run <script>` across the workspace in dependency order; packages without that script are skipped. There is no cache, so every run rebuilds. Output is prefixed per package; for one phase with less interleaving:
+First `check:publish` and `test:scripts` (the unit tests of `scripts/lib`, run with `node --test`), then runs `build`, then `lint`, `check-types` and `test`, each as `pnpm -r run <script>` across the workspace in dependency order; packages without that script are skipped. There is no cache, so every run rebuilds. Output is prefixed per package; for one phase with less interleaving:
 
 ```bash
 pnpm -r --aggregate-output run build

@@ -31,7 +31,7 @@ replaced by `npx create-bht-component-registry update`.
 
 ## Commands (root package scripts; a plain pnpm workspace, no task runner)
 
-`pnpm dev` · `pnpm build` · `pnpm serve` · `pnpm verify` (build, then lint+types+unit)
+`pnpm dev` · `pnpm build` · `pnpm serve` · `pnpm verify` (build, then lint+types+unit, plus `pnpm test:scripts` for `scripts/lib`)
 · `pnpm test:e2e` (Playwright against the static build) · `pnpm gen [component <scope> <category> <name>]`
 · `pnpm changeset` / `pnpm version-packages` (bumps, changelogs, then `pnpm snapshot-docs`) / `pnpm release`
 · `pnpm snapshot-docs [--all] [--force] [--include-private] [--dry-run]`.
@@ -43,7 +43,9 @@ replaced by `npx create-bht-component-registry update`.
   no request-time data. Every param route sets `export const dynamicParams = false` and lists its params
   in `generateStaticParams`. A real 404 comes from the host serving `404.html` with a 404 status.
 - No environment variable may be required for dev, build, test or deploy beyond `NODE_AUTH_TOKEN` for the GitHub Packages
-  install (above, temporary). The others are optional publish tokens; never write any token to the repo.
+  install (above, temporary). The others are optional: publish tokens, and `BHT_SITE_URL` (an absolute `https://` URL
+  that overrides `registry.config.json#site.url` for each published package's `homepage` and `Docs:` line; unset means
+  the config value, and an invalid value fails the publish, naming the variable). Never write any token to the repo.
 - **Temporary, until npm publishing returns:** the `@behivetech` scope installs from GitHub Packages
   (`https://npm.pkg.github.com`), named in the root `.npmrc`, and that registry needs a token even for public
   packages. The token is never in the repo: it goes in the user-level `~/.npmrc` as
@@ -62,7 +64,8 @@ replaced by `npx create-bht-component-registry update`.
   into the app or style a package's classes from the app — fix or extend the package. The app never
   imports a registry (`registry/`) package except through the generated sandbox module.
 - A package's description is its README's first paragraph, nowhere else, and its docs URL is
-  `registry.config.json#site.url` plus its path, nowhere else: `package.json#description`/`#homepage` and the
+  the site URL (`BHT_SITE_URL` when set, else `registry.config.json#site.url`; read only through
+  `scripts/lib/site-url.mjs`) plus its path, nowhere else: `package.json#description`/`#homepage` and the
   README's `Docs:` line are written by `scripts/prepare-publish.mjs` for the publish and restored after. READMEs
   carry no props table; the Props tab is generated.
 - Status and tags come from `package.json#registry`; scope identity from `scope.json`; tokens from

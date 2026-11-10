@@ -52,6 +52,7 @@ Then set `scope` in `registry.config.json`, rename `registry/example` to your sc
 - Before every `dev` and `build`, `apps/docs/scripts/generate-catalog.ts` reads every package (README, examples, source, CHANGELOG, `package.json`) and writes a catalog the pages are generated from.
 - Each component's build runs `tsup` and then `bht-registry-docgen`, which writes `docs.json` into the package, so a published tarball describes itself.
 - Changesets owns versions: `pnpm changeset`, `pnpm version-packages`, `pnpm release`. Versioning also writes the docs snapshot for each bumped component, so a version's docs land in the same commit as its bump.
+- The docs site's address is optional. `registry.config.json#site.url` sets it, and the environment variable `BHT_SITE_URL` (an absolute `https://` URL) overrides it, for example on a fork or a staging deploy; it feeds the `homepage` and `Docs:` line `pnpm release` gives each published package. Unset means the config value, and an invalid value fails the release, naming the variable.
 - `registry.config.json` holds the scope, the npm registry, the site branding and the docs options. It is committed and contains no secrets. Brand files live in `branding/`.
 
 ## Guides

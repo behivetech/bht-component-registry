@@ -51,7 +51,7 @@
         "url": {
           "type": "string",
           "format": "uri",
-          "description": "Where the docs site is served, e.g. \"https://components.acme.example\". With it set, `pnpm release` gives each published package its docs page as `homepage` and a `Docs:` line in its README, so the npm page points here rather than at the repository."
+          "description": "Where the docs site is served, e.g. \"https://components.acme.example\". With it set, `pnpm release` gives each published package its docs page as `homepage` and a `Docs:` line in its README, so the npm page points here rather than at the repository. The environment variable `BHT_SITE_URL` (an absolute https URL) overrides this value when set."
         },
         "description": {
           "type": "string",

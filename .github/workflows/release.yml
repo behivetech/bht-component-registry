@@ -130,6 +130,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ steps.publish.outputs.method == 'token' && secrets.NPM_TOKEN || '' }}
+          # Optional repository variable: overrides registry.config.json#site.url
+          # in each package's published homepage (scripts/lib/site-url.mjs). Unset
+          # reads as blank, which means the config value.
+          BHT_SITE_URL: ${{ vars.BHT_SITE_URL }}
           # The ~/.npmrc line above reads this: here it is the job's own token,
           # which can publish the class-name helper to GitHub Packages.
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { docsUrl, siteUrl } from "./lib/site-url.mjs";
 
 /**
  * `pnpm release` runs this right before `changeset publish`, and again with
@@ -11,9 +12,12 @@ import { fileURLToPath } from "node:url";
  * - `package.json#description` ← the README's first paragraph (the same
  *   sentence the docs site shows on the catalog card).
  * - `package.json#homepage` and a `Docs: <url>` line under that paragraph in
- *   the README ← `registry.config.json#site.url` plus the package's path, so
- *   the npm page links to the package's docs page rather than the repository
- *   (which may be private). Skipped when `site.url` is not set.
+ *   the README ← the site URL plus the package's path, so the npm page links
+ *   to the package's docs page rather than the repository (which may be
+ *   private). The site URL is `BHT_SITE_URL` when set, else
+ *   `registry.config.json#site.url` (scripts/lib/site-url.mjs); an invalid
+ *   `BHT_SITE_URL` stops the run before any file is touched. Skipped when
+ *   neither is set.
  *
  * The files are changed in the working tree for the publish only; `--restore`
  * writes back the originals saved in node_modules/.prepare-publish.json, so the
@@ -76,13 +80,10 @@ export function withDocsLine(readme, url) {
   return readme;
 }
 
-/** The docs page for registry/<scope>/<category>/<name> under site.url, or null. */
-function docsUrl(dir) {
-  const config = JSON.parse(readFileSync(join(ROOT, "registry.config.json"), "utf8"));
-  const base = config.site?.url?.replace(/\/+$/, "");
-  if (!base) return null;
+/** The docs page for registry/<scope>/<category>/<name> under the site URL, or null. */
+function packageDocsUrl(dir) {
   const rel = relative(join(ROOT, "registry"), dir).split("\\").join("/");
-  return `${base}/${rel}`;
+  return docsUrl(rel);
 }
 
 if (restore) {
@@ -91,6 +92,7 @@ if (restore) {
   if (existsSync(stateFile)) rmSync(stateFile);
   console.log(`prepare-publish: restored ${Object.keys(originals).length} file(s)`);
 } else {
+  siteUrl(); // an invalid BHT_SITE_URL fails here, before anything is written
   const originals = {};
   const save = (file, text) => { if (!(file in originals)) originals[file] = text; };
   let packages = 0;
@@ -99,7 +101,7 @@ if (restore) {
     const readmeFile = join(dir, "README.md");
     const readme = existsSync(readmeFile) ? readFileSync(readmeFile, "utf8") : "";
     const summary = readmeSummary(readme);
-    const url = docsUrl(dir);
+    const url = packageDocsUrl(dir);
     const text = readFileSync(pkgFile, "utf8");
     const pkg = JSON.parse(text);
     if (pkg.private) continue; // workspace-only, never published
