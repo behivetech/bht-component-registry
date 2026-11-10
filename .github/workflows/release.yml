@@ -133,7 +133,7 @@ jobs:
           # Optional repository variable: overrides registry.config.json#site.url
           # in each package's published homepage (scripts/lib/site-url.mjs). Unset
           # reads as blank, which means the config value.
-          BHT_SITE_URL: ${{ vars.BHT_SITE_URL }}
+          BHT_DOCS_SITE_URL: ${{ vars.BHT_DOCS_SITE_URL }}
           # The ~/.npmrc line above reads this: here it is the job's own token,
           # which can publish the class-name helper to GitHub Packages.
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

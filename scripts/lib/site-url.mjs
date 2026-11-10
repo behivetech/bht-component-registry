@@ -3,12 +3,12 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 /**
- * The one place the docs site's URL is decided. `BHT_SITE_URL` (optional) wins
+ * The one place the docs site's URL is decided. `BHT_DOCS_SITE_URL` (optional) wins
  * over `registry.config.json#site.url`, so a fork or a staging deploy sets its
  * own address without editing the committed config. Every reader of the site
  * URL goes through `siteUrl()`; nothing else reads either source.
  */
-export const SITE_URL_VARIABLE = "BHT_SITE_URL";
+export const SITE_URL_VARIABLE = "BHT_DOCS_SITE_URL";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const TRAILING_SLASHES = /\/+$/;
@@ -18,7 +18,7 @@ const readConfig = () =>
   JSON.parse(readFileSync(join(ROOT, "registry.config.json"), "utf8"));
 
 /**
- * Checks one `BHT_SITE_URL` value: an absolute https URL with no credentials,
+ * Checks one `BHT_DOCS_SITE_URL` value: an absolute https URL with no credentials,
  * query or fragment (a package path is appended to it), trailing slash removed.
  *
  * @param {string} value the trimmed, non-empty variable value
@@ -44,13 +44,13 @@ const validateEnvUrl = (value) => {
 };
 
 /**
- * Where the docs site is served: `BHT_SITE_URL` when set (trimmed; blank counts
+ * Where the docs site is served: `BHT_DOCS_SITE_URL` when set (trimmed; blank counts
  * as unset), else `registry.config.json#site.url`, else null. Never required.
  *
  * @param {{ env?: Record<string, string | undefined>, config?: { site?: { url?: string } } }} [options]
  *   overrides for tests; default to `process.env` and the repo's config file
  * @returns {string | null} the URL without a trailing slash, or null when neither source is set
- * @throws {Error} when `BHT_SITE_URL` is set to an invalid value (the build or publish stops)
+ * @throws {Error} when `BHT_DOCS_SITE_URL` is set to an invalid value (the build or publish stops)
  */
 export const siteUrl = ({ env = process.env, config } = {}) => {
   const fromEnv = env[SITE_URL_VARIABLE]?.trim();

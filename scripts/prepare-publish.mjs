@@ -14,9 +14,9 @@ import { docsUrl, siteUrl } from "./lib/site-url.mjs";
  * - `package.json#homepage` and a `Docs: <url>` line under that paragraph in
  *   the README ← the site URL plus the package's path, so the npm page links
  *   to the package's docs page rather than the repository (which may be
- *   private). The site URL is `BHT_SITE_URL` when set, else
+ *   private). The site URL is `BHT_DOCS_SITE_URL` when set, else
  *   `registry.config.json#site.url` (scripts/lib/site-url.mjs); an invalid
- *   `BHT_SITE_URL` stops the run before any file is touched. Skipped when
+ *   `BHT_DOCS_SITE_URL` stops the run before any file is touched. Skipped when
  *   neither is set.
  *
  * The files are changed in the working tree for the publish only; `--restore`
@@ -92,7 +92,7 @@ if (restore) {
   if (existsSync(stateFile)) rmSync(stateFile);
   console.log(`prepare-publish: restored ${Object.keys(originals).length} file(s)`);
 } else {
-  siteUrl(); // an invalid BHT_SITE_URL fails here, before anything is written
+  siteUrl(); // an invalid BHT_DOCS_SITE_URL fails here, before anything is written
   const originals = {};
   const save = (file, text) => { if (!(file in originals)) originals[file] = text; };
   let packages = 0;

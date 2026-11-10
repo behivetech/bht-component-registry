@@ -11,29 +11,29 @@ describe("siteUrl", () => {
     assert.equal(siteUrl({ env: {}, config }), "https://platform.example.test");
   });
 
-  it("lets BHT_SITE_URL override the config", () => {
-    const env = { BHT_SITE_URL: "https://docs.other.test" };
+  it("lets BHT_DOCS_SITE_URL override the config", () => {
+    const env = { BHT_DOCS_SITE_URL: "https://docs.other.test" };
     assert.equal(siteUrl({ env, config }), "https://docs.other.test");
   });
 
   it("trims the value and treats a blank one as unset", () => {
     assert.equal(
-      siteUrl({ env: { BHT_SITE_URL: "  https://docs.other.test  " }, config }),
+      siteUrl({ env: { BHT_DOCS_SITE_URL: "  https://docs.other.test  " }, config }),
       "https://docs.other.test",
     );
     assert.equal(
-      siteUrl({ env: { BHT_SITE_URL: "   " }, config }),
+      siteUrl({ env: { BHT_DOCS_SITE_URL: "   " }, config }),
       "https://platform.example.test",
     );
     assert.equal(
-      siteUrl({ env: { BHT_SITE_URL: "" }, config }),
+      siteUrl({ env: { BHT_DOCS_SITE_URL: "" }, config }),
       "https://platform.example.test",
     );
   });
 
   it("strips trailing slashes from either source", () => {
     assert.equal(
-      siteUrl({ env: { BHT_SITE_URL: "https://docs.other.test///" }, config }),
+      siteUrl({ env: { BHT_DOCS_SITE_URL: "https://docs.other.test///" }, config }),
       "https://docs.other.test",
     );
     assert.equal(
@@ -44,7 +44,7 @@ describe("siteUrl", () => {
 
   it("keeps a base path", () => {
     assert.equal(
-      siteUrl({ env: { BHT_SITE_URL: "https://a.test/docs/" }, config }),
+      siteUrl({ env: { BHT_DOCS_SITE_URL: "https://a.test/docs/" }, config }),
       "https://a.test/docs",
     );
   });
@@ -71,14 +71,14 @@ describe("siteUrl", () => {
   ]) {
     it(`fails loudly, naming the variable, for ${label}`, () => {
       assert.throws(
-        () => siteUrl({ env: { BHT_SITE_URL: value }, config }),
-        /BHT_SITE_URL must be an absolute https:\/\//,
+        () => siteUrl({ env: { BHT_DOCS_SITE_URL: value }, config }),
+        /BHT_DOCS_SITE_URL must be an absolute https:\/\//,
       );
     });
   }
 
   it("does not fall back to the config when the variable is invalid", () => {
-    assert.throws(() => siteUrl({ env: { BHT_SITE_URL: "nope" }, config }));
+    assert.throws(() => siteUrl({ env: { BHT_DOCS_SITE_URL: "nope" }, config }));
   });
 });
 
@@ -90,8 +90,8 @@ describe("docsUrl", () => {
     );
   });
 
-  it("uses BHT_SITE_URL, with no doubled slash", () => {
-    const env = { BHT_SITE_URL: "https://example.test/" };
+  it("uses BHT_DOCS_SITE_URL, with no doubled slash", () => {
+    const env = { BHT_DOCS_SITE_URL: "https://example.test/" };
     assert.equal(
       docsUrl("behivetech/atoms/button", { env, config }),
       "https://example.test/behivetech/atoms/button",
@@ -109,11 +109,11 @@ describe("docsUrl", () => {
     assert.equal(docsUrl("../packages/env", { env: {}, config }), null);
   });
 
-  it("throws on an invalid BHT_SITE_URL", () => {
+  it("throws on an invalid BHT_DOCS_SITE_URL", () => {
     assert.throws(
       () =>
-        docsUrl("a/b/c", { env: { BHT_SITE_URL: "http://x.test" }, config }),
-      /BHT_SITE_URL/,
+        docsUrl("a/b/c", { env: { BHT_DOCS_SITE_URL: "http://x.test" }, config }),
+      /BHT_DOCS_SITE_URL/,
     );
   });
 });

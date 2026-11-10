@@ -43,7 +43,7 @@ replaced by `npx create-bht-component-registry update`.
   no request-time data. Every param route sets `export const dynamicParams = false` and lists its params
   in `generateStaticParams`. A real 404 comes from the host serving `404.html` with a 404 status.
 - No environment variable may be required for dev, build, test or deploy beyond `NODE_AUTH_TOKEN` for the GitHub Packages
-  install (above, temporary). The others are optional: publish tokens, and `BHT_SITE_URL` (an absolute `https://` URL
+  install (above, temporary). The others are optional: publish tokens, and `BHT_DOCS_SITE_URL` (an absolute `https://` URL
   that overrides `registry.config.json#site.url` for each published package's `homepage` and `Docs:` line; unset means
   the config value, and an invalid value fails the publish, naming the variable). Never write any token to the repo.
 - **Temporary, until npm publishing returns:** the `@behivetech` scope installs from GitHub Packages
@@ -64,7 +64,7 @@ replaced by `npx create-bht-component-registry update`.
   into the app or style a package's classes from the app — fix or extend the package. The app never
   imports a registry (`registry/`) package except through the generated sandbox module.
 - A package's description is its README's first paragraph, nowhere else, and its docs URL is
-  the site URL (`BHT_SITE_URL` when set, else `registry.config.json#site.url`; read only through
+  the site URL (`BHT_DOCS_SITE_URL` when set, else `registry.config.json#site.url`; read only through
   `scripts/lib/site-url.mjs`) plus its path, nowhere else: `package.json#description`/`#homepage` and the
   README's `Docs:` line are written by `scripts/prepare-publish.mjs` for the publish and restored after. READMEs
   carry no props table; the Props tab is generated.
