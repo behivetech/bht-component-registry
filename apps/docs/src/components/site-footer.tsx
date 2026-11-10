@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import { catalog } from "@/lib/catalog";
 import { getDocPage } from "@/lib/docs";
 import styles from "./site-footer.module.scss";

@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import { CodeBlock } from "./code-block";
 import { snippetToLiveCode } from "./snippet";
 import styles from "./markdown.module.scss";

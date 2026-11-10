@@ -33,7 +33,7 @@ change the package. `globals.scss` holds only the site-level font wiring; the co
 
 ## Class names are BEM through `getClassName`
 
-Every styled element gets its class from `getClassName` (`@bht-component-registry/class-names`): the root is
+Every styled element gets its class from `getClassName` (`@behivetech/bht-class-names`): the root is
 `rootClass` (`<classPrefix>__<PascalName>` in a registry package — `classPrefix` from `scope.json`, else the scope in CONSTANT_CASE — and `<PascalName>` in the docs app), children are
 `getChildClass("kebab-name")`, variants are `modifiers`, and the `.module.scss` mirrors that tree with
 `&__child` and `&--modifier`. Never write `styles.foo`, a literal class string, a selector that reaches into

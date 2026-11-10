@@ -17,7 +17,7 @@ replaced by `npx create-bht-component-registry update`.
   `src/lib/branding.ts`; the Material Design 3 colour engine (build time and the `/theme` builder) in `src/lib/theme/`;
   e2e in `e2e/`.
 - `packages/env` — everything a component package builds, lints, type-checks and tests with: tsup config, `tsconfig.json` (carries the `*.module.scss` typings via `files`), ESLint config, Vitest config + setup (root `vitest.config.ts` re-exports it), and the `bht-registry-docgen` bin (writes `docs.json` per package).
-- `packages/class-names`, `eslint-config`, `typescript-config`, `scope` — workspace-only (`@bht-component-registry/*`).
+- `packages/class-names` — `@behivetech/bht-class-names`, the `getClassName` helper (no dependencies; the part of `classnames` it used is its own `joinClassNames`, held byte-identical by a differential test). **Published** (GitHub Packages for now) and an external `dependencies` entry (`workspace:^`) of every component, never bundled in. A created registry keeps the folder as a private, workspace-only copy (`create` and `update` set that). `eslint-config`, `typescript-config`, `scope` and `env` stay workspace-only (`@bht-component-registry/*`).
 - `packages/create-bht-component-registry` — the npx `create` and `update` CLI; `template.manifest.json` lists what `update` may replace.
 - `registry/<scope>/` — `scope.json` plus one package per component. `registry/example` is the shipped example; deleting it must not break the build.
 - `plopfile.ts` + `scripts/generators/<name>/{index.ts,templates/}` — `pnpm gen` is plop, launched as its docs say for TypeScript (`NODE_OPTIONS="--import tsx" plop --plopfile=plopfile.ts`): `component`, `hook`, `util`, `doc`, `generator`; shared prompts/helpers in `scripts/generators/shared.ts`. The owner's own generators go in `generators/<name>/` (never template-owned); both folders are auto-loaded. Stay within plop's documented API (plopjs.com) — no hand-rolled rendering.
@@ -42,13 +42,19 @@ replaced by `npx create-bht-component-registry update`.
 - Static export (`output: "export"`): no `proxy.ts`/middleware, no route handlers, no cookies, no auth,
   no request-time data. Every param route sets `export const dynamicParams = false` and lists its params
   in `generateStaticParams`. A real 404 comes from the host serving `404.html` with a 404 status.
-- No environment variable may be required for dev, build, test or deploy. The only ones that exist are
-  optional publish tokens; never write them to the repo.
-- Nothing may depend on a private registry. `pnpm install` must work with no `.npmrc` and no token; CI
-  fails if the lockfile mentions one. Registry packages depend only on `@bht-component-registry/*`
-  workspace packages.
+- No environment variable may be required for dev, build, test or deploy beyond `NODE_AUTH_TOKEN` for the GitHub Packages
+  install (above, temporary). The others are optional publish tokens; never write any token to the repo.
+- **Temporary, until npm publishing returns:** the `@behivetech` scope installs from GitHub Packages
+  (`https://npm.pkg.github.com`), named in the root `.npmrc`, and that registry needs a token even for public
+  packages. The token is never in the repo: it goes in the user-level `~/.npmrc` as
+  `//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}` (pnpm 11 ignores an env-expanded credential in a project
+  `.npmrc`), and in CI the workflows write that line and read the secret `PACKAGES_READ_TOKEN`. CI fails if the lockfile
+  points at any registry other than npmjs and GitHub Packages. Nothing else may be private: registry packages depend
+  only on `@behivetech/bht-class-names` and workspace tooling. When npm publishing returns, delete the
+  `@behivetech:registry` line in `.npmrc`, the token steps in the workflows, and this rule's exception.
 - Everything public is `bht`-prefixed (`create-bht-component-registry`, `bht-registry-docgen`,
-  `@behivetech/bht-*`); workspace-only packages are `@bht-component-registry/*` and never published.
+  `@behivetech/bht-*`, so `@behivetech/bht-class-names`); workspace-only packages are `@bht-component-registry/*`
+  and never published.
 - The docs app's chrome is the published `@behivetech` components (Button, Card, Badge, Table,
   TextField, EmptyState, HeroBanner) and `@behivetech/cms.base-styles` for the token sheet, pinned in
   `apps/docs/package.json`; `globals.scss` holds only the site-level typography wiring and the generated
@@ -69,7 +75,7 @@ replaced by `npx create-bht-component-registry update`.
 - `check-types` and `test` need upstream `dist/`: `pnpm verify` builds first; on a fresh clone run `pnpm build` before
   either alone. Guides treat plain pnpm as the baseline; a task runner is named only in the optional section of `apps/docs/default-docs/guide/adopting.md`. Never name competing or comparable products anywhere (no "X-style", no "like X").
 - Don't `pnpm install` while `next dev` runs; restart the dev server after. Never `cd` in Bash; use `--filter`, `-C`, `--dir`.
-- Every class name goes through `getClassName` (`@bht-component-registry/class-names`) with BEM names: `rootClass` is
+- Every class name goes through `getClassName` (`@behivetech/bht-class-names`) with BEM names: `rootClass` is
   `<classPrefix>__<PascalName>` for a registry package (`classPrefix` from `scope.json`, else the scope in CONSTANT_CASE) and `<PascalName>` for the docs app's own chrome and routes; inner elements are
   `getChildClass("kebab-name")`, variants are `modifiers`, and the `.module.scss` mirrors it (`.Root { &__child {} &--modifier {} }`).
   Never `styles.foo`, never a hand-written class string, never a selector into another component's classes (pass `className`

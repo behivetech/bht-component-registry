@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@behivetech/atoms.button";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import type { ThemeSeeds } from "@/lib/theme/scheme";
 import { configSnippet } from "@/lib/theme/url-state";
 import { PlainCodeBlock } from "@/components/docs/plain-code-block";

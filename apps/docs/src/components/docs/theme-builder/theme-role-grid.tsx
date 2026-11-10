@@ -1,6 +1,6 @@
 "use client";
 
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import {
   ROLES,
   contrastReport,

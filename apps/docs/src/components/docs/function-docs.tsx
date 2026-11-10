@@ -1,4 +1,4 @@
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import { Table, type TableColumn } from "@behivetech/atoms.table";
 import type { CatalogDocFunction, CatalogDocParam } from "@/lib/catalog";
 import { CodeBlock } from "./code-block";

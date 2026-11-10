@@ -5,7 +5,7 @@ import { HeroBanner } from "@behivetech/organisms.hero-banner";
 import { catalog, getScopes, latestReleases } from "@/lib/catalog";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import styles from "./page.module.scss";
 
 /**

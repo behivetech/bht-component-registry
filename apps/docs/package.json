@@ -31,7 +31,7 @@
     "@behivetech/cms.base-styles": "0.3.1",
     "@behivetech/molecules.empty-state": "0.3.2",
     "@behivetech/organisms.hero-banner": "0.7.2",
-    "@bht-component-registry/class-names": "workspace:*",
+    "@behivetech/bht-class-names": "workspace:*",
     "@example/atoms.price-tag": "workspace:*",
     "@example/atoms.rating-stars": "workspace:*",
     "@example/hooks.use-toggle": "workspace:*",

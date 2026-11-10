@@ -118,6 +118,20 @@ async function makeTemplate(dir: string): Promise<void> {
   await write(dir, "apps/docs/test-results/.last-run.json", "{}");
   await write(dir, "apps/docs/playwright-report/index.html", "<html></html>");
   // Template-only: the CLI's own source and the template repo's contributor templates.
+  await write(
+    dir,
+    "packages/class-names/package.json",
+    JSON.stringify(
+      {
+        name: "@behivetech/bht-class-names",
+        version: "0.1.0",
+        publishConfig: { registry: "https://npm.pkg.github.com", access: "public" },
+      },
+      null,
+      2,
+    ),
+  );
+  await write(dir, ".npmrc", "@behivetech:registry=https://npm.pkg.github.com\n//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}\n");
   await write(dir, "packages/scope/package.json", '{ "name": "@bht-component-registry/scope" }');
   await write(dir, "packages/create-bht-component-registry/package.json", '{ "name": "create-bht-component-registry" }');
   await write(dir, "packages/create-bht-component-registry/src/cli.ts", "// the CLI itself");
@@ -161,6 +175,18 @@ describe("create", () => {
 
   afterEach(async () => {
     await rm(tmp, { recursive: true, force: true });
+  });
+
+  it("keeps the shared class-name helper in the workspace but never publishable, and ships the .npmrc that reads the token from the environment", async () => {
+    const { target } = await run({});
+    const helper = await readJson(join(target, "packages/class-names/package.json"));
+    expect(helper.name).toBe("@behivetech/bht-class-names");
+    expect(helper.private).toBe(true);
+    expect("publishConfig" in helper).toBe(false);
+    const npmrc = await readFile(join(target, ".npmrc"), "utf8");
+    expect(npmrc).toContain("@behivetech:registry=https://npm.pkg.github.com");
+    expect(npmrc).toContain("_authToken=${NODE_AUTH_TOKEN}");
+    expect(npmrc).not.toMatch(/_authToken=(?!\$\{)\S/);
   });
 
   it("renames the example scope everywhere and writes the owner's config", async () => {

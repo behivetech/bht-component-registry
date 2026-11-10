@@ -10,7 +10,7 @@ import { PropsTable } from "@/components/docs/props-table";
 import { FunctionDocs } from "@/components/docs/function-docs";
 import { TabPage } from "@/components/docs/tab-page";
 import { VersionBanner } from "@/components/docs/version-banner";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import type { CatalogComponent, HistoryEntry } from "@/lib/catalog/types";
 import overviewStyles from "../../page.module.scss";
 import changelogStyles from "../../changelog/page.module.scss";

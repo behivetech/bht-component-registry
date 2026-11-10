@@ -84,6 +84,13 @@ async function makeTarget(dir: string): Promise<void> {
   // The template repo's own docs/ (seed pages for `create`): never update's business.
   await write(dir, "docs/contributing.md", "# Contributing\n\nTemplate seed.\n");
   await write(dir, "docs/guide/publishing.md", "# Publishing\n\nThe template's docs/ copy.\n");
+  // The shared helper is published from the template; a registry keeps it workspace-only.
+  await write(
+    dir,
+    "packages/class-names/package.json",
+    '{\n  "name": "@behivetech/bht-class-names",\n  "version": "0.2.0",\n  "publishConfig": { "registry": "https://npm.pkg.github.com", "access": "public" }\n}\n',
+  );
+  await write(dir, ".npmrc", "@behivetech:registry=https://npm.pkg.github.com\n//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}\n");
 }
 
 const neverPrompt: Prompter = {
@@ -161,13 +168,23 @@ describe("update", () => {
     expect(config.scope).toBe("bobsburgers");
     expect(config.templateVersion).toBe("0.2.0");
 
-    expect(text).toContain("Added (2):");
+    expect(text).toContain("Added (4):");
     expect(text).toContain("apps/docs/src/app/new-feature.tsx");
     expect(text).toContain("Removed (4):");
     expect(text).toContain("apps/docs/src/app/legacy.tsx");
     expect(text).toContain("Replaced (");
     expect(text).toContain("apps/docs/src/app/page.tsx");
     expect(text).toContain("Review with `git diff`, then run `pnpm install && pnpm verify`.");
+  });
+
+  it("brings the shared helper and the token-reading .npmrc, and keeps the helper out of publishing", async () => {
+    const { code } = await run();
+    expect(code).toBe(0);
+    const helper = JSON.parse(await read("packages/class-names/package.json")) as Record<string, unknown>;
+    expect(helper.version).toBe("0.2.0");
+    expect(helper.private).toBe(true);
+    expect("publishConfig" in helper).toBe(false);
+    expect(await read(".npmrc")).toContain("_authToken=${NODE_AUTH_TOKEN}");
   });
 
   it("refreshes the default guide pages with the app and never touches docs/", async () => {

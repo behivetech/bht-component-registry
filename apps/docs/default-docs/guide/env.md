@@ -12,7 +12,7 @@ Every component package in this registry builds, lints, type-checks and tests th
 
 | In the package | One line | What the env provides |
 | --- | --- | --- |
-| `tsup.config.ts` | `defineConfig(createComponentConfig())` | the build: ESM + CJS, declarations, CSS Modules compiled to `dist/index.css`, workspace tooling bundled in so the published package depends on nothing private |
+| `tsup.config.ts` | `defineConfig(createComponentConfig())` | the build: ESM + CJS, declarations, CSS Modules compiled to `dist/index.css`, nothing bundled in: the shared `getClassName` helper (`@behivetech/bht-class-names`) is an external dependency of every component |
 | `tsconfig.json` | `"extends": "@bht-component-registry/env/tsconfig.json"` | the compiler settings (a React library preset) **and** the ambient `*.module.scss` typings, carried through the base config's `files` |
 | `eslint.config.mjs` | `export { default } from "@bht-component-registry/env/eslint.config.mjs"` | the lint rules (a React preset) |
 | _(nothing)_ | — | the Vitest config: packages run `vitest run` and Vitest walks up to the repo root's `vitest.config.ts`, which re-exports `packages/env/vitest.config.mjs` — globals, jsdom, and a setup file with the jest-dom matchers and the DOM stubs jsdom lacks |

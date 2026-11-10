@@ -16,7 +16,7 @@ import {
   type SandboxProgram,
   type ToSandbox,
 } from "./sandbox-protocol";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import styles from "./sandbox.module.scss";
 
 // The URL fragment is external state: read it through useSyncExternalStore

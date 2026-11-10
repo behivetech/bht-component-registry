@@ -110,6 +110,9 @@ importers:
       '@behivetech/atoms.text-field':
         specifier: 0.3.2
         version: 0.3.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@behivetech/bht-class-names':
+        specifier: workspace:*
+        version: link:../../packages/class-names
       '@behivetech/cms.base-styles':
         specifier: 0.3.1
         version: 0.3.1
@@ -119,9 +122,6 @@ importers:
       '@behivetech/organisms.hero-banner':
         specifier: 0.7.2
         version: 0.7.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@bht-component-registry/class-names':
-        specifier: workspace:*
-        version: link:../../packages/class-names
       '@example/atoms.price-tag':
         specifier: workspace:*
         version: link:../../registry/example/atoms/price-tag
@@ -221,10 +221,6 @@ importers:
         version: 4.1.11(@types/node@22.20.5)(jsdom@29.1.1)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(sass-embedded@1.105.1)(sass@1.105.1)(tsx@4.23.15))
 
   packages/class-names:
-    dependencies:
-      classnames:
-        specifier: ^2.5.1
-        version: 2.5.1
     devDependencies:
       '@bht-component-registry/eslint-config':
         specifier: workspace:*
@@ -232,6 +228,9 @@ importers:
       '@bht-component-registry/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      classnames:
+        specifier: 2.5.1
+        version: 2.5.1
       eslint:
         specifier: 'catalog:'
         version: 9.39.5(supports-color@8.1.1)
@@ -241,6 +240,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@types/node@22.20.5)(jsdom@29.1.1)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(sass-embedded@1.105.1)(sass@1.105.1)(tsx@4.23.15))
 
   packages/create-bht-component-registry:
     dependencies:
@@ -356,6 +358,9 @@ importers:
 
   registry/example/atoms/price-tag:
     dependencies:
+      '@behivetech/bht-class-names':
+        specifier: workspace:^
+        version: link:../../../../packages/class-names
       react:
         specifier: ^19.2.7
         version: 19.2.8
@@ -363,9 +368,6 @@ importers:
         specifier: ^19.2.7
         version: 19.2.8(react@19.2.8)
     devDependencies:
-      '@bht-component-registry/class-names':
-        specifier: workspace:*
-        version: link:../../../../packages/class-names
       '@bht-component-registry/env':
         specifier: workspace:*
         version: link:../../../../packages/env
@@ -390,6 +392,9 @@ importers:
 
   registry/example/atoms/rating-stars:
     dependencies:
+      '@behivetech/bht-class-names':
+        specifier: workspace:^
+        version: link:../../../../packages/class-names
       react:
         specifier: ^19.2.7
         version: 19.2.8
@@ -397,9 +402,6 @@ importers:
         specifier: ^19.2.7
         version: 19.2.8(react@19.2.8)
     devDependencies:
-      '@bht-component-registry/class-names':
-        specifier: workspace:*
-        version: link:../../../../packages/class-names
       '@bht-component-registry/env':
         specifier: workspace:*
         version: link:../../../../packages/env

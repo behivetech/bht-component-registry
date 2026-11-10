@@ -126,6 +126,34 @@ export async function renameScopeTree(root: string, r: ScopeRename): Promise<str
   return changed;
 }
 
+/** Where the shared class-name helper's package.json sits in the template and in a registry. */
+export const CLASS_NAMES_PACKAGE_JSON = "packages/class-names/package.json";
+
+/**
+ * Makes the registry's copy of the shared class-name helper workspace-only.
+ *
+ * The template publishes `@behivetech/bht-class-names` (to GitHub Packages, for
+ * now) and every component depends on it as `workspace:^`. A created registry
+ * keeps that folder so its workspace links and lockfile stay valid, but must
+ * never publish it: `changeset publish` would try to push a `@behivetech`
+ * package from a repo that does not own the scope. `"private": true` takes it
+ * out of publishing and versioning; when a registry's own packages are
+ * published, pnpm turns `workspace:^` into `^<its version>`, which the template
+ * published, so consumers install the real one.
+ */
+export function markHelperWorkspaceOnly(text: string): string {
+  const pkg = JSON.parse(text) as Record<string, unknown>;
+  if (pkg.private === true && !("publishConfig" in pkg)) return text;
+  const ordered: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(pkg)) {
+    if (key === "publishConfig") continue;
+    ordered[key] = key === "private" ? true : value;
+    if (key === "version" && !("private" in pkg)) ordered.private = true;
+  }
+  if (!("private" in ordered)) ordered.private = true;
+  return `${JSON.stringify(ordered, null, 2)}\n`;
+}
+
 /**
  * Pending changesets name packages by their published name, so a changeset
  * shipped with the template must follow the rename or `changeset version`

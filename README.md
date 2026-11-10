@@ -44,7 +44,7 @@ Then set `scope` in `registry.config.json`, rename `registry/example` to your sc
 - Branding from `registry.config.json` and a `branding/` folder: logo, icons, colours (seeds, not a palette to maintain), self-hosted fonts, a dark header, the home-page hero. Nothing of it is template-owned.
 - Publishing to npmjs, GitHub Packages or a private registry with `pnpm release`.
 - A static export (`apps/docs/out`) that deploys to Vercel, Netlify, Cloudflare Pages, S3, or a Docker image.
-- No auth, no database, no required environment variables.
+- No auth, no database, no required environment variables (for now one token, to install the `@behivetech` packages from GitHub Packages; see the Getting started guide).
 
 ## How it works
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useDeferredValue, useState } from "react";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import { TextField } from "@behivetech/atoms.text-field";
 import { EmptyState } from "@behivetech/molecules.empty-state";
 import type { ComponentCardModel } from "@/lib/catalog/card-model";

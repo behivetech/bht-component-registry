@@ -35,9 +35,10 @@ export function createComponentConfig(overrides = {}) {
     sourcemap: false,
     injectStyle: true,
     external: ["react", "react-dom"],
-    // Workspace tooling (the class-name helper) is private to this repo, so a
-    // published package must not depend on it at runtime: bundle it in.
-    noExternal: [/^@bht-component-registry\//],
+    // Nothing is bundled in: tsup leaves `dependencies` and `peerDependencies`
+    // external, and the one shared helper, getClassName
+    // (@behivetech/bht-class-names), is a dependency of every component, so
+    // each build imports one shared copy instead of carrying its own.
     esbuildPlugins: [
       sassPlugin({
         transform: postcssModules({ generateScopedName: "[local]" }),

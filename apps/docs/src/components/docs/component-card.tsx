@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import { Badge } from "@behivetech/atoms.badge";
 import { Card } from "@behivetech/atoms.card";
 import type { ComponentCardModel } from "@/lib/catalog/card-model";

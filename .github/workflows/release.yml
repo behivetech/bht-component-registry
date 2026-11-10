@@ -34,6 +34,12 @@ on:
 
 concurrency: release-${{ github.ref }}
 
+# One secret is needed beyond the publish credentials: PACKAGES_READ_TOKEN, a
+# GitHub token with read:packages, to install the @behivetech packages from
+# GitHub Packages while they are not on the public npm registry (see .npmrc).
+# The shared class-name helper (@behivetech/bht-class-names) is published to
+# GitHub Packages with the job's own GITHUB_TOKEN (packages: write below).
+
 permissions:
   contents: write
   pull-requests: write
@@ -54,7 +60,15 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
+      # The token line lives in the runner's user-level ~/.npmrc: pnpm 11 ignores
+      # an environment-expanded credential in the project .npmrc (see .npmrc).
+      - name: GitHub Packages auth
+        run: echo '//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}' >> "$HOME/.npmrc"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PACKAGES_READ_TOKEN }}
       - run: pnpm install --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PACKAGES_READ_TOKEN }}
 
       # changesets/action publishes whenever there are no pending changesets,
       # which on a fresh repo would try to push every package on the first
@@ -116,6 +130,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ steps.publish.outputs.method == 'token' && secrets.NPM_TOKEN || '' }}
+          # The ~/.npmrc line above reads this: here it is the job's own token,
+          # which can publish the class-name helper to GitHub Packages.
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Optional, for an expanded version that tracks releases:
       # tell it which packages were just published so their docs appear

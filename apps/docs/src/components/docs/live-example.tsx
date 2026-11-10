@@ -8,7 +8,7 @@ import {
   type FromSandbox,
   type ToSandbox,
 } from "./sandbox-protocol";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import styles from "./live-example.module.scss";
 
 /** The editor loads when "Edit code" is first opened; nothing of it ships before. */

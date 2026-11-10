@@ -1,5 +1,5 @@
 import { Highlight, themes, type Language } from "prism-react-renderer";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import styles from "./code-block.module.scss";
 
 /**

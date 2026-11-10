@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { markPublishable, rewritePackageRefs, rewriteScopeMentions, scopeRename } from "./rename.js";
+import { markHelperWorkspaceOnly, markPublishable, rewritePackageRefs, rewriteScopeMentions, scopeRename } from "./rename.js";
 
 describe("markPublishable", () => {
   it("flips private:true in place", () => {
@@ -77,5 +77,36 @@ describe("rewriteScopeMentions", () => {
   it("does not touch words that merely contain the slug", () => {
     const out = rewriteScopeMentions("examples example-ish counterexample example.com", scopeRename("acme"));
     expect(out).toBe("examples example-ish counterexample acme.com");
+  });
+});
+
+describe("markHelperWorkspaceOnly", () => {
+  const published = JSON.stringify(
+    {
+      name: "@behivetech/bht-class-names",
+      version: "0.1.0",
+      license: "MIT",
+      publishConfig: { registry: "https://npm.pkg.github.com", access: "public" },
+    },
+    null,
+    2,
+  );
+
+  it("makes the published helper private and drops its publishConfig", () => {
+    const pkg = JSON.parse(markHelperWorkspaceOnly(published)) as Record<string, unknown>;
+    expect(pkg.private).toBe(true);
+    expect("publishConfig" in pkg).toBe(false);
+    expect(pkg.version).toBe("0.1.0");
+    expect(Object.keys(pkg)).toEqual(["name", "version", "private", "license"]);
+  });
+
+  it("flips an explicit private: false", () => {
+    const pkg = JSON.parse(markHelperWorkspaceOnly('{"name":"x","private":false}')) as Record<string, unknown>;
+    expect(pkg.private).toBe(true);
+  });
+
+  it("leaves an already workspace-only helper byte for byte", () => {
+    const text = '{\n  "name": "x",\n  "private": true\n}\n';
+    expect(markHelperWorkspaceOnly(text)).toBe(text);
   });
 });

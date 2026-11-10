@@ -12,7 +12,7 @@ Thanks for helping with bht-component-registry. This file covers the template re
 
 ## Setup
 
-You need Node 22 or newer and pnpm (`corepack enable`).
+You need Node 22 or newer and pnpm (`corepack enable`), and a GitHub token with `read:packages`: for now the `@behivetech` packages install from GitHub Packages (see `.npmrc`).
 
 ```bash
 git clone https://github.com/behivetech/bht-component-registry.git
@@ -21,7 +21,7 @@ pnpm install
 pnpm dev
 ```
 
-`pnpm install` needs no token and no `.npmrc`; the repo depends on nothing private. Keep it that way.
+`pnpm install` needs the token for now: put `//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}` in your user-level `~/.npmrc` (pnpm 11 ignores it in a project `.npmrc`) and `export NODE_AUTH_TOKEN=<token>`. The repo never holds the token. This is temporary, until npm publishing returns; the repo depends on nothing private beyond that. CI uses the repository secret `PACKAGES_READ_TOKEN`, so a pull request from a fork cannot run its install: a maintainer re-runs the checks from a branch.
 
 ## Before you open a pull request
 
@@ -48,7 +48,7 @@ Conventional subject lines: `feat(docs): …`, `fix(gen): …`, `docs: …`, `ch
 
 ## Changesets
 
-Published packages are versioned with Changesets: in this repo that is `packages/create-bht-component-registry` (the example scope is private and never versioned). If your change affects it, add a changeset:
+Published packages are versioned with Changesets: in this repo that is `packages/create-bht-component-registry` and `packages/class-names` (`@behivetech/bht-class-names`, published to GitHub Packages for now); the example scope is private and never versioned. If your change affects it, add a changeset:
 
 ```bash
 pnpm changeset
@@ -60,7 +60,7 @@ Commit the generated `.changeset/*.md` with your change. Changes to the docs app
 
 - Everything public is `bht`-prefixed; workspace-only packages use `@bht-component-registry/*` and are never published.
 - The docs app is a static export: no middleware, route handlers, cookies or auth.
-- No environment variable may be required for dev, build, test or deploy.
+- No environment variable may be required for dev, build, test or deploy (beyond the temporary `NODE_AUTH_TOKEN` for the GitHub Packages install).
 - Template-owned paths are listed in `template.manifest.json`; if you add a top-level file the `update` command should manage, add it there.
 
 ## Questions

@@ -13,7 +13,7 @@ import { toCardModel } from "@/lib/catalog/card-model";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ScopeCatalog } from "@/components/docs/scope-catalog";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import styles from "./page.module.scss";
 
 /** Tile thumbnails rendered at build time; this page also carries their styles. */

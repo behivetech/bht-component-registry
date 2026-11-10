@@ -5,7 +5,7 @@ import { Markdown } from "@/components/docs/markdown";
 import { LiveExample } from "@/components/docs/live-example";
 import { PropsTable } from "@/components/docs/props-table";
 import { FunctionDocs } from "@/components/docs/function-docs";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import styles from "./page.module.scss";
 
 interface Props {

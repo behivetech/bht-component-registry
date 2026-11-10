@@ -81,9 +81,11 @@ The specs name the example components (`Price Tag`, `Rating Stars`, `@example/at
 1. checkout, pnpm via corepack, `pnpm install --frozen-lockfile`;
 2. `pnpm verify`;
 3. `pnpm exec playwright install --with-deps chromium webkit` and `pnpm test:e2e`;
-4. a check that `pnpm-lock.yaml` contains no private registry URL, so the repo keeps installing without tokens.
+4. a check that `pnpm-lock.yaml` points only at npmjs and GitHub Packages (temporary), so no other private registry sneaks in.
 
-No secrets are needed. If you do not want CI, delete the file; nothing else references it. If you want only part of it, delete the steps you do not want.
+One secret is needed for now: `PACKAGES_READ_TOKEN`, a GitHub token with `read:packages`, because the `@behivetech` packages install from GitHub Packages. The workflows write it into the runner's `~/.npmrc` and expose it as `NODE_AUTH_TOKEN`. A pull request from a fork gets no secrets, so a maintainer re-runs its checks from a branch.
+
+If you do not want CI, delete the file; nothing else references it. If you want only part of it, delete the steps you do not want.
 
 The CI badge in the README points at this workflow.
 

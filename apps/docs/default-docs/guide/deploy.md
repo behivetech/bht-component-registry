@@ -24,12 +24,17 @@ That serves `apps/docs/out` on http://localhost:3000, answering unknown paths wi
 
 Optional: set `REGISTRY_READ_TOKEN` in the build environment if your packages are on a private registry and you want the Changelog tab to list published versions. See [Publishing](publishing.md).
 
+## Installing on a host or in Docker (for now)
+
+Every build installs the `@behivetech` packages from GitHub Packages, so the build environment needs the token line in a user-level `~/.npmrc` and `NODE_AUTH_TOKEN` set (see [Getting started](getting-started.md#a-token-for-github-packages-for-now)). With a host that lets you set the install command, use `echo '//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}' >> ~/.npmrc && pnpm install`. For the Dockerfile, pass the token as a build secret, not a build arg that stays in the image history: `docker build --secret id=npm_token,env=NODE_AUTH_TOKEN .`.
+
 ## Vercel
 
 Import the repository; Vercel detects pnpm. Settings:
 
 - Framework preset: Next.js
 - Root directory: leave as the repo root
+- Install command: `echo '//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}' >> ~/.npmrc && pnpm install` (and the environment variable `NODE_AUTH_TOKEN` set to a `read:packages` token)
 - Build command: `pnpm build`
 - Output directory: `apps/docs/out`
 

@@ -1,9 +1,20 @@
 {
-  "name": "@bht-component-registry/class-names",
+  "name": "@behivetech/bht-class-names",
   "version": "0.0.6",
+  "description": "getClassName: BEM class names for a component, built through its CSS module. The one helper every registry component uses.",
   "license": "MIT",
   "type": "module",
-  "private": true,
+  "keywords": [
+    "bem",
+    "class-names",
+    "css-modules",
+    "react"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/behivetech/bht-component-registry.git",
+    "directory": "packages/class-names"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -11,6 +22,11 @@
       "require": "./dist/index.cjs"
     }
   },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
@@ -18,14 +34,17 @@
     "check-types": "tsc --noEmit",
     "test": "vitest run"
   },
-  "dependencies": {
-    "classnames": "^2.5.1"
-  },
   "devDependencies": {
     "@bht-component-registry/eslint-config": "workspace:*",
     "@bht-component-registry/typescript-config": "workspace:*",
+    "classnames": "2.5.1",
     "eslint": "catalog:",
     "tsup": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
   }
 }

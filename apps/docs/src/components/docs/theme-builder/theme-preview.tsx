@@ -5,7 +5,7 @@ import { Badge } from "@behivetech/atoms.badge";
 import { Button } from "@behivetech/atoms.button";
 import { Card } from "@behivetech/atoms.card";
 import { TextField } from "@behivetech/atoms.text-field";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import { ROLES, roleToken, type SchemeColors, type Theme } from "@/lib/theme/scheme";
 import styles from "./theme-preview.module.scss";
 

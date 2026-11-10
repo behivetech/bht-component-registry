@@ -44,7 +44,7 @@ Why each file is there:
 
 ### Styling: BEM through `getClassName`
 
-Every class name in a component — and in the docs site itself — comes from `getClassName` (`@bht-component-registry/class-names`), so the markup and the stylesheet agree by construction:
+Every class name in a component — and in the docs site itself — comes from `getClassName` (`@behivetech/bht-class-names`), so the markup and the stylesheet agree by construction:
 
 ```tsx
 const [rootClass, getChildClass] = getClassName({

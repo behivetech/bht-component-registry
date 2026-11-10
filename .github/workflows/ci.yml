@@ -1,8 +1,13 @@
 # Continuous integration for the registry and its docs site.
 #
-# Nothing here needs a secret: the site is a static export and the tests run
-# against that export. If you don't want CI, delete this file — nothing else
-# references it. See apps/docs/default-docs/guide/testing-and-ci.md.
+# The site is a static export and the tests run against that export. One secret
+# is needed for now: PACKAGES_READ_TOKEN, a GitHub token with read:packages,
+# because the @behivetech packages (the shared class-name helper's consumers, the
+# docs site's chrome) install from GitHub Packages until they are on the public
+# npm registry again (see .npmrc). A pull request from a fork gets no secrets,
+# so its install fails; a maintainer re-runs it from a branch. If you don't want
+# CI, delete this file — nothing else references it. See
+# apps/docs/default-docs/guide/testing-and-ci.md.
 name: CI
 
 on:
@@ -19,6 +24,8 @@ jobs:
     name: Build, lint, types, unit tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.PACKAGES_READ_TOKEN }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -31,11 +38,20 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
+      # The token line lives in the runner's user-level ~/.npmrc: pnpm 11 ignores
+      # an environment-expanded credential in the project .npmrc (see .npmrc).
+      - name: GitHub Packages auth
+        run: echo '//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}' >> "$HOME/.npmrc"
       - run: pnpm install --frozen-lockfile
-      - name: Nothing may come from a private registry
+      - name: Nothing may come from a registry we do not name
         run: |
-          if grep -q "npm.pkg.github.com" pnpm-lock.yaml; then
-            echo "pnpm-lock.yaml references GitHub Packages; a public template must install with no token." >&2
+          # npmjs and GitHub Packages (temporary, see .npmrc) are the only
+          # registries a lockfile may point at; any other host is a private
+          # registry a public template must not depend on.
+          bad=$(grep -oE 'tarball: https?://[^/]+' pnpm-lock.yaml | grep -vE 'https?://(registry\.npmjs\.org|npm\.pkg\.github\.com)$' | sort -u || true)
+          if [ -n "$bad" ]; then
+            echo "pnpm-lock.yaml references a registry other than npmjs or GitHub Packages:" >&2
+            echo "$bad" >&2
             exit 1
           fi
       - run: pnpm verify
@@ -45,6 +61,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     needs: verify
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.PACKAGES_READ_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -52,6 +70,10 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
+      # The token line lives in the runner's user-level ~/.npmrc: pnpm 11 ignores
+      # an environment-expanded credential in the project .npmrc (see .npmrc).
+      - name: GitHub Packages auth
+        run: echo '//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}' >> "$HOME/.npmrc"
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter docs exec playwright install --with-deps chromium webkit
       - run: pnpm test:e2e
