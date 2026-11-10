@@ -29,7 +29,22 @@ export default defineConfig({
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    {
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
+      testIgnore: /\.webkit\.spec\.ts$/,
+    },
+    {
+      // iOS Safari is WebKit, and it kills a page that holds too much memory
+      // (see e2e/component-pages.webkit.spec.ts); Chromium never shows that.
+      // Only the component-page specs run here: it is a mobile-engine check,
+      // not a second copy of the suite. `pnpm exec playwright install webkit`.
+      name: "webkit",
+      use: { ...devices["iPhone 14"] },
+      testMatch: /\.webkit\.spec\.ts$/,
+    },
+  ],
   webServer: {
     // PORT lets the suite run beside another dev server (default 3000).
     command: `pnpm --dir ../.. build && pnpm exec serve out --listen ${port} --no-clipboard`,

@@ -7,12 +7,17 @@ import {
   getScopes,
   groupByCategory,
 } from "@/lib/catalog";
+import thumbnailJson from "@/generated/thumbnails.json";
+import "@/generated/thumbnail-styles";
 import { toCardModel } from "@/lib/catalog/card-model";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ScopeCatalog } from "@/components/docs/scope-catalog";
 import { getClassName } from "@bht-component-registry/class-names";
 import styles from "./page.module.scss";
+
+/** Tile thumbnails rendered at build time; this page also carries their styles. */
+const thumbnails: Record<string, string> = thumbnailJson;
 
 interface Props {
   params: Promise<{ scope: string }>;
@@ -39,7 +44,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 /**
  * A scope's catalog — every component it owns, grouped by category, with a
- * live thumbnail each. Name and tagline come from the scope's scope.json;
+ * static thumbnail each (rendered at build time, so no component code loads for it). Name and tagline come from the scope's scope.json;
  * status and tags from each package.json. All of it is in the catalog.
  */
 export default async function ScopePage({ params }: Props) {
@@ -49,7 +54,9 @@ export default async function ScopePage({ params }: Props) {
 
   const groups = groupByCategory(getComponents(slug)).map((group) => ({
     ...group,
-    components: group.components.map((component) => toCardModel(component)),
+    components: group.components.map((component) =>
+      toCardModel(component, thumbnails),
+    ),
   }));
 
   const [rootClass, getChildClass] = getClassName({

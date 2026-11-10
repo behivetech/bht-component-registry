@@ -58,23 +58,6 @@
     background: transparent;
   }
 
-  // The inline variant (catalog thumbnails) renders here: no frame, no controls.
-  &__body {
-    padding: 1.5rem;
-    display: flow-root;
-  }
-
-  &__error {
-    margin: 0.75rem 0 0;
-    padding: 0.75rem;
-    border-radius: 0.5rem;
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.8125rem;
-    white-space: pre-wrap;
-    background: var(--md-sys-color-error-container);
-    color: var(--md-sys-color-on-error-container);
-  }
-
   &__editor {
     border-top: 1px solid var(--md-sys-color-outline-variant);
     background: #011627;
@@ -84,11 +67,5 @@
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 0.8125rem;
     min-height: 3rem;
-  }
-
-  // `previewOnly`: the example is a thumbnail, inline in the page.
-  &--inline {
-    // Nothing yet beyond the body padding above; the modifier is here so a
-    // thumbnail can be styled apart from a framed example without a new class.
   }
 }

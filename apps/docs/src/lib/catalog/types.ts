@@ -78,7 +78,7 @@ export interface CatalogExample {
   title: string;
   /** JSDoc above the example, when present. */
   description: string;
-  /** Self-contained TSX for react-live's noInline mode — ends with `render(...)`. */
+  /** Self-contained TSX for the sandbox's noInline mode — ends with `render(...)`. */
   code: string;
 }
 

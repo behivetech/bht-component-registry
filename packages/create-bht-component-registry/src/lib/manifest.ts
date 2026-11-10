@@ -95,7 +95,14 @@ export const DEFAULT_MANIFEST: TemplateManifest = {
     "apps/docs/e2e/history.spec.ts",
   ],
   readmeMarker: DEFAULT_README_MARKER,
-  rewriteScope: ["apps/docs/e2e/public.spec.ts", "apps/docs/package.json", "docs/using-this-registry.md"],
+  rewriteScope: [
+    "apps/docs/e2e/public.spec.ts",
+    "apps/docs/e2e/sandbox-chunks.spec.ts",
+    "apps/docs/e2e/js-budget.spec.ts",
+    "apps/docs/e2e/component-pages.webkit.spec.ts",
+    "apps/docs/package.json",
+    "docs/using-this-registry.md",
+  ],
 };
 
 function stringArray(value: unknown, key: string, source: string): string[] {

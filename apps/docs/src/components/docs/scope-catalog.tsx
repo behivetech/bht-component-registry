@@ -17,8 +17,8 @@ export interface CatalogGroup {
 /**
  * Client-side filtering over a scope's components. The list is already in
  * the page (it's build-time data), so searching is instant and needs no
- * request; `useDeferredValue` keeps typing smooth while thirty live
- * thumbnails re-render.
+ * request; `useDeferredValue` keeps typing smooth while the
+ * tiles re-render.
  */
 export function ScopeCatalog({ groups }: { groups: CatalogGroup[] }) {
   const [query, setQuery] = useState("");

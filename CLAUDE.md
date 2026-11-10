@@ -38,6 +38,7 @@ replaced by `npx create-bht-component-registry update`.
 
 ## Rules
 
+- A page loads only what it renders (`e2e/sandbox-chunks.spec.ts` and `e2e/js-budget.spec.ts` hold it): the generated `registry-scope.ts` is lazy loaders and an export index, never static imports of the registry; each sandbox frame loads the packages its program names (`sandbox-resolve.ts`) and runs it with sucrase directly, not react-live; catalog tiles are rendered to static markup at build time (`scripts/lib/thumbnails.ts`); `LiveExample` loads through `next/dynamic` from `markdown.tsx`, the editor only on **Edit code**; `CodeBlock` highlights at build time as a server component; frames unmount off screen.
 - Static export (`output: "export"`): no `proxy.ts`/middleware, no route handlers, no cookies, no auth,
   no request-time data. Every param route sets `export const dynamicParams = false` and lists its params
   in `generateStaticParams`. A real 404 comes from the host serving `404.html` with a 404 status.

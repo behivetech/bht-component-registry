@@ -3,14 +3,34 @@ import { getClassName } from "@bht-component-registry/class-names";
 import { Badge } from "@behivetech/atoms.badge";
 import { Card } from "@behivetech/atoms.card";
 import type { ComponentCardModel } from "@/lib/catalog/card-model";
-import { LiveExample } from "./live-example";
 import { StatusBadge } from "./status-badge";
 import styles from "./component-card.module.scss";
 
+const NO_PREVIEW_TEXT = {
+  overlay: "Opens as an overlay — see its examples",
+  function: "No visual preview — see its signatures and examples",
+  failed: "No preview",
+};
+
+/** Which placeholder a tile with no thumbnail shows. */
+const noPreviewReason = (
+  component: ComponentCardModel,
+): keyof typeof NO_PREVIEW_TEXT => {
+  const isFunction =
+    component.category === "hooks" || component.category === "utils";
+  // A hook or util is never an overlay, even when its package opts out of the
+  // tile with `preview.thumbnail: false`: its placeholder says so.
+  let reason: keyof typeof NO_PREVIEW_TEXT = "failed";
+  if (isFunction) reason = "function";
+  else if (component.thumbnailKind === "overlay") reason = "overlay";
+  return reason;
+};
+
 /**
- * One tile in a scope's catalog: a live thumbnail of the first example,
- * the name, version and summary. Rendering the real component instead of a
- * screenshot means the tile is never stale.
+ * One tile in a scope's catalog: a thumbnail of the first example, the name,
+ * version and summary. The thumbnail is the real component rendered to static
+ * markup when the site is built, so it is never a stale screenshot and the
+ * browser loads no component code for it.
  */
 export function ComponentCard({
   component,
@@ -28,18 +48,16 @@ export function ComponentCard({
           reach assistive tech or the tab order — the card's link is the
           one interactive thing here. */}
       <div className={getChildClass("thumb")} aria-hidden inert>
-        {component.thumbnailCode ? (
-          <LiveExample
-            code={component.thumbnailCode}
-            noInline
-            previewOnly
+        {component.thumbnailHtml ? (
+          <div
             className={getChildClass("thumb-example")}
+            // Markup this build rendered from our own registry (see
+            // scripts/lib/thumbnails.ts), never user input.
+            dangerouslySetInnerHTML={{ __html: component.thumbnailHtml }}
           />
         ) : (
           <span className={getChildClass("no-preview")}>
-            {component.category === "hooks" || component.category === "utils"
-              ? "No visual preview — see its signatures and examples"
-              : "Opens as an overlay — see its examples"}
+            {NO_PREVIEW_TEXT[noPreviewReason(component)]}
           </span>
         )}
       </div>

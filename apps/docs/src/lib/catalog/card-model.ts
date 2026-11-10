@@ -12,8 +12,17 @@ export interface ComponentCardModel {
   tags: string[];
   status: CatalogStatus;
   visibility: CatalogComponent["visibility"];
-  /** Live-example source for the tile, or null when the component can't be shown in a tile. */
-  thumbnailCode: string | null;
+  /**
+   * The tile's thumbnail as static markup, rendered at build time, or null when
+   * the component can't be shown in a tile. Inert: no component code reaches the browser for it.
+   */
+  thumbnailHtml: string | null;
+  /**
+   * Why there is no markup: `overlay` for a component that opens over the page,
+   * `none` for anything else (a hook, or a thumbnail that failed to render).
+   * `rendered` when there is.
+   */
+  thumbnailKind: "rendered" | "overlay" | "none";
 }
 
 /**
@@ -45,8 +54,36 @@ export const isOverlayComponent = (
   !component.thumbnail ||
   component.exportNames.some((name) => OVERLAY_EXPORTS.has(name));
 
-/** The slice of a catalog entry a card needs — the full entry carries every source file. */
-export function toCardModel(component: CatalogComponent): ComponentCardModel {
+/**
+ * The program a component's tile renders: its first example, or null when the
+ * component can't be shown in a tile (an overlay, or one that opted out).
+ */
+export const thumbnailProgram = (
+  component: Pick<CatalogComponent, "exportNames" | "thumbnail" | "examples">,
+): string | null =>
+  isOverlayComponent(component) ? null : (component.examples[0]?.code ?? null);
+
+const thumbnailKind = (
+  component: CatalogComponent,
+  html: string | null,
+): ComponentCardModel["thumbnailKind"] => {
+  let kind: ComponentCardModel["thumbnailKind"] = "none";
+  if (html) kind = "rendered";
+  else if (isOverlayComponent(component)) kind = "overlay";
+  return kind;
+};
+
+/**
+ * The slice of a catalog entry a card needs — the full entry carries every source file.
+ *
+ * @param component the catalog entry
+ * @param thumbnails package name → the thumbnail markup rendered at build time
+ */
+export function toCardModel(
+  component: CatalogComponent,
+  thumbnails: Record<string, string>,
+): ComponentCardModel {
+  const thumbnailHtml = thumbnails[component.packageName] ?? null;
   return {
     scope: component.scope,
     category: component.category,
@@ -58,8 +95,7 @@ export function toCardModel(component: CatalogComponent): ComponentCardModel {
     tags: component.tags,
     status: component.status,
     visibility: component.visibility,
-    thumbnailCode: isOverlayComponent(component)
-      ? null
-      : (component.examples[0]?.code ?? null),
+    thumbnailHtml,
+    thumbnailKind: thumbnailKind(component, thumbnailHtml),
   };
 }

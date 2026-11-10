@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { LiveEditor, LiveError, LivePreview, LiveProvider } from "react-live";
-import { themes } from "prism-react-renderer";
-import { sandboxScope } from "./sandbox-scope";
+import dynamic from "next/dynamic";
 import {
   SANDBOX_PATH,
   encodeSandboxHash,
@@ -13,14 +11,15 @@ import {
 import { getClassName } from "@bht-component-registry/class-names";
 import styles from "./live-example.module.scss";
 
+/** The editor loads when "Edit code" is first opened; nothing of it ships before. */
+const CodeEditor = dynamic(() => import("./code-editor"), { ssr: false });
+
 export interface LiveExampleProps {
   /** The code to run. In `noInline` mode it must call `render(...)`; otherwise it's one JSX expression. */
   code: string;
   noInline?: boolean;
   /** Start with the editor open. Defaults to closed — the preview is what most readers want first. */
   editorOpen?: boolean;
-  /** Render inline with no frame, editor or controls (catalog thumbnails). */
-  previewOnly?: boolean;
   /** Minimum preview height in px. Overlays need room to open inside their frame. */
   minHeight?: number;
   title?: string;
@@ -31,60 +30,26 @@ const DEFAULT_MIN_HEIGHT = 96;
 const EXPANDED_MIN_HEIGHT = 560;
 /** Keystrokes are batched before the frame re-runs the program. */
 const SEND_DELAY_MS = 150;
+/** How far outside the viewport a frame mounts. */
+const FRAME_MOUNT_MARGIN = "400px 0px";
+/** How far outside the viewport a mounted frame stays mounted. */
+const FRAME_UNMOUNT_MARGIN = "1000px 0px";
 
 /**
  * A component rendered from source, with the source editable in place.
  *
- * react-live transforms the code in the browser (TypeScript included), so
+ * The frame transforms the code in the browser (TypeScript included), so
  * the reader can change a prop and see the result without a build step.
- * The scope is the whole registry, which is what lets a snippet reference
- * any component the way its README does.
+ * A snippet may reference any registry component the way its README does:
+ * the packages it names are loaded on demand, and no others.
  *
  * The preview runs in its own document (an iframe at `/sandbox`): a modal,
  * drawer or toast portals to *that* body and covers the preview, not the
- * docs page. Catalog thumbnails stay inline — dozens of frames per page
- * would be too heavy, and overlays are kept off the tiles anyway.
+ * docs page. Catalog thumbnails are not live examples at all: they are
+ * rendered to static markup at build time (see `ComponentCard`).
  */
 export function LiveExample(props: LiveExampleProps) {
-  return props.previewOnly ? (
-    <InlineExample {...props} />
-  ) : (
-    <FramedExample {...props} />
-  );
-}
-
-function InlineExample({
-  code,
-  noInline = false,
-  title,
-  className,
-}: LiveExampleProps) {
-  const [rootClass, getChildClass] = getClassName({
-    rootClass: "LiveExample",
-    styles,
-    className,
-    modifiers: { inline: true },
-  });
-  return (
-    <LiveProvider
-      code={code}
-      scope={sandboxScope}
-      noInline={noInline}
-      language="tsx"
-    >
-      <figure className={rootClass}>
-        {title && (
-          <figcaption className={getChildClass("bar")}>
-            <span className={getChildClass("title")}>{title}</span>
-          </figcaption>
-        )}
-        <div className={getChildClass("body")}>
-          <LivePreview />
-          <LiveError className={getChildClass("error")} />
-        </div>
-      </figure>
-    </LiveProvider>
-  );
+  return <FramedExample {...props} />;
 }
 
 function FramedExample({
@@ -104,22 +69,43 @@ function FramedExample({
   const [ready, setReady] = useState(false);
   const [contentHeight, setContentHeight] = useState(0);
 
-  // Mount the frame only as it approaches the viewport; a long examples
-  // page would otherwise boot every example at once.
+  // Mount the frame only while it is near the viewport, and unmount it once it
+  // scrolls well away. Every frame is a whole copy of the sandbox app (React,
+  // sucrase and the packages its program uses), and WebKit spends far more
+  // memory on each than Chromium: with every frame of a long page mounted, iOS
+  // Safari kills the page ("A problem repeatedly occurred"). A frame mounts
+  // within FRAME_MOUNT_MARGIN of the viewport and unmounts only beyond the
+  // wider FRAME_UNMOUNT_MARGIN, so one that has just mounted is not dropped
+  // again by a small scroll. It does not keep the page still: frames above a
+  // figure still grow as they size to their content and can move it. The last
+  // reported height is kept, so the page does not jump when a frame unmounts;
+  // an edit is kept in `code` and sent again when the frame comes back.
   useEffect(() => {
     const element = figureRef.current;
     if (!element) return;
-    const observer = new IntersectionObserver(
+    const near = (entries: IntersectionObserverEntry[]) =>
+      entries.some((entry) => entry.isIntersecting);
+    const mount = new IntersectionObserver(
       (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          setVisible(true);
-          observer.disconnect();
+        if (near(entries)) setVisible(true);
+      },
+      { rootMargin: FRAME_MOUNT_MARGIN },
+    );
+    const unmount = new IntersectionObserver(
+      (entries) => {
+        if (!near(entries)) {
+          setVisible(false);
+          setReady(false);
         }
       },
-      { rootMargin: "240px" },
+      { rootMargin: FRAME_UNMOUNT_MARGIN },
     );
-    observer.observe(element);
-    return () => observer.disconnect();
+    mount.observe(element);
+    unmount.observe(element);
+    return () => {
+      mount.disconnect();
+      unmount.disconnect();
+    };
   }, []);
 
   // The frame says when it can take a program, and how tall its content is.
@@ -227,11 +213,9 @@ function FramedExample({
       </div>
       {showEditor && (
         <div className={getChildClass("editor")}>
-          <LiveEditor
+          <CodeEditor
             code={code}
             onChange={setCode}
-            language="tsx"
-            theme={themes.nightOwl}
             className={getChildClass("editor-inner")}
           />
         </div>

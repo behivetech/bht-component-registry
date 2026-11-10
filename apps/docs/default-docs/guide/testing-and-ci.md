@@ -49,10 +49,16 @@ Playwright's `webServer` runs `pnpm build && pnpm serve` inside `apps/docs`: the
 - editing a live example re-renders it;
 - an unknown scope and an unknown component are real 404s.
 
-The first time, install the browser:
+Three more specs hold the rule that **a page loads only what it renders**:
+
+- `sandbox-chunks.spec.ts` reads the scripts a page and its frames really fetch: a frame loads the packages its program uses and no others, the code editor loads only when **Edit code** opens, a guide page with no live block loads neither the transformer nor the editor, and catalog tiles are static markup (they render with JavaScript off and fetch no component code);
+- `js-budget.spec.ts` caps the uncompressed JavaScript of a component page, a guide page, a scope page and one example frame, about 10% above what the site weighs. A budget that fails means something heavy landed on a page that does not need it; if you accept the growth, raise the number in the spec in the same change and say why;
+- `component-pages.webkit.spec.ts` runs in the `webkit` project (an iPhone 14 profile). iOS Safari kills a page that holds too much memory, and WebKit counts every mounted example frame against it, which Chromium hides. It checks that component pages render, and that frames far from the viewport are unmounted.
+
+The first time, install the browsers (WebKit is needed for the `webkit` project):
 
 ```bash
-pnpm exec playwright install chromium
+pnpm exec playwright install chromium webkit
 ```
 
 Useful variants:
@@ -66,7 +72,7 @@ If a server is already running on :3000, Playwright reuses it locally (not in CI
 
 ### After renaming the example scope
 
-The specs name the example components (`Price Tag`, `Rating Stars`, `@example/atoms.price-tag`). When you rename or delete the example scope, edit the spec to point at one of your components, or the suite fails. The spec says so at the top.
+The specs name the example components (`Price Tag`, `Rating Stars`, `@example/atoms.price-tag`; the chunk specs also use the example scope's root class prefix, `ACME__`). When you rename or delete the example scope, edit the spec to point at one of your components, or the suite fails. The spec says so at the top.
 
 ## CI
 
@@ -74,7 +80,7 @@ The specs name the example components (`Price Tag`, `Rating Stars`, `@example/at
 
 1. checkout, pnpm via corepack, `pnpm install --frozen-lockfile`;
 2. `pnpm verify`;
-3. `pnpm exec playwright install --with-deps chromium` and `pnpm test:e2e`;
+3. `pnpm exec playwright install --with-deps chromium webkit` and `pnpm test:e2e`;
 4. a check that `pnpm-lock.yaml` contains no private registry URL, so the repo keeps installing without tokens.
 
 No secrets are needed. If you do not want CI, delete the file; nothing else references it. If you want only part of it, delete the steps you do not want.

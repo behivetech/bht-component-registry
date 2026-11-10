@@ -30,7 +30,7 @@ pnpm verify
 pnpm test:e2e
 ```
 
-`pnpm verify` runs build, lint, type checks and unit tests for every package. `pnpm test:e2e` builds the static export and runs Playwright against it (first time: `pnpm exec playwright install chromium`). Both run in CI as well; see [the testing guide](apps/docs/default-docs/guide/testing-and-ci.md).
+`pnpm verify` runs build, lint, type checks and unit tests for every package. `pnpm test:e2e` builds the static export and runs Playwright against it (first time: `pnpm exec playwright install chromium webkit`). Both run in CI as well; see [the testing guide](apps/docs/default-docs/guide/testing-and-ci.md).
 
 If you change how the site or the tooling behaves, update the matching guide page in `apps/docs/default-docs/guide/` in the same pull request. (`docs/` at the root belongs to the owner of a created registry; the template keeps nothing there.)
 

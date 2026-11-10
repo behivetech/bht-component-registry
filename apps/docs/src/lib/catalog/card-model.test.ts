@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
-import { toCardModel } from "./card-model";
+import { thumbnailProgram, toCardModel } from "./card-model";
 import type { CatalogComponent } from "./types";
 
 const base: CatalogComponent = {
@@ -38,13 +38,31 @@ const base: CatalogComponent = {
 };
 
 describe("toCardModel", () => {
-  it("uses the first example as the tile's live thumbnail", () => {
-    expect(toCardModel(base).thumbnailCode).toContain("PriceTag");
+  it("uses the first example as the tile's thumbnail program", () => {
+    expect(thumbnailProgram(base)).toContain("PriceTag");
+  });
+
+  it("carries the thumbnail markup rendered for the package", () => {
+    const html = { "@example/atoms.price-tag": "<span>$1</span>" };
+    expect(toCardModel(base, html).thumbnailHtml).toBe("<span>$1</span>");
+  });
+
+  it("has no thumbnail markup when none was rendered", () => {
+    const model = toCardModel(base, {});
+    expect(model.thumbnailHtml).toBeNull();
+    expect(model.thumbnailKind).toBe("none");
+  });
+
+  it("calls a tile that rendered rendered, and an overlay an overlay", () => {
+    const html = { "@example/atoms.price-tag": "<span />" };
+    expect(toCardModel(base, html).thumbnailKind).toBe("rendered");
+    const modal = { ...base, exportNames: ["Modal"] };
+    expect(toCardModel(modal, {}).thumbnailKind).toBe("overlay");
   });
 
   it("never thumbnails a component that renders through a portal", () => {
     const modal = { ...base, name: "modal", exportNames: ["Modal"] };
-    expect(toCardModel(modal).thumbnailCode).toBeNull();
+    expect(thumbnailProgram(modal)).toBeNull();
   });
 
   it("lets a package opt out of its tile with registry.preview.thumbnail: false", () => {
@@ -54,7 +72,7 @@ describe("toCardModel", () => {
       exportNames: ["Popup"],
       thumbnail: false,
     };
-    expect(toCardModel(popup).thumbnailCode).toBeNull();
+    expect(thumbnailProgram(popup)).toBeNull();
   });
 
   it("carries the package's own status and tags", () => {
@@ -63,7 +81,7 @@ describe("toCardModel", () => {
       status: "BETA" as const,
       tags: ["commerce", "pricing"],
     };
-    expect(toCardModel(beta)).toMatchObject({
+    expect(toCardModel(beta, {})).toMatchObject({
       title: "Price Tag",
       summary: "From the README.",
       tags: ["commerce", "pricing"],
