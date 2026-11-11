@@ -32,10 +32,13 @@ allowBuilds:
   "@parcel/watcher": true
 
 minimumReleaseAgeExclude:
-  - '@behivetech/atoms.badge@0.4.2'
-  - '@behivetech/atoms.button@0.4.2'
-  - '@behivetech/atoms.card@0.4.2'
-  - '@behivetech/atoms.table@0.2.2'
-  - '@behivetech/atoms.text-field@0.3.2'
-  - '@behivetech/molecules.empty-state@0.3.2'
-  - '@behivetech/organisms.hero-banner@0.7.2'
+  - '@behivetech/atoms.badge@0.4.5'
+  - '@behivetech/atoms.button@0.5.2'
+  - '@behivetech/atoms.card@0.6.2'
+  - '@behivetech/atoms.table@0.2.5'
+  - '@behivetech/atoms.text-field@0.4.1'
+  - '@behivetech/cms.base-styles@0.5.1'
+  - '@behivetech/cms.types@0.5.2'
+  - '@behivetech/get-class-name@0.1.0'
+  - '@behivetech/molecules.empty-state@0.3.5'
+  - '@behivetech/organisms.hero-banner@0.8.4'
