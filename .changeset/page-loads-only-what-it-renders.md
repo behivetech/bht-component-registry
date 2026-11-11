@@ -1,5 +1,0 @@
----
-"create-bht-component-registry": minor
----
-
-Template: a page loads only what it renders. Live examples used to boot every sandbox frame with the whole registry in scope, which got iPhone WebKit to kill long component pages; now a frame loads the packages its program names, runs the program with sucrase directly (no react-live), and unmounts when it is far off screen. Catalog tiles are rendered to static markup at build time (a tile's first example must render on the server, or the tile shows "No preview"). The live example, its editor and the code highlighter load only on pages and clicks that need them, and `CodeBlock` highlights at build time. The generated `registry-scope.ts` is now lazy loaders plus an export index. New e2e specs hold it: `sandbox-chunks.spec.ts`, `js-budget.spec.ts` and a WebKit project (`component-pages.webkit.spec.ts`; CI now installs WebKit). The new specs are in `rewriteScope`. Generated packages declare `"sideEffects"` (`["**/*.css"]` for a component, `false` for a hook or util); `registry/**` is yours, so add it to your existing packages. Guide: Components, Testing and CI.
