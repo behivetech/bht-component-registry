@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import { SNAPSHOT_TABS, versionedPath } from "@/lib/catalog/history";
 import styles from "./component-tabs.module.scss";
 

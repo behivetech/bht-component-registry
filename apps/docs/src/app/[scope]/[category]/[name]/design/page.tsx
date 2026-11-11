@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { catalog, getComponent } from "@/lib/catalog";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import { TabPage } from "@/components/docs/tab-page";
 import styles from "./page.module.scss";
 

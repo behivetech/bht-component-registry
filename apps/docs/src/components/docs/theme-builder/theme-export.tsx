@@ -2,10 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@behivetech/atoms.button";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import type { ThemeSeeds } from "@/lib/theme/scheme";
 import { configSnippet } from "@/lib/theme/url-state";
-import { CodeBlock } from "@/components/docs/code-block";
+import { PlainCodeBlock } from "@/components/docs/plain-code-block";
 import styles from "./theme-export.module.scss";
 
 /**
@@ -82,21 +82,22 @@ export function ThemeExport({
           <code>registry.config.json</code> under <code>site</code> and rebuild:
           the site regenerates exactly this CSS. Roles you edited by hand travel
           in <code>overrides</code>.
-          <CodeBlock language="json" code={`{\n  "site": {\n${snippet.replace(/^/gm, "  ")}\n  }\n}`} />
+          <PlainCodeBlock
+            code={`{\n  "site": {\n${snippet.replace(/^/gm, "  ")}\n  }\n}`}
+          />
         </li>
         <li>
           <strong>In your app.</strong> Import the token sheet first, then{" "}
           <code>theme.css</code>: the sheet defines every{" "}
           <code>--md-sys-*</code> property and this file overrides the colour
           roles, so every component on the page re-themes.
-          <CodeBlock
-            language="tsx"
+          <PlainCodeBlock
             code={`// your root layout or entry file\nimport "${sheet}";\nimport "./theme.css"; // the download, committed next to it`}
           />
         </li>
         <li>
-          <strong>Choosing a scheme.</strong> Do nothing and the visitor&apos;s OS
-          preference picks light or dark. Set{" "}
+          <strong>Choosing a scheme.</strong> Do nothing and the visitor&apos;s
+          OS preference picks light or dark. Set{" "}
           <code>data-theme=&quot;light&quot;</code> or{" "}
           <code>data-theme=&quot;dark&quot;</code> on <code>&lt;html&gt;</code>{" "}
           to force one; the file carries both.
@@ -105,7 +106,7 @@ export function ThemeExport({
 
       <details className={getChildClass("details")}>
         <summary>The CSS</summary>
-        <CodeBlock language="css" code={css} />
+        <PlainCodeBlock code={css} />
       </details>
     </section>
   );

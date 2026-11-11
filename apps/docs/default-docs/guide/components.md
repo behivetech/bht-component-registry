@@ -21,7 +21,7 @@ registry/acme/atoms/button/
 ├─ index.ts                   the package's public exports
 ├─ README.md                  the Overview tab
 ├─ CHANGELOG.md               written by Changesets; the Changelog tab
-├─ package.json               @acme/atoms.button, scripts, files, publishConfig, registry, license (MIT by default; yours to change)
+├─ package.json               @acme/atoms.button, scripts, files, sideEffects, publishConfig, registry, license (MIT by default; yours to change)
 ├─ tsup.config.ts             createComponentConfig() from @bht-component-registry/env
 ├─ tsconfig.json              extends the env's tsconfig (which also types *.module.scss imports); excludes specs and examples from the build
 └─ eslint.config.mjs          re-exports the env's ESLint config
@@ -37,14 +37,14 @@ Two files appear after a build and are gitignored:
 Why each file is there:
 
 - `<name>.tsx` holds exactly one exported component whose props interface is `<Name>Props`. The docs engine documents every exported, capitalised component it finds in the package's `.tsx` files (specs and examples excluded), so keep helpers un-exported or in `index.ts`.
-- `<name>.module.scss` is compiled by the shared tsup config into `dist/index.css`, which the package exposes as `./styles.css`. The docs site imports it for every package so examples are styled.
+- `<name>.module.scss` is compiled by the shared tsup config into `dist/index.css`, which the package exposes as `./styles.css`. A package declares `"sideEffects": ["**/*.css"]` (a hook or util, which has no styles, `false`) so a bundler keeps its stylesheet and still drops what an app does not use. The docs site loads a package's stylesheet only for a page or example that uses that package.
 - `<name>.example.tsx`: each named export is one example. See below.
 - `index.ts` is what consumers and the docs sandbox import. Only export from here what you want in the Playground scope.
 - `README.md` and `CHANGELOG.md` are shown as-is. The generator writes a CHANGELOG containing only the package-name heading; Changesets adds releases under it.
 
 ### Styling: BEM through `getClassName`
 
-Every class name in a component — and in the docs site itself — comes from `getClassName` (`@bht-component-registry/class-names`), so the markup and the stylesheet agree by construction:
+Every class name in a component — and in the docs site itself — comes from `getClassName` (`@behivetech/bht-class-names`), so the markup and the stylesheet agree by construction:
 
 ```tsx
 const [rootClass, getChildClass] = getClassName({
@@ -97,7 +97,7 @@ The README is the Overview tab. A few rules make it work as docs:
 - **The H1 is the title.** `# Price Tag` is shown as the page title and on the catalog card; the H1 itself is stripped from the rendered body. A PascalCase H1 (`# PriceTag`) is split into words; anything else is shown exactly as you wrote it. With no H1, the folder name is title-cased.
 - **The first paragraph after the H1 is the summary**, one line, used on catalog cards and in the page description. It is also the published package's `description`: `pnpm release` writes it into `package.json` just for the publish and restores the file after, so leave `package.json#description` empty and the sentence lives in one place. The component's JSDoc is the fallback when a README has no summary.
 - **No props table.** The Props tab is generated from the TypeScript interface and its JSDoc, so a hand-written table in the README is a second copy that drifts. The README is for what the component is for, how to use it, and the decisions behind it.
-- **Linking back from npm is automatic.** With `registry.config.json#site.url` set (see [Scopes](scopes.md)), `pnpm release` publishes each package with its docs page as `homepage` and a `Docs: <url>` line under the summary; neither is written into the repo.
+- **Linking back from npm is automatic.** With the site URL set, as `registry.config.json#site.url` or the `BHT_DOCS_SITE_URL` environment variable that overrides it (see [Scopes](scopes.md)), `pnpm release` publishes each package with its docs page as `homepage` and a `Docs: <url>` line under the summary; neither is written into the repo.
 - **```` ```jsx ```` and ```` ```tsx ```` blocks run live.** Each one is rendered as a working example above its code, editable in place. Other languages (```` ```bash ````, ```` ```scss ````) render as plain code.
 - **Import lines are stripped** before a snippet runs, because every export of every registry package is already in the sandbox scope. Write the imports anyway: readers copy them.
 - A snippet that is a bare JSX expression is rendered directly (siblings are allowed). A snippet that declares a component (`function Example() {}` or `const Example = () => …`) is rendered as `<Example />`. A snippet that calls hooks at the top level is wrapped in a component for you.
@@ -122,11 +122,13 @@ import { RatingStars } from '@example/atoms.rating-stars';
 
 ## Examples
 
-`<name>.example.tsx` holds the examples shown on the Examples tab, in the Playground, and as the live thumbnail on the catalog card.
+`<name>.example.tsx` holds the examples shown on the Examples tab, in the Playground, and, for the first example, as the thumbnail on the catalog card.
 
 Until template 0.4 the file was `<name>.composition.tsx`. The site still reads that name and warns about it at build time; rename when convenient — 0.5 stops reading it.
 
-Every live example runs in its own document — an iframe the site serves at `/sandbox` — so a component that portals to `document.body` or positions itself `fixed` (a modal, a drawer, a toast) opens inside its preview and never over the docs page. The frame grows to fit its content; **Expand** gives an overlay room to open, and **Open in new tab** runs the example on its own, including any edits you have made. Catalog tiles render inline instead (dozens of frames would be heavy), and a component that only opens as an overlay has nothing to show in a tile: say so with `"registry": { "preview": { "thumbnail": false } }` in its `package.json` and the tile shows a placeholder.
+Every live example runs in its own document — an iframe the site serves at `/sandbox` — so a component that portals to `document.body` or positions itself `fixed` (a modal, a drawer, a toast) opens inside its preview and never over the docs page. The frame grows to fit its content; **Expand** gives an overlay room to open, and **Open in new tab** runs the example on its own, including any edits you have made. Catalog tiles are not frames at all (dozens of them would be heavy): the site renders each tile's first example to static markup when it is built, in Node, so that example must render on the server, with no `window` or `document` touched during render (use an effect for those). A component that fails to render there, or that only opens as an overlay, has nothing to show in a tile: for an overlay, say so with `"registry": { "preview": { "thumbnail": false } }` in its `package.json`; either way the tile shows a placeholder.
+
+A page loads only what it renders. A frame reads its program, loads the registry packages whose exports the program names (and their dependencies' styles) and nothing else; a frame far from the viewport is unmounted and mounts again when you scroll back; the code editor loads when you open **Edit code**. So an example may use any component from the registry without importing it, and the cost of a page is the cost of what it shows.
 
 - **Each named export that starts with a capital letter is one example.** `export const BasicRatingStars = () => <RatingStars value={4} />;` becomes the example "Basic Rating Stars"; the title is the export name split at capitals.
 - **A JSDoc comment above the export becomes its description.**

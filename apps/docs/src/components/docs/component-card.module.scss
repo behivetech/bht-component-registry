@@ -20,8 +20,8 @@
   }
 
   &__thumb-example {
-    border: 0;
-    background: transparent;
+    display: flow-root;
+    padding: 1.5rem;
     max-width: 100%;
     // Thumbnails are for recognition, not interaction — the page behind them is
     // the link, and a Modal or Drawer example must not open on hover.

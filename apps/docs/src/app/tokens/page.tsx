@@ -4,7 +4,7 @@ import { Table, type TableColumn } from "@behivetech/atoms.table";
 import { catalog, type CatalogTokens } from "@/lib/catalog";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import styles from "./page.module.scss";
 
 const [rootClass, getChildClass] = getClassName({

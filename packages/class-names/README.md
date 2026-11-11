@@ -15,7 +15,7 @@ A powerful utility for generating BEM (Block Element Modifier) style class names
 ## Basic Usage
 
 ```tsx
-import { getClassName } from '@bht-component-registry/class-names';
+import { getClassName } from '@behivetech/bht-class-names';
 
 // Basic component setup
 const [rootClass, getChildClass] = getClassName({
@@ -89,7 +89,7 @@ console.log(getChildClass('text'));
 
 ```tsx
 import React from 'react';
-import { getClassName } from '@bht-component-registry/class-names';
+import { getClassName } from '@behivetech/bht-class-names';
 import styles from './Button.module.css';
 
 interface ButtonProps {

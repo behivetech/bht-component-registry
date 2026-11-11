@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { getDocPage, getDocPages, resolveDocLink } from "@/lib/docs";
 import { DocsShell } from "@/components/docs-shell";
 import { Markdown } from "@/components/docs/markdown";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import styles from "./page.module.scss";
 
 interface Props {

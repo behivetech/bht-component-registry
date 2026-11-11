@@ -96,32 +96,32 @@ importers:
   apps/docs:
     dependencies:
       '@behivetech/atoms.badge':
-        specifier: 0.4.2
-        version: 0.4.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: 0.4.5
+        version: 0.4.5(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@behivetech/atoms.button':
-        specifier: 0.4.2
-        version: 0.4.2(@radix-ui/react-slot@1.4.0(@types/react@19.3.0)(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: 0.5.2
+        version: 0.5.2(@radix-ui/react-slot@1.4.0(@types/react@19.3.0)(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@behivetech/atoms.card':
-        specifier: 0.4.2
-        version: 0.4.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: 0.6.2
+        version: 0.6.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@behivetech/atoms.table':
-        specifier: 0.2.2
-        version: 0.2.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: 0.2.5
+        version: 0.2.5(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@behivetech/atoms.text-field':
-        specifier: 0.3.2
-        version: 0.3.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@behivetech/cms.base-styles':
-        specifier: 0.3.1
-        version: 0.3.1
-      '@behivetech/molecules.empty-state':
-        specifier: 0.3.2
-        version: 0.3.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@behivetech/organisms.hero-banner':
-        specifier: 0.7.2
-        version: 0.7.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@bht-component-registry/class-names':
+        specifier: 0.4.1
+        version: 0.4.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@behivetech/bht-class-names':
         specifier: workspace:*
         version: link:../../packages/class-names
+      '@behivetech/cms.base-styles':
+        specifier: 0.5.1
+        version: 0.5.1
+      '@behivetech/molecules.empty-state':
+        specifier: 0.3.5
+        version: 0.3.5(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@behivetech/organisms.hero-banner':
+        specifier: 0.8.4
+        version: 0.8.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@example/atoms.price-tag':
         specifier: workspace:*
         version: link:../../registry/example/atoms/price-tag
@@ -161,6 +161,9 @@ importers:
       remark-gfm:
         specifier: ^4.0.1
         version: 4.0.1(supports-color@8.1.1)
+      sucrase:
+        specifier: ^3.35.1
+        version: 3.35.1
     devDependencies:
       '@bht-component-registry/env':
         specifier: workspace:*
@@ -218,10 +221,6 @@ importers:
         version: 4.1.11(@types/node@22.20.5)(jsdom@29.1.1)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(sass-embedded@1.105.1)(sass@1.105.1)(tsx@4.23.15))
 
   packages/class-names:
-    dependencies:
-      classnames:
-        specifier: ^2.5.1
-        version: 2.5.1
     devDependencies:
       '@bht-component-registry/eslint-config':
         specifier: workspace:*
@@ -229,6 +228,9 @@ importers:
       '@bht-component-registry/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      classnames:
+        specifier: 2.5.1
+        version: 2.5.1
       eslint:
         specifier: 'catalog:'
         version: 9.39.5(supports-color@8.1.1)
@@ -238,6 +240,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.11(@types/node@22.20.5)(jsdom@29.1.1)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(sass-embedded@1.105.1)(sass@1.105.1)(tsx@4.23.15))
 
   packages/create-bht-component-registry:
     dependencies:
@@ -353,6 +358,9 @@ importers:
 
   registry/example/atoms/price-tag:
     dependencies:
+      '@behivetech/bht-class-names':
+        specifier: workspace:^
+        version: link:../../../../packages/class-names
       react:
         specifier: ^19.2.7
         version: 19.2.8
@@ -360,9 +368,6 @@ importers:
         specifier: ^19.2.7
         version: 19.2.8(react@19.2.8)
     devDependencies:
-      '@bht-component-registry/class-names':
-        specifier: workspace:*
-        version: link:../../../../packages/class-names
       '@bht-component-registry/env':
         specifier: workspace:*
         version: link:../../../../packages/env
@@ -387,6 +392,9 @@ importers:
 
   registry/example/atoms/rating-stars:
     dependencies:
+      '@behivetech/bht-class-names':
+        specifier: workspace:^
+        version: link:../../../../packages/class-names
       react:
         specifier: ^19.2.7
         version: 19.2.8
@@ -394,9 +402,6 @@ importers:
         specifier: ^19.2.7
         version: 19.2.8(react@19.2.8)
     devDependencies:
-      '@bht-component-registry/class-names':
-        specifier: workspace:*
-        version: link:../../../../packages/class-names
       '@bht-component-registry/env':
         specifier: workspace:*
         version: link:../../../../packages/env
@@ -553,51 +558,54 @@ packages:
     resolution: {integrity: sha512-Vj1jF3cPfxg7OAfoI7QnVKLoILlm2JF9pnVHrX8qx7AHMiYWT+NDAA7jChlNgRS4WTLc/fD1lXLmPixluj+3Gg==}
     engines: {node: '>=6.9.0'}
 
-  '@behivetech/atoms.badge@0.4.2':
-    resolution: {integrity: sha512-LQAw5Vyv/KpzWdIU3FPT2aV9clHETaZw45HN4pHoIl/NOwMS8D4eshId7ZF8c6uoU0fCpqRLl1WYkz1B/vxywQ==}
+  '@behivetech/atoms.badge@0.4.5':
+    resolution: {integrity: sha512-euqu4cCtLeSaqjnuyKuFBM2N7hprPZ6t3y7pUmZBFkdQAYisjEwSSz5OotLX/jLEqfDhV9wCLuGCeeDoA9eX0g==, tarball: https://npm.pkg.github.com/download/@behivetech/atoms.badge/0.4.5/35100d7e3837ac8ea0fa5c6f72cb57ae81ff5196}
     peerDependencies:
       react: ^19.2.7
       react-dom: ^19.2.7
 
-  '@behivetech/atoms.button@0.4.2':
-    resolution: {integrity: sha512-pvRe6YdKCu199TPjkUX4pJgtpdnstHmmfbXVVe8nIhNvj0+ApONyt4sbUXBUmI8QLcSfzTpBWn+rxgiLwKs09Q==}
+  '@behivetech/atoms.button@0.5.2':
+    resolution: {integrity: sha512-SWe7ln+8MfCF6OEF5a7Ni1EAO65TZrjL+I/wC0cno1YCQu50Qw8WTzz8e4Cf956IJ7b9+sqwn+/1pyaNkpM8CA==, tarball: https://npm.pkg.github.com/download/@behivetech/atoms.button/0.5.2/29693e1beb3d27db4968ac4d46fb005697f687c8}
     peerDependencies:
       '@radix-ui/react-slot': ^1.1.0
       react: ^19.2.7
       react-dom: ^19.2.7
 
-  '@behivetech/atoms.card@0.4.2':
-    resolution: {integrity: sha512-8D0tygTkrO62Gezo3Syf323r6yGO+xyrXytUoQyXFZYQ03yDyS6wh6gVTPNRa02HYC7XkW8LJUh0HckNw09DWw==}
+  '@behivetech/atoms.card@0.6.2':
+    resolution: {integrity: sha512-ZuwADV/ga7Sx+F2xEfvyUs80hn8HcYowDLHpji7S4wz7xCo0TzjsESwKSGOSCX+bi8b3mP1ETDkBYUIj1bHQog==, tarball: https://npm.pkg.github.com/download/@behivetech/atoms.card/0.6.2/011e9fe251144a5f5369e249374a019f5d755805}
     peerDependencies:
       react: ^19.2.7
       react-dom: ^19.2.7
 
-  '@behivetech/atoms.table@0.2.2':
-    resolution: {integrity: sha512-2qGUuuy5OfIHXjjXxsv/o28tk347wUaTGI9hgATl9JHQhoJNStfZXT01tVtelpriAUHQUo8pL17LOYQRkjUEqw==}
+  '@behivetech/atoms.table@0.2.5':
+    resolution: {integrity: sha512-ZsJDt7zP8aWT9AIJ+qzWL5tPJHoFd0qqzYkDY2eZK+rVn2NmAOiJD5H/DJJffZMaNgD6roewMADn4uGE7P7jqg==, tarball: https://npm.pkg.github.com/download/@behivetech/atoms.table/0.2.5/c9161cf8ea8faee658fa073040127ecf65025b34}
     peerDependencies:
       react: ^19.2.7
       react-dom: ^19.2.7
 
-  '@behivetech/atoms.text-field@0.3.2':
-    resolution: {integrity: sha512-zsLPkqDIsewodj5v4N3OWLwvwAfDJwizaTWa/+pBJtaOCQrtiSxYixM2ib0QIfB8zcyoYka1k+6GNbNZNbOF0w==}
+  '@behivetech/atoms.text-field@0.4.1':
+    resolution: {integrity: sha512-LOCubsE1Kt1WsMXoucuOAYc/a6tM357rAtDIawu555cJD4g5hVH6aTDIjFDNLUVUPiWTVhu0rmzqLSvJhDt+mw==, tarball: https://npm.pkg.github.com/download/@behivetech/atoms.text-field/0.4.1/143a0368e942fd06d3c0b2157e566e6fdc1bf825}
     peerDependencies:
       react: ^19.2.7
       react-dom: ^19.2.7
 
-  '@behivetech/cms.base-styles@0.3.1':
-    resolution: {integrity: sha512-jNdjPK80mXaxFJaqzpflkZYqfBxZ8GnwcfbTRqbRbrCA9bsWNXDbny6L4gvRFx7R/8aOS63VtMwmZLXSj8BPHw==}
+  '@behivetech/cms.base-styles@0.5.1':
+    resolution: {integrity: sha512-f6t1D4k8DhnRyXa6lIXidkdvflbn8MZIwC5xPEIZpOT+gIzjBfShf21+9E38qUJvtch+DDZ7tHT0H6pEx0QUmw==, tarball: https://npm.pkg.github.com/download/@behivetech/cms.base-styles/0.5.1/714880c9de007ffdbe2736fbd85ef9014a593e6a}
 
-  '@behivetech/cms.types@0.5.0':
-    resolution: {integrity: sha512-cctRtqx153bjHxCJRq6zoV5+lG1VR5LJJVNL9QrELb67H6OwGErX6TvEl4+Qfi7kP/7+lZoEnzsd6wRQpUfrtg==}
+  '@behivetech/cms.types@0.5.2':
+    resolution: {integrity: sha512-nZJeoLdErNxN8AtstB1J7sd99tvsdmPIcF4eyECp99uJ0L7cr7XvEs9tJWuss9TxgUuux003/G7b5RPdJi5HJQ==, tarball: https://npm.pkg.github.com/download/@behivetech/cms.types/0.5.2/6eff595306feb7589589ae2e875b705954115df5}
 
-  '@behivetech/molecules.empty-state@0.3.2':
-    resolution: {integrity: sha512-9AHahi58lN0oI9ihwA+7FwgqKkCnvGi1tb7yKI7wVtsM/UcbPgJ+xj+N06tnoq3y/Ae+oJS/Z0g1VUOISStgJQ==}
+  '@behivetech/get-class-name@0.1.0':
+    resolution: {integrity: sha512-ZNvYuR/U51ykA5ejcpPwHKT3HFqekoVpN4jJP3bO9yWgHumaCIwAHRTacpRJUgl+USobkwpN+3SZLw6Ei+4sbQ==, tarball: https://npm.pkg.github.com/download/@behivetech/get-class-name/0.1.0/a347e962ffc81f0796c4bf6f7c387a8b8b9dc770}
+
+  '@behivetech/molecules.empty-state@0.3.5':
+    resolution: {integrity: sha512-Q94klIA4kAxkZAWgNdGMlGLoqM+lu5Jlwf9XGv7oVnnyTr8orUoV6XihqKWPZ6F3z6iPVEJg8zpeCFqBVzd/wg==, tarball: https://npm.pkg.github.com/download/@behivetech/molecules.empty-state/0.3.5/f76c2bfb7a024be1ce7893b3372b34a844f70d82}
     peerDependencies:
       react: ^19.2.7
       react-dom: ^19.2.7
 
-  '@behivetech/organisms.hero-banner@0.7.2':
-    resolution: {integrity: sha512-Pd+NYxb32NlGdBljWHH6Q9bzofL1mPdcz97EUqZ8bCYiXyjbZtBYwTp1Z2jZvGNcPDVu3mMSsL7jhlMGE68iJg==}
+  '@behivetech/organisms.hero-banner@0.8.4':
+    resolution: {integrity: sha512-Vmg6etRKYHY+0ByGdzgQwf2bXFi8JSci2YpLpoBgA7MTZC5vOILJlkCrgnKF2rUVbKvu+HLBFlvnish1fBk63A==, tarball: https://npm.pkg.github.com/download/@behivetech/organisms.hero-banner/0.8.4/f94ac13e961fc5b0f47f7a1a3fc5817afbdc59b2}
     peerDependencies:
       react: ^19.2.7
       react-dom: ^19.2.7
@@ -5196,44 +5204,53 @@ snapshots:
       '@babel/helper-string-parser': 7.29.7
       '@babel/helper-validator-identifier': 7.29.7
 
-  '@behivetech/atoms.badge@0.4.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@behivetech/atoms.badge@0.4.5(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
+      '@behivetech/get-class-name': 0.1.0
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
 
-  '@behivetech/atoms.button@0.4.2(@radix-ui/react-slot@1.4.0(@types/react@19.3.0)(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@behivetech/atoms.button@0.5.2(@radix-ui/react-slot@1.4.0(@types/react@19.3.0)(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
+      '@behivetech/get-class-name': 0.1.0
       '@radix-ui/react-slot': 1.4.0(@types/react@19.3.0)(react@19.2.8)
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
 
-  '@behivetech/atoms.card@0.4.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@behivetech/atoms.card@0.6.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
+      '@behivetech/get-class-name': 0.1.0
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
 
-  '@behivetech/atoms.table@0.2.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@behivetech/atoms.table@0.2.5(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
+      '@behivetech/get-class-name': 0.1.0
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
 
-  '@behivetech/atoms.text-field@0.3.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@behivetech/atoms.text-field@0.4.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
+      '@behivetech/get-class-name': 0.1.0
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
 
-  '@behivetech/cms.base-styles@0.3.1': {}
+  '@behivetech/cms.base-styles@0.5.1': {}
 
-  '@behivetech/cms.types@0.5.0': {}
+  '@behivetech/cms.types@0.5.2': {}
 
-  '@behivetech/molecules.empty-state@0.3.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@behivetech/get-class-name@0.1.0': {}
+
+  '@behivetech/molecules.empty-state@0.3.5(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
+      '@behivetech/get-class-name': 0.1.0
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
 
-  '@behivetech/organisms.hero-banner@0.7.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@behivetech/organisms.hero-banner@0.8.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@behivetech/cms.types': 0.5.0
+      '@behivetech/cms.types': 0.5.2
+      '@behivetech/get-class-name': 0.1.0
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
 

@@ -13,7 +13,7 @@ import { Badge } from "@behivetech/atoms.badge";
 import { ComponentTabs } from "@/components/docs/component-tabs";
 import { StatusBadge } from "@/components/docs/status-badge";
 import { VersionSwitcher } from "@/components/docs/version-switcher";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import styles from "./layout.module.scss";
 
 interface Props {

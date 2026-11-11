@@ -20,7 +20,7 @@ import {
   type TemplateManifest,
 } from "../lib/manifest.js";
 import { interactivePrompter, type Prompter } from "../lib/prompt.js";
-import { rewriteScopeMentions, scopeRename, type ScopeRename } from "../lib/rename.js";
+import { CLASS_NAMES_PACKAGE_JSON, markHelperWorkspaceOnly, rewriteScopeMentions, scopeRename, type ScopeRename } from "../lib/rename.js";
 import { isGitTreeClean } from "../lib/run.js";
 import { fetchTemplate, type TemplateFetcher } from "../lib/template.js";
 import { readOwnVersion } from "../lib/version.js";
@@ -122,6 +122,10 @@ export async function planUpdate(
       const original = content.toString("utf8");
       content = rewriteScopeMentions(original, rename);
       if (content !== original) rewritten.push(file);
+    }
+    if (file === CLASS_NAMES_PACKAGE_JSON) {
+      // The registry's copy of the shared helper is workspace-only, whatever the template says.
+      content = markHelperWorkspaceOnly(content.toString("utf8"));
     }
     if (!localSet.has(file)) {
       added.push({ path: file, content });

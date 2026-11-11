@@ -44,7 +44,7 @@ Then set `scope` in `registry.config.json`, rename `registry/example` to your sc
 - Branding from `registry.config.json` and a `branding/` folder: logo, icons, colours (seeds, not a palette to maintain), self-hosted fonts, a dark header, the home-page hero. Nothing of it is template-owned.
 - Publishing to npmjs, GitHub Packages or a private registry with `pnpm release`.
 - A static export (`apps/docs/out`) that deploys to Vercel, Netlify, Cloudflare Pages, S3, or a Docker image.
-- No auth, no database, no required environment variables.
+- No auth, no database, no required environment variables (for now one token, to install the `@behivetech` packages from GitHub Packages; see the Getting started guide).
 
 ## How it works
 
@@ -52,6 +52,7 @@ Then set `scope` in `registry.config.json`, rename `registry/example` to your sc
 - Before every `dev` and `build`, `apps/docs/scripts/generate-catalog.ts` reads every package (README, examples, source, CHANGELOG, `package.json`) and writes a catalog the pages are generated from.
 - Each component's build runs `tsup` and then `bht-registry-docgen`, which writes `docs.json` into the package, so a published tarball describes itself.
 - Changesets owns versions: `pnpm changeset`, `pnpm version-packages`, `pnpm release`. Versioning also writes the docs snapshot for each bumped component, so a version's docs land in the same commit as its bump.
+- The docs site's address is optional. `registry.config.json#site.url` sets it, and the environment variable `BHT_DOCS_SITE_URL` (an absolute `https://` URL) overrides it, for example on a fork or a staging deploy; it feeds the `homepage` and `Docs:` line `pnpm release` gives each published package. Unset means the config value, and an invalid value fails the release, naming the variable.
 - `registry.config.json` holds the scope, the npm registry, the site branding and the docs options. It is committed and contains no secrets. Brand files live in `branding/`.
 
 ## Guides

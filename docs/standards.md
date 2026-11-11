@@ -21,7 +21,7 @@ The rules every component in this registry follows. Keep this page short enough 
 
 ## Styling
 
-- Every component names its classes through `getClassName` from `@bht-component-registry/class-names`, BEM-style: the root element carries the block class, every inner element a `__child` class, and variants are `--modifier` classes on the root only. The generator writes this for you:
+- Every component names its classes through `getClassName` from `@behivetech/bht-class-names`, BEM-style: the root element carries the block class, every inner element a `__child` class, and variants are `--modifier` classes on the root only. The generator writes this for you:
 
   ```tsx
   const [rootClass, getChildClass] = getClassName({ rootClass: "ACME__DatePicker", styles, className, modifiers: { open } });

@@ -1,5 +1,5 @@
 import { type HTMLAttributes } from "react";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import styles from "./price-tag.module.scss";
 
 export type PriceTagSize = "sm" | "md" | "lg";

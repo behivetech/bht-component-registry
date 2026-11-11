@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import { catalog } from "@/lib/catalog";
 import { getDocPages } from "@/lib/docs";
 import styles from "./site-header.module.scss";
@@ -63,7 +63,11 @@ export function SiteHeader() {
             {/* The tokens page exists only when a scope declares a tokens.scss. */}
             {tokens && <Link href="/tokens">Design tokens</Link>}
             {/* The theme builder is on unless registry.config.json#docs.themeBuilder turns it off. */}
-            {docs.themeBuilder && <Link href="/theme">Theme</Link>}
+            {docs.themeBuilder && (
+              <Link href="/theme" prefetch={false}>
+                Theme
+              </Link>
+            )}
             {/* The Docs section exists when any page does — the template's defaults or the owner's docs/. */}
             {getDocPages().length > 0 && <Link href="/docs">Docs</Link>}
           </nav>

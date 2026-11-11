@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { getComponent } from "@/lib/catalog";
 import { loadPublishedVersions, publishedRegistryHost } from "@/lib/published";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import { Markdown } from "@/components/docs/markdown";
 import { TabPage } from "@/components/docs/tab-page";
 import styles from "./page.module.scss";

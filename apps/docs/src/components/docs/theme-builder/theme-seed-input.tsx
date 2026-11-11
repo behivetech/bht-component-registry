@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import { normalizeHex } from "@/lib/theme/scheme";
 import styles from "./theme-seed-input.module.scss";
 

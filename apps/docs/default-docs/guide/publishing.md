@@ -64,7 +64,7 @@ pnpm changeset tag                                         # tags every publishe
 git push --follow-tags
 ```
 
-`pnpm release` is for CI, where trusted publishing or a token answers for you. Before `changeset publish` it runs `scripts/prepare-publish.mjs`, which fills in what the published package says about itself from where that already lives, and restores the files afterwards: `package.json#description` from the README's first paragraph, and — when `registry.config.json#site.url` is set — `package.json#homepage` plus a `Docs: <url>` line in the README, both pointing at the package's page on the docs site. The repo keeps one copy of each. Publishing by hand as above skips that step, so a hand-published version carries none of it until the next release.
+`pnpm release` is for CI, where trusted publishing or a token answers for you. Before `changeset publish` it runs `scripts/prepare-publish.mjs`, which fills in what the published package says about itself from where that already lives, and restores the files afterwards: `package.json#description` from the README's first paragraph, and — when the site URL is set — `package.json#homepage` plus a `Docs: <url>` line in the README, both pointing at the package's page on the docs site. The site URL is the environment variable `BHT_DOCS_SITE_URL` when set (an absolute `https://` URL, trailing slash ignored; an invalid value fails the release before any file changes), else `registry.config.json#site.url`. Neither is required. The repo keeps one copy of each. Publishing by hand as above skips that step, so a hand-published version carries none of it until the next release.
 
 ## GitHub Packages
 
@@ -77,6 +77,12 @@ Set the registry:
 The scope must match the GitHub owner of the repo, lowercased. Packages are visible to whoever can see the repo. Consumers need a `.npmrc` with an auth token and `@acme:registry=https://npm.pkg.github.com`, even for public repos.
 
 In CI, `GITHUB_TOKEN` with `packages: write` permission is enough; no secret to create. The commented variant in `.github/workflows/release.yml` shows the two lines.
+
+## The shared helper, and GitHub Packages for now
+
+Every component imports `getClassName` from `@behivetech/bht-class-names` and lists it in `dependencies` as `workspace:^`. The template publishes that helper (to GitHub Packages, with the release job's own `GITHUB_TOKEN`); your registry keeps a workspace-only copy of the folder (`"private": true`, set by `create` and `update`) so linking works and nothing is published from your repo. When your components publish, pnpm turns `workspace:^` into `^<version>`, so whoever installs your package also installs the helper, from GitHub Packages. That is temporary: it moves back to npm with the rest of the `@behivetech` packages, and nothing in your components changes.
+
+For now, installing your published packages therefore needs the `@behivetech` scope pointed at GitHub Packages with a token, like this repo's `.npmrc` and the section [A token for GitHub Packages](getting-started.md#a-token-for-github-packages-for-now). Say so in your own README if you publish publicly.
 
 ## Public and private packages
 
@@ -107,12 +113,13 @@ The generator writes each package's `publishConfig.registry` from this value, so
 
 ## Tokens
 
-There are two, both optional, neither committed:
+There are three, neither committed (the first is needed for now to install, the others are optional):
 
 | Token | Used by | Purpose |
 |---|---|---|
 | `NPM_TOKEN` (or `GITHUB_TOKEN` for GitHub Packages) | `.github/workflows/release.yml` | Publish public packages. Exposed to `changeset publish` as `NODE_AUTH_TOKEN`. Not needed with trusted publishing. |
 | `PRIVATE_REGISTRY_TOKEN` | `.github/workflows/release.yml` | Publish private packages to `privateRegistry`. For GitHub Packages the job's `GITHUB_TOKEN` stands in when this is absent. |
+| `PACKAGES_READ_TOKEN` (CI secret) / `NODE_AUTH_TOKEN` (your shell) | `.github/workflows/ci.yml`, `release.yml`, `pnpm install` | A GitHub token with `read:packages`, to install the `@behivetech` packages from GitHub Packages (temporary). The workflows write it into the runner's `~/.npmrc`; locally it goes in `~/.npmrc` as `//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}`. |
 | `REGISTRY_READ_TOKEN` | `pnpm build` (the docs site) | Lets the Changelog tab list the versions actually published. Not needed for public packages on npmjs. Without it, the tab shows the `CHANGELOG.md` only. |
 
 The docs site itself never needs a token at runtime; it is static.

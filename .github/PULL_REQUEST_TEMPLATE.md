@@ -11,7 +11,7 @@
 - [ ] The matching guide page in `apps/docs/default-docs/guide/` is updated if behaviour changed
 - [ ] A changeset is added if a published package changed (`pnpm changeset`)
 - [ ] `template.manifest.json` is updated if a new top-level file should be managed by `update`
-- [ ] No new required environment variable, server-side code or private registry dependency
+- [ ] No new required environment variable (beyond the temporary `NODE_AUTH_TOKEN`), server-side code or private registry dependency (beyond GitHub Packages for `@behivetech`, temporary)
 - [ ] Commit subjects follow the conventional style (`feat(docs): …`, `fix(gen): …`)
 
 ## How to test it

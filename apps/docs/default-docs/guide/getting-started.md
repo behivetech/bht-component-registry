@@ -15,7 +15,20 @@ This guide takes you from nothing to a running docs site with your own scope. Yo
 - git.
 - For publishing later: an npm account and an org for your scope. See [Scopes](scopes.md).
 
-No environment variables are needed to develop, build or deploy. Tokens are only involved when you publish. See [Publishing](publishing.md).
+No environment variable is needed to develop, build or deploy once the packages are installed. Two tokens are involved: one to install the `@behivetech` packages (see [A token for GitHub Packages](#a-token-for-github-packages-for-now)), and publish tokens when you publish. See [Publishing](publishing.md).
+
+## A token for GitHub Packages (for now)
+
+Until the `@behivetech` packages are on the public npm registry again, the shared class-name helper's published copy and the docs site's chrome (Button, Card, Badge, Table, TextField, EmptyState, HeroBanner and the token sheet) install from GitHub Packages. The repo's `.npmrc` names that registry for the `@behivetech` scope; GitHub Packages wants a token even for public packages, so before `pnpm install`:
+
+```bash
+# once: let pnpm read the token from the environment
+echo '//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}' >> ~/.npmrc
+# each shell: a GitHub token with the read:packages scope
+export NODE_AUTH_TOKEN=<your token>
+```
+
+The token line goes in your user-level `~/.npmrc` on purpose: pnpm 11 ignores a credential that expands an environment variable when it sits in a project `.npmrc`, because that file is committed. The repo never holds the token. In CI, the shipped workflows write the same line and read the token from the repository secret `PACKAGES_READ_TOKEN`; a pull request from a fork gets no secrets, so its install cannot run. Delete the `@behivetech:registry` line in `.npmrc` to go back to the public registry once the packages are there.
 
 ## Create a registry
 
@@ -29,7 +42,7 @@ The command prompts for:
 - **npm registry**: where `pnpm release` publishes. Default `https://registry.npmjs.org`; GitHub Packages is `https://npm.pkg.github.com`; a private registry is whatever URL it gives you.
 - **Starter categories**: which `registry/<scope>/<category>` folders to create.
 
-It then writes `registry.config.json`, renames the example scope to yours, runs `pnpm install` and a first `pnpm build`, and prints the next steps.
+It then writes `registry.config.json`, renames the example scope to yours, runs `pnpm install` and a first `pnpm build` (set `NODE_AUTH_TOKEN` first, see below, or pass `--no-install`), and prints the next steps.
 
 ```bash
 cd my-registry
@@ -113,7 +126,7 @@ All run from the repo root.
 | `pnpm dev` | Regenerates the catalog, then Next dev on :3000 |
 | `pnpm build` | Builds every package, then the static export to `apps/docs/out` |
 | `pnpm serve` | Serves `apps/docs/out` on :3000 the way a static host would |
-| `pnpm verify` | build, then lint + types + unit tests for every package |
+| `pnpm verify` | publish-config check and script tests, then build, then lint + types + unit tests for every package |
 | `pnpm test:e2e` | Playwright against the static build (builds first) |
 | `pnpm gen` | Pick a generator; `pnpm gen component <scope> <category> <name>` skips the prompts. See [Generators](generators.md) |
 | `pnpm changeset` | Record a change for the next release |

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useHashSeeds } from "./use-hash-seeds";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import {
   CONTRAST_LEVELS,
   SCHEME_VARIANTS,

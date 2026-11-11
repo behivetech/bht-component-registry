@@ -14,7 +14,15 @@ import { copyTree, isDirEmpty, isInside, readText, writeText } from "../lib/fs.j
 import { errorMessage, log as defaultLog, type Logger } from "../lib/log.js";
 import { DEFAULT_MANIFEST, MANIFEST_FILE, isTemplateOnly, readManifest, type TemplateManifest } from "../lib/manifest.js";
 import { interactivePrompter, type Prompter } from "../lib/prompt.js";
-import { renameScopeTree, rewriteChangesets, rewriteLockfile, rewriteScopeFiles, scopeRename } from "../lib/rename.js";
+import {
+  CLASS_NAMES_PACKAGE_JSON,
+  markHelperWorkspaceOnly,
+  renameScopeTree,
+  rewriteChangesets,
+  rewriteLockfile,
+  rewriteScopeFiles,
+  scopeRename,
+} from "../lib/rename.js";
 import { runPnpm, type Runner } from "../lib/run.js";
 import { fetchTemplate, type TemplateFetcher } from "../lib/template.js";
 import { readOwnVersion } from "../lib/version.js";
@@ -209,6 +217,15 @@ function skipTemplateOnly(manifest: TemplateManifest): (relPath: string) => bool
   return (relPath) => isTemplateOnly(relPath, manifest) || isTemplateOnly(`${relPath}/`, manifest);
 }
 
+/** The shared class-name helper stays in the workspace but is never published from a registry. */
+async function keepHelperWorkspaceOnly(target: string): Promise<void> {
+  const path = join(target, CLASS_NAMES_PACKAGE_JSON);
+  if (!existsSync(path)) return;
+  const before = await readText(path);
+  const after = markHelperWorkspaceOnly(before);
+  if (after !== before) await writeText(path, after);
+}
+
 /**
  * Turns a pristine template copy into the owner's registry. Exported so tests
  * can exercise it without prompts; `update` reuses the same rename rules via
@@ -220,6 +237,7 @@ export async function applyScope(target: string, choices: ScopeChoices): Promise
   await rewriteChangesets(target, rename);
   await rewriteLockfile(target, rename);
   await ensureCategories(target, choices.scope, choices.categories);
+  await keepHelperWorkspaceOnly(target);
   await writeConfig(target, choices);
   const manifest = await readManifestOrDefault(target);
   await rewriteScopeFiles(target, manifest.rewriteScope, rename);
@@ -234,6 +252,9 @@ function printNextSteps(dir: string, scope: string, installed: boolean, log: Log
   log.info(`  cd ${dir}`);
   if (!installed) log.info("  pnpm install");
   log.info("  pnpm dev");
+  log.blank();
+  log.info("The docs site and every component install @behivetech packages from GitHub Packages for now (see .npmrc):");
+  log.info("export NODE_AUTH_TOKEN=<a GitHub token with read:packages> before `pnpm install`, and add it as the secret PACKAGES_READ_TOKEN in CI.");
   log.blank();
   log.info(`Create the npm org for @${scope} at https://www.npmjs.com/org/create before your first \`pnpm release\`.`);
   log.info("Guide: apps/docs/default-docs/guide/getting-started.md — also at /docs on the site. Pages under docs/ are yours; a same-path copy there replaces a default page.");

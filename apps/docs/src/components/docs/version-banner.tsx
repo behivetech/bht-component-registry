@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import styles from "./version-banner.module.scss";
 
 /**

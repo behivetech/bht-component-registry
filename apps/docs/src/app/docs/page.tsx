@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getDocSections } from "@/lib/docs";
 import { DocsShell } from "@/components/docs-shell";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import styles from "./page.module.scss";
 
 export const metadata: Metadata = { title: "Docs" };

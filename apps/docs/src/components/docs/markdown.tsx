@@ -1,10 +1,18 @@
+import dynamic from "next/dynamic";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import { CodeBlock } from "./code-block";
-import { LiveExample } from "./live-example";
 import { snippetToLiveCode } from "./snippet";
 import styles from "./markdown.module.scss";
+
+/**
+ * Loaded only by a page that renders a live block: a page that shows code but
+ * runs none (most guide pages) ships none of the live example's client code.
+ */
+const LiveExample = dynamic(() =>
+  import("./live-example").then((module) => module.LiveExample),
+);
 
 export interface MarkdownProps {
   children: string;

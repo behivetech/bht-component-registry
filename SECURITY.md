@@ -12,7 +12,7 @@ If you cannot use GitHub, contact BEhive Tech through https://platform.behivetec
 
 The registry template is a static site generator and a set of build tools. It has no server, no authentication, no database and no runtime secrets. A deployed site is a folder of HTML, CSS and JavaScript.
 
-The only secrets involved anywhere are publish tokens and an optional registry read token, which live in your CI secrets or your shell and are never written to the repo. `registry.config.json` is committed and contains nothing secret. The CI workflow checks that the lockfile points at no private registry.
+The only secrets involved anywhere are publish tokens, a registry read token (for now `PACKAGES_READ_TOKEN`, `read:packages`, to install the `@behivetech` packages from GitHub Packages) and an optional one for listing published versions, which live in your CI secrets or your shell and are never written to the repo. The token line goes in a user-level `~/.npmrc`, not in the committed `.npmrc`. `registry.config.json` is committed and contains nothing secret. The CI workflow checks that the lockfile points only at npmjs and GitHub Packages.
 
 Things that are in scope for a report:
 

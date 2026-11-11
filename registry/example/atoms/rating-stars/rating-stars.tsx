@@ -1,5 +1,5 @@
 import { type HTMLAttributes } from "react";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import styles from "./rating-stars.module.scss";
 
 export type RatingStarsSize = "sm" | "md" | "lg";

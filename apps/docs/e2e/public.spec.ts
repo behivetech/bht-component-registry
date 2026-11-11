@@ -46,8 +46,12 @@ test("home lists the public scopes and shows the site title from registry.config
     page.getByRole("heading", { name: "Scopes", exact: true }),
   ).toBeVisible();
   // The hero's default actions: into the primary scope, and the Docs section.
-  await expect(page.getByRole("link", { name: "Browse components" })).toHaveAttribute("href", "/example");
-  await expect(page.getByRole("link", { name: "Docs", exact: true }).first()).toHaveAttribute("href", "/docs");
+  await expect(
+    page.getByRole("link", { name: "Browse components" }),
+  ).toHaveAttribute("href", "/example");
+  await expect(
+    page.getByRole("link", { name: "Docs", exact: true }).first(),
+  ).toHaveAttribute("href", "/docs");
   // Nothing on the visitor-facing home tells people how to add a component; that is in the guide.
   await expect(page.getByText("Add a component to your scope")).toHaveCount(0);
 });
@@ -56,7 +60,9 @@ test("the head carries the default favicon and the theme colour", async ({
   page,
 }) => {
   await page.goto("/");
-  await expect(page.locator('link[rel="icon"][href="/favicon.ico"]')).toHaveCount(1);
+  await expect(
+    page.locator('link[rel="icon"][href="/favicon.ico"]'),
+  ).toHaveCount(1);
   await expect(page.locator('meta[name="theme-color"]')).toHaveCount(1);
   const response = await page.request.get("/favicon.ico");
   expect(response.status()).toBe(200);
@@ -235,7 +241,38 @@ test.describe("preview isolation", () => {
     await expect(page.getByText(/\$\d/).first()).toBeVisible();
   });
 
-  test("catalog tiles stay inline", async ({ page }) => {
+  test("only the example frames near the viewport stay mounted", async ({
+    page,
+  }) => {
+    // Each frame is a whole copy of the sandbox app; with every frame of a long
+    // page mounted, iOS Safari runs out of memory and kills the page.
+    await page.setViewportSize({ width: 390, height: 600 });
+    await page.goto("/example/atoms/price-tag");
+    const frames = page.locator("iframe");
+    const firstFrame = page.locator("figure").first().locator("iframe");
+    await expect(firstFrame).toBeAttached();
+    const total = await page.locator("figure").count();
+    expect(total).toBeGreaterThan(2);
+
+    // Far enough below the first example that it is beyond the unmount margin.
+    const gap = await page.evaluate(
+      () =>
+        document.body.scrollHeight -
+        document.querySelector("figure")!.getBoundingClientRect().bottom,
+    );
+    expect(gap).toBeGreaterThan(1600);
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await expect(firstFrame).toHaveCount(0);
+    await expect.poll(() => frames.count()).toBeLessThan(total);
+
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect(firstFrame).toBeAttached();
+    await expect(
+      page.frameLocator("iframe").first().getByText(/\$\d/).first(),
+    ).toBeVisible();
+  });
+
+  test("catalog tiles are static markup, not frames", async ({ page }) => {
     await page.goto("/example");
     await expect(page.locator("iframe")).toHaveCount(0);
     await expect(page.getByText(/\$\d/).first()).toBeVisible();
@@ -290,7 +327,9 @@ test.describe("hooks and utilities", () => {
     ).toBeVisible();
     await expect(page.getByRole("cell", { name: /^initial/ })).toBeVisible();
     // The default comes from the signature (`initial = false`), like a prop default.
-    await expect(page.getByRole("cell", { name: "false", exact: true })).toBeVisible();
+    await expect(
+      page.getByRole("cell", { name: "false", exact: true }),
+    ).toBeVisible();
     await expect(page.getByText("The starting value.")).toBeVisible();
     // The example is a live example, like a component's.
     await expect(page.locator("figure").first()).toBeVisible();
@@ -457,7 +496,9 @@ test.describe("theme", () => {
           bg: toRgb(s.backgroundColor),
           bgAlpha: s.backgroundColor,
           // The page background is on <html> (tokens.scss), not <body>.
-          surface: toRgb(getComputedStyle(document.documentElement).backgroundColor),
+          surface: toRgb(
+            getComputedStyle(document.documentElement).backgroundColor,
+          ),
         };
       }, rgb.toString());
       expect(colors.bgAlpha).not.toMatch(/rgba\(\d+, \d+, \d+, 0\)/);
@@ -483,15 +524,21 @@ test.describe("theme", () => {
     await page.goto("/");
     const roles = await page.evaluate(() => {
       const s = getComputedStyle(document.documentElement);
-      return ["primary", "on-primary", "surface-container-highest", "inverse-primary"].map((role) =>
-        s.getPropertyValue(`--md-sys-color-${role}`).trim(),
-      );
+      return [
+        "primary",
+        "on-primary",
+        "surface-container-highest",
+        "inverse-primary",
+      ].map((role) => s.getPropertyValue(`--md-sys-color-${role}`).trim());
     });
     // Either the generated six-digit hex or a shorthand the token sheet uses.
-    for (const value of roles) expect(value).toMatch(/^#([0-9a-f]{3}|[0-9a-f]{6})$/);
+    for (const value of roles)
+      expect(value).toMatch(/^#([0-9a-f]{3}|[0-9a-f]{6})$/);
     // The dark-header values are fixed per theme, available in both schemes.
     const darkSurface = await page.evaluate(() =>
-      getComputedStyle(document.documentElement).getPropertyValue("--site-dark-surface").trim(),
+      getComputedStyle(document.documentElement)
+        .getPropertyValue("--site-dark-surface")
+        .trim(),
     );
     expect(darkSurface).toMatch(/^#[0-9a-f]{6}$/);
   });

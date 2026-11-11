@@ -1,9 +1,15 @@
-"use client";
-
 import { Highlight, themes, type Language } from "prism-react-renderer";
-import { getClassName } from "@bht-component-registry/class-names";
+import { getClassName } from "@behivetech/bht-class-names";
 import styles from "./code-block.module.scss";
 
+/**
+ * A highlighted block of code, tokenised when the site is built.
+ *
+ * A server component on purpose: the highlighter runs in Node during the
+ * static export and the page gets plain markup, so no highlighter code reaches
+ * the browser. Code a reader types (the theme builder's export) cannot be
+ * known at build time; that is `PlainCodeBlock`.
+ */
 export function CodeBlock({
   code,
   language = "tsx",

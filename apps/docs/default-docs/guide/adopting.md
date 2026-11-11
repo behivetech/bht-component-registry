@@ -18,7 +18,7 @@ Get a fresh template with `npx create-bht-component-registry tmp --scope <yours>
 | `registry.config.json`, `registry.config.schema.json` | scope, registry URL, site branding | yes |
 | `apps/docs/` | the docs site (Next.js static export) | yes |
 | `packages/env` | everything a component builds, lints, type-checks and tests with (tsup, tsconfig, ESLint, Vitest config + setup, SCSS-module typings) and the `bht-registry-docgen` bin — see [The env package](env.md) | yes |
-| `packages/class-names` | the `getClassName` helper the component template uses | yes |
+| `packages/class-names` | `@behivetech/bht-class-names`, the `getClassName` helper every component depends on. The template publishes it (to GitHub Packages for now); your copy is workspace-only (`"private": true`, set by `create` and `update`), so it links in the workspace and is never published from your repo | yes |
 | `packages/scope` | scope naming rules used by the generator | yes |
 | `packages/eslint-config`, `packages/typescript-config` | the configs the packages above extend | yes |
 | `plopfile.ts`, `scripts/generators/` | `pnpm gen` and the shipped generators — see [Generators](generators.md) | yes |
@@ -26,7 +26,9 @@ Get a fresh template with `npx create-bht-component-registry tmp --scope <yours>
 | `.changeset/config.json` | Changesets config, if you do not have one | optional |
 | `Dockerfile`, `nginx.conf`, `.github/workflows/*.yml` | the container image and CI/release workflows | optional |
 
-Keep the `@bht-component-registry/*` package names. The component template, the shared tsup config (which bundles them into each component) and the docs app's `next.config.ts` all reference them.
+Keep the `@bht-component-registry/*` package names and `@behivetech/bht-class-names`. The component template and the docs app import the helper by that name; each component lists it as a `workspace:^` dependency, which `pnpm release` turns into a normal version range (`^<version>`), so consumers of your packages install the helper from the registry that publishes it. The shared tsup config bundles nothing: the helper stays an external dependency of every component.
+
+For now `@behivetech` packages (the helper, and the docs site's chrome) come from GitHub Packages: copy the root `.npmrc` and set the token as described in [Getting started](getting-started.md#a-token-for-github-packages-for-now).
 
 ## Where things have to sit
 
