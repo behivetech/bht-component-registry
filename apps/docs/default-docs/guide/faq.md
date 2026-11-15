@@ -6,7 +6,7 @@ order: 17
 
 # FAQ
 
-Short answers to the questions that come up when teams evaluate this registry: why there is no database, why the site is a static export, why git and npm rather than a hosted component platform, and what the expanded version adds. Where a question has a longer answer, it links to the guide.
+Short answers to the questions that come up when teams evaluate this registry: why there is no database, why the site is a static export, why git and npm rather than a hosted component platform, why this registry rather than another component framework, and what the expanded version adds. Where a question has a longer answer, it links to the guide.
 
 ## Why no database?
 
@@ -26,17 +26,29 @@ Developing, building, testing and deploying need none beyond one token for now: 
 
 Because you already have both, and they are enough:
 
-| Idea | This registry |
-|---|---|
-| Scopes | an npm scope and a folder under `registry/` |
+| Idea                      | This registry                                                        |
+| ------------------------- | -------------------------------------------------------------------- |
+| Scopes                    | an npm scope and a folder under `registry/`                          |
 | One package per component | `registry/<scope>/<category>/<name>` is `@<scope>/<category>.<name>` |
-| Examples | the named exports of `<name>.example.tsx` |
-| Generated docs | README, examples, react-docgen props, CHANGELOG |
-| Versions | Changesets and the npm registry you already use |
-| Deleting a component | deleting a folder |
-| Source of truth | git |
+| Examples                  | the named exports of `<name>.example.tsx`                            |
+| Generated docs            | README, examples, react-docgen props, CHANGELOG                      |
+| Versions                  | Changesets and the npm registry you already use                      |
+| Deleting a component      | deleting a folder                                                    |
+| Source of truth           | git                                                                  |
 
 There is no daemon, no second CLI to learn beyond `pnpm gen`, no separate store, and nothing to export if you stop using it.
+
+## Why this registry rather than another component framework?
+
+Compare it with the other frameworks for sharing components and three differences stand out.
+
+**The README is the documentation.** Each component is a folder with its own `README.md`, and that file is the Overview tab on the docs site, the page GitHub shows when someone opens the folder, and the page npm shows for the package. Its first paragraph is the package description everywhere a description appears. You write about a component once, in the format every developer already reads, and it shows properly in all three places. Other frameworks keep a component's description in their own files or their own hosted service, so the package page on npm and the folder on GitHub say little or nothing about it.
+
+**There is little to learn.** A component is an ordinary npm package in a pnpm workspace. You build it with the tools you already know, version it with Changesets and publish it with `pnpm release`. There is no project graph to configure, no plugin system, no cloud workspace and no command line of its own beyond `pnpm gen`. A new developer can read one component folder and understand all of it.
+
+**Nothing locks you in.** Other frameworks become the thing your repository is built around: their configuration, their build executors, their hosting, their way of importing a component. Leaving means a migration. Here the registry is folders, `package.json` files and a static docs site. Stop using the docs site and your packages still build, publish and install exactly as before, because they never depended on it.
+
+The table in the previous answer lists what each idea becomes in this registry.
 
 ## Can I have more than one scope?
 

@@ -7,23 +7,33 @@
   color: var(--md-sys-color-on-surface);
 
   &--sm {
-    font-size: var(--md-sys-typescale-body-small-size);
+    &.ACME__PriceTag {
+      font-size: var(--md-sys-typescale-body-small-size);
+    }
   }
 
   &--md {
-    font-size: var(--md-sys-typescale-title-medium-size);
+    &.ACME__PriceTag {
+      font-size: var(--md-sys-typescale-title-medium-size);
+    }
   }
 
   &--lg {
-    font-size: var(--md-sys-typescale-headline-small-size);
+    &.ACME__PriceTag {
+      font-size: var(--md-sys-typescale-headline-small-size);
+    }
   }
 
   &__amount {
     font-weight: 600;
   }
 
-  &--discounted &__amount {
-    color: var(--md-sys-color-primary);
+  &--discounted {
+    .ACME__PriceTag {
+      &__amount {
+        color: var(--md-sys-color-primary);
+      }
+    }
   }
 
   &__compare-at {

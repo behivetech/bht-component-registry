@@ -83,6 +83,7 @@ replaced by `npx create-bht-component-registry update`.
   `getChildClass("kebab-name")`, variants are `modifiers`, and the `.module.scss` mirrors it (`.Root { &__child {} &--modifier {} }`).
   Never `styles.foo`, never a hand-written class string, never a selector into another component's classes (pass `className`
   instead), and never a class for a state the DOM already carries (`aria-current`, `disabled`): style the attribute.
+- SCSS, two hard rules that `pnpm check:scss` checks (part of `pnpm verify`). A modifier is written `&--mod { &.Root { root properties } .Root { &__child { … } } }`: never `&--mod &__child`, never a declaration or `&:hover` directly in `&--mod`, one block per modifier. And each component has its own `.module.scss` that styles only itself: style a child component through a prop or a `className` passed to it. The shape and its reasons are in `apps/docs/default-docs/guide/components.md` ("Modifiers in the stylesheet"); fix any stylesheet you open that is written another way.
 - Scaffold with the generators, never by hand: a new component, hook or util package, docs page or generator starts with `pnpm gen …`
   (`pnpm gen` lists them), then edit what it wrote. Don't copy an existing package as a starting point: the generators are
   where the conventions live (layout, `package.json`, `publishConfig`, build scripts, docs frontmatter) and a hand-made copy

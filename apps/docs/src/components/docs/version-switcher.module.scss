@@ -6,10 +6,12 @@
 
   // No snapshots: the plain version label the header always had.
   &--static {
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    padding: 0.125rem 0.5rem;
-    border-radius: 999px;
-    background: var(--md-sys-color-surface-container-high);
+    &.VersionSwitcher {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      padding: 0.125rem 0.5rem;
+      border-radius: 999px;
+      background: var(--md-sys-color-surface-container-high);
+    }
   }
 
   &__summary {
