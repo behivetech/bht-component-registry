@@ -1,6 +1,6 @@
 {
   "name": "@behivetech/bht-class-names",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "getClassName: BEM class names for a component, built through its CSS module. The one helper every registry component uses.",
   "license": "MIT",
   "type": "module",
