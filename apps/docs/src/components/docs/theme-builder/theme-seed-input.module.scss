@@ -34,8 +34,12 @@
     cursor: pointer;
   }
 
-  &--empty &__picker {
-    opacity: 0.5;
+  &--empty {
+    .ThemeSeedInput {
+      &__picker {
+        opacity: 0.5;
+      }
+    }
   }
 
   &__hex {

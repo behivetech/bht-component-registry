@@ -40,6 +40,38 @@ Every styled element gets its class from `getClassName` (`@behivetech/bht-class-
 another component's classes (pass it `className` instead), or a class for a state the DOM already carries
 (`aria-current`, `disabled`) — style the attribute.
 
+## Modifiers in SCSS are written one way
+
+Hard rule, in every `.module.scss`. Inside `&--modifier` there are exactly two kinds of block: `&.Root` for the root's own properties (declarations, `&:hover`, `&::after`), and `.Root { &__child { … } }` for the children the modifier changes.
+
+```scss
+.ComponentName {
+  &__child {
+    // child
+  }
+
+  &--md {
+    &.ComponentName {
+      // the root itself under the modifier
+    }
+
+    .ComponentName {
+      &__child {
+        // the child under the modifier
+      }
+    }
+  }
+}
+```
+
+Never `&--md &__child`, `&--md { .ComponentName__child {} }`, `&--md:hover`, a top-level `.ComponentName--md …`, or a declaration directly in `&--md`. One block per modifier. The re-opened `.ComponentName` holds `&__child` blocks only. When you open a stylesheet written another way, fix it in the same change and check that the extra class from `&.Root` changes no winner in the cascade.
+
+## One stylesheet per component
+
+Hard rule. Each component has its own `.module.scss`, which styles that component only: no class of another component, no second block, no `@use` of another component's stylesheet. To style a child component, give it a prop or pass it `className` and style that class in the parent's file.
+
+`pnpm check:scss` checks both rules (it is part of `pnpm verify`). The Components guide (`apps/docs/default-docs/guide/components.md`, "Modifiers in the stylesheet") explains them.
+
 Keep the other repo rules from `CLAUDE.md`: no required environment variables, nothing hardcoded to a
 scope name, `docs/` and `registry/` and `generators/` are the owner's and `update` never touches them.
 

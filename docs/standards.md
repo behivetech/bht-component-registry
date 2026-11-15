@@ -24,12 +24,45 @@ The rules every component in this registry follows. Keep this page short enough 
 - Every component names its classes through `getClassName` from `@behivetech/bht-class-names`, BEM-style: the root element carries the block class, every inner element a `__child` class, and variants are `--modifier` classes on the root only. The generator writes this for you:
 
   ```tsx
-  const [rootClass, getChildClass] = getClassName({ rootClass: "ACME__DatePicker", styles, className, modifiers: { open } });
-  <div className={rootClass}><span className={getChildClass("label")} /></div>
+  const [rootClass, getChildClass] = getClassName({
+    rootClass: "ACME__DatePicker",
+    styles,
+    className,
+    modifiers: { open },
+  });
+  <div className={rootClass}>
+    <span className={getChildClass("label")} />
+  </div>;
   ```
 
   and the stylesheet mirrors it: `.ACME__DatePicker { &__label {} &--open {} }`. No bare `styles.foo` and no hand-written class strings.
-- A stylesheet styles its own component only. To change how a child component looks inside yours, pass it a `className` (or give it a prop) — never target its classes from your file.
+
+- A modifier is written one way. The root's own properties go in `&.ACME__DatePicker { … }` and the children it changes go in `.ACME__DatePicker { &__child { … } }`, both directly inside the modifier block, and nothing else sits there:
+
+  ```scss
+  .ACME__DatePicker {
+    &__label {
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    &--open {
+      &.ACME__DatePicker {
+        border-color: var(--md-sys-color-primary);
+      }
+
+      .ACME__DatePicker {
+        &__label {
+          color: var(--md-sys-color-primary);
+        }
+      }
+    }
+  }
+  ```
+
+  Never `&--open &__label`, `&--open { .ACME__DatePicker__label {} }` or a declaration directly in `&--open`. One block per modifier. The Components guide ("Modifiers in the stylesheet") explains the shape.
+
+- Each component has its own `.module.scss`, and it styles its own component only. To change how a child component looks inside yours, give it a prop or pass it a `className` and style that class in your file. Never target its classes from your file, and never `@use` its stylesheet (the one packaging exception is in the Components guide, "One stylesheet per component").
+- `pnpm check:scss` checks the two rules above on every `.module.scss` outside `docs-history`, on commit and in CI. The other rules in this section are checked in review.
 - A state the DOM already expresses (`aria-current`, `aria-expanded`, `disabled`) is styled from that attribute, not a second class.
 - Colour, spacing and type come from the design tokens (`--md-sys-*`), never from literal values, so a theme change reaches every component.
 

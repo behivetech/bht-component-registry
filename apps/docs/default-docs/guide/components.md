@@ -49,17 +49,73 @@ Every class name in a component — and in the docs site itself — comes from `
 ```tsx
 const [rootClass, getChildClass] = getClassName({
   rootClass: "ACME__Button", // <classPrefix>__<PascalName> — scope.json's classPrefix, else the scope in CONSTANT_CASE
-  styles,                     // the CSS-module map, so names resolve to the hashed classes
-  className,                  // whatever the consumer passed, merged onto the root
-  modifiers: { loading },     // `ACME__Button--loading` while true
+  styles, // the CSS-module map, so names resolve to the hashed classes
+  className, // whatever the consumer passed, merged onto the root
+  modifiers: { loading }, // `ACME__Button--loading` while true
 });
 
 <button className={rootClass}>
   <span className={getChildClass("label")}>…</span> // ACME__Button__label
-</button>
+</button>;
 ```
 
 The stylesheet is the same tree: `.ACME__Button { &__label {} &--loading {} }`. Three rules follow from it: no `styles.foo` or hand-written class strings anywhere; a stylesheet styles its own component only (position a child by passing it `className`, never by selecting its classes); and a state the DOM already carries (`aria-current`, `disabled`) is styled from that attribute rather than a second class.
+
+### Modifiers in the stylesheet
+
+A modifier is written one way, in every stylesheet:
+
+```scss
+.ACME__Button {
+  padding: 0 1rem;
+
+  &__label {
+    font-weight: 500;
+  }
+
+  &--loading {
+    // The root itself, while loading.
+    &.ACME__Button {
+      cursor: wait;
+    }
+
+    // Its children, while loading.
+    .ACME__Button {
+      &__label {
+        opacity: 0;
+      }
+    }
+  }
+}
+```
+
+Inside the modifier block, the root class appears twice and means two different things. `&.ACME__Button` (with the `&`) is the root element carrying the modifier, so the root's own properties go there, along with its states (`&:hover`) and pseudo-elements (`&::after`). `.ACME__Button` (without the `&`) re-opens the block as a descendant, so every child the modifier changes goes inside it as `&__child`, exactly as it is written at the top of the file.
+
+The rules that follow:
+
+- Nothing sits directly in `&--modifier` except those two blocks: no declarations, no `&:hover`, no `&__child`.
+- A child is never reached on the modifier's own line (`&--loading &__label`), by its full class (`.ACME__Button__label`), or from a rule outside the root block (`.ACME__Button--loading .ACME__Button__label`).
+- One block per modifier. When a second child changes under the same modifier, add it to the block that is already there. Modifiers that share rules may also be grouped in a list (`&--left, &--right { … }`) beside each one's own block.
+- The re-opened `.ACME__Button` holds `&__child` blocks and nothing else. A `&:hover` or a declaration placed there would style a button nested inside this one, not this one.
+- Two modifiers together are a compound, written with the second modifier's full class: `&--invalid { &.ACME__Button--loading { … } }`, or inside the root compound when the first has properties of its own, `&--invalid { &.ACME__Button { … &.ACME__Button--loading { … } } }`.
+- A condition from outside the component, such as the page theme, wraps the blocks inside the modifier: `&--paired { :root[data-theme="dark"] & { .ACME__Header { &__logo { … } } } }`.
+- Pseudo-classes are states, not modifiers, and stay as they are: `&:hover { … }`. A state of the root under a modifier nests in the root compound: `&--linked { &.ACME__Button { &:hover { … } } }`, never `&--linked:hover`.
+- A modifier whose name is built in a loop follows the same shape: `&--cols-#{$n} { &.ACME__Grid { … } }`.
+
+Why this shape: each modifier is one place that lists everything it changes, a new child under a modifier has an obvious home, and the child selectors read the same under a modifier as they do at the top of the file. Every modifier rule also gets the same specificity (two classes), so a modifier always beats the base rule whatever the order in the file, and no rule wins by accident.
+
+### One stylesheet per component
+
+Each component has its own `.module.scss`, and that file styles that component only: every class in it belongs to its own root block, and it never pulls another component's stylesheet in. When a component needs a child component to look different, there are two ways, and no third:
+
+- give the child a prop, which the child turns into a modifier in its own stylesheet; or
+- pass the child a `className` (one of your own `getChildClass` classes) and style that class in your file. Every component accepts `className` for this.
+
+A child element that needs a modifier of its own becomes its own component, with its own stylesheet, inside the parent package.
+
+One packaging exception exists. A package whose component renders another package's component may `@use` that package's stylesheet by its package path, unchanged, so that its own published `styles.css` works without a second import (a Modal that renders a Card as its panel, for example). It re-emits the other stylesheet; it still never styles the other component's classes. Each case is listed by file in `scripts/lib/scss-files.mjs`, and a new one is a decision to make first, not a default.
+
+`pnpm check:scss` checks the modifier shape and the one-component rule on every `.module.scss`; it runs on commit and in CI. It skips `docs-history`, which is generated. Two things it cannot see stay with the reviewer: a child element that needs a modifier (it becomes its own component), and whether a class you pass to a child still wins over what the child's modifier sets (a modifier rule has two classes, so use the child's prop for anything its modifiers control).
 
 Categories offered by the generator are `atoms`, `molecules`, `forms`, `organisms`, `templates`. The catalog also recognises `utils` and `theme`, in case you need them. Display order is atoms, molecules, organisms, templates, forms, utils, theme.
 
@@ -98,7 +154,7 @@ The README is the Overview tab. A few rules make it work as docs:
 - **The first paragraph after the H1 is the summary**, one line, used on catalog cards and in the page description. It is also the published package's `description`: `pnpm release` writes it into `package.json` just for the publish and restores the file after, so leave `package.json#description` empty and the sentence lives in one place. The component's JSDoc is the fallback when a README has no summary.
 - **No props table.** The Props tab is generated from the TypeScript interface and its JSDoc, so a hand-written table in the README is a second copy that drifts. The README is for what the component is for, how to use it, and the decisions behind it.
 - **Linking back from npm is automatic.** With the site URL set, as `registry.config.json#site.url` or the `BHT_DOCS_SITE_URL` environment variable that overrides it (see [Scopes](scopes.md)), `pnpm release` publishes each package with its docs page as `homepage` and a `Docs: <url>` line under the summary; neither is written into the repo.
-- **```` ```jsx ```` and ```` ```tsx ```` blocks run live.** Each one is rendered as a working example above its code, editable in place. Other languages (```` ```bash ````, ```` ```scss ````) render as plain code.
+- **` ```jsx ` and ` ```tsx ` blocks run live.** Each one is rendered as a working example above its code, editable in place. Other languages (` ```bash `, ` ```scss `) render as plain code.
 - **Import lines are stripped** before a snippet runs, because every export of every registry package is already in the sandbox scope. Write the imports anyway: readers copy them.
 - A snippet that is a bare JSX expression is rendered directly (siblings are allowed). A snippet that declares a component (`function Example() {}` or `const Example = () => …`) is rendered as `<Example />`. A snippet that calls hooks at the top level is wrapped in a component for you.
 - Everything else is GitHub-flavoured Markdown: headings, tables, lists, links.
@@ -114,9 +170,9 @@ rather than rounded to a half, so 4.3 and 4.7 look different.
 ## Usage
 
 ```jsx
-import { RatingStars } from '@example/atoms.rating-stars';
+import { RatingStars } from "@example/atoms.rating-stars";
 
-<RatingStars value={4.3} count={128} />
+<RatingStars value={4.3} count={128} />;
 ```
 ````
 
@@ -142,7 +198,9 @@ import { RatingStars } from "./rating-stars.js";
 const reviews = { value: 4.3, count: 128 };
 
 /** A fractional rating with its review count. */
-export const FractionalRatingStars = () => <RatingStars value={reviews.value} count={reviews.count} />;
+export const FractionalRatingStars = () => (
+  <RatingStars value={reviews.value} count={reviews.count} />
+);
 ```
 
 Examples are excluded from the package build by `tsconfig.json` but shipped in the tarball as source, so other tools can render them.
